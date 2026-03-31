@@ -47,6 +47,7 @@ async function saveSeoSettings(formData: FormData) {
       noIndex,
     },
     create: {
+      tenantId: "", // injected by scoped client
       pageType,
       pageSlug,
       metaTitle,

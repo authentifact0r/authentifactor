@@ -31,7 +31,6 @@ export async function createSubscription(
 
   const subscription = await tdb.subscription.create({
     data: {
-      tenantId: "", // injected by scoped client
       userId: user.id,
       productId,
       quantity,
@@ -94,7 +93,6 @@ export async function processDueSubscriptions() {
       nextDelivery: { lte: new Date() },
     },
     include: {
-      user: { include: { addresses: { where: { isDefault: true } } } },
       product: true,
     },
   });
@@ -102,7 +100,10 @@ export async function processDueSubscriptions() {
   const results = [];
 
   for (const sub of dueSubscriptions) {
-    const address = sub.user.addresses[0];
+    // Look up user's default address separately (no user relation on Subscription)
+    const address = await db.address.findFirst({
+      where: { userId: sub.userId, isDefault: true },
+    });
     if (!address) continue;
 
     const unitPrice = Number(sub.product.price);

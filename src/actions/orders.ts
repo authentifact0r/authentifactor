@@ -206,7 +206,6 @@ export async function reorderAction(orderId: string): Promise<void> {
       },
       update: { quantity: item.quantity },
       create: {
-        tenantId: "", // injected by scoped client
         userId: user.id,
         productId: item.productId,
         quantity: item.quantity,

@@ -34,6 +34,7 @@ async function addShippingRule(formData: FormData) {
 
   await tdb.shippingRule.create({
     data: {
+      tenantId: "", // injected by scoped client
       name,
       method: method as "LOCAL_FRESH" | "STANDARD" | "EXPRESS" | "LOCAL_VAN" | "DHL",
       minWeightKg,

@@ -49,7 +49,6 @@ export async function createProduct(formData: FormData): Promise<void> {
   await tdb.product.create({
     data: {
       ...data,
-      tenantId: "", // injected by scoped client
       slug,
       tags: tags ? tags.split(",").map((t) => t.trim().toLowerCase()) : [],
       images: [],
@@ -141,7 +140,6 @@ export async function addInventoryBatch(formData: FormData): Promise<void> {
 
   await tdb.inventoryBatch.create({
     data: {
-      tenantId: "", // injected by scoped client
       productId,
       warehouseId,
       quantity,
@@ -167,7 +165,6 @@ export async function createFlashSale(formData: FormData): Promise<void> {
     where: { productId },
     update: { discountPercent, reason, endsAt, isActive: true, startsAt: new Date() },
     create: {
-      tenantId: "", // injected by scoped client
       productId,
       discountPercent,
       reason,

@@ -1,7 +1,11 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth";
+import { db } from "@/lib/db";
+import { getTenant } from "@/lib/tenant";
 import { Header } from "@/components/layout/header";
+import { Footer } from "@/components/layout/footer";
+import { TenantProvider, type TenantConfig } from "@/components/tenant-provider";
 import { logoutAction } from "@/actions/auth";
 import { Button } from "@/components/ui/button";
 import { Package, MapPin, RefreshCw, User, LogOut } from "lucide-react";
@@ -21,15 +25,37 @@ export default async function AccountLayout({
   const user = await getCurrentUser();
   if (!user) redirect("/login");
 
+  const [dbUser, tenant] = await Promise.all([
+    db.user.findUnique({
+      where: { id: user.id },
+      select: { firstName: true },
+    }),
+    getTenant(),
+  ]);
+
+  const tenantConfig: TenantConfig = {
+    id: tenant.id,
+    name: tenant.name,
+    slug: tenant.slug,
+    logo: tenant.logo,
+    primaryColor: tenant.primaryColor,
+    accentColor: tenant.accentColor,
+    tagline: tenant.tagline,
+    currency: tenant.currency,
+    freeShippingMinimum: tenant.freeShippingMinimum,
+    heroBannerTitle: tenant.heroBannerTitle,
+    heroBannerSubtitle: tenant.heroBannerSubtitle,
+  };
+
   return (
-    <>
+    <TenantProvider tenant={tenantConfig}>
       <Header />
       <div className="mx-auto max-w-7xl px-4 py-8">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold text-gray-900">My Account</h1>
             <p className="text-sm text-gray-500">
-              Welcome back, {user.firstName}
+              Welcome back, {dbUser?.firstName || user.email}
             </p>
           </div>
           <form action={logoutAction}>
@@ -55,6 +81,7 @@ export default async function AccountLayout({
           <div>{children}</div>
         </div>
       </div>
-    </>
+      <Footer />
+    </TenantProvider>
   );
 }
