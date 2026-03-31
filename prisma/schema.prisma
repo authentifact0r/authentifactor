@@ -7,9 +7,65 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// ─── TENANT SYSTEM ─────────────────────────────────────────
+
+model Tenant {
+  id               String   @id @default(cuid())
+  name             String
+  slug             String   @unique
+  customDomain     String?  @unique
+  logo             String?
+  favicon          String?
+  primaryColor     String   @default("#064E3B")
+  accentColor      String   @default("#F59E0B")
+  tagline          String?
+  paystackSecretKey String?
+  paystackPublicKey String?
+  stripeSecretKey  String?
+  stripePublicKey  String?
+  localHubLat      Float?
+  localHubLng      Float?
+  localRadiusKm    Float    @default(15)
+  freeShippingMinimum Float?
+  currency         String   @default("NGN")
+  isActive         Boolean  @default(true)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  // SEO defaults
+  defaultMetaTitle       String?
+  defaultMetaDescription String?
+  defaultOgImage         String?
+
+  // Mobile app
+  mobileAppEnabled    Boolean  @default(false)
+  mobileAppBrandName  String?  // e.g., "Taste of Motherland"
+  mobileAppIcon       String?
+
+  // Hero/banner
+  heroBannerImage     String?
+  heroBannerTitle     String?
+  heroBannerSubtitle  String?
+
+  tenantUsers      TenantUser[]
+  products         Product[]
+  warehouses       Warehouse[]
+  inventoryBatches InventoryBatch[]
+  cartItems        CartItem[]
+  orders           Order[]
+  subscriptions    Subscription[]
+  recipes          Recipe[]
+  flashSales       FlashSale[]
+  shippingRules    ShippingRule[]
+  seoSettings      SeoSettings[]
+  onboardingProgress OnboardingProgress?
+
+  @@map("tenants")
+}
+
 // ─── USER SYSTEM ─────────────────────────────────────────────
 
-enum UserRole {
+enum TenantRole {
   CUSTOMER
   MANAGER
   ADMIN
@@ -22,16 +78,27 @@ model User {
   firstName     String
   lastName      String
   phone         String?
-  role          UserRole  @default(CUSTOMER)
+  isSuperAdmin  Boolean   @default(false)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
   addresses     Address[]
-  orders        Order[]
-  cartItems     CartItem[]
-  subscriptions Subscription[]
+  tenantUsers   TenantUser[]
 
   @@map("users")
+}
+
+model TenantUser {
+  id        String     @id @default(cuid())
+  userId    String
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tenantId  String
+  tenant    Tenant     @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  role      TenantRole @default(CUSTOMER)
+  createdAt DateTime   @default(now())
+
+  @@unique([userId, tenantId])
+  @@map("tenant_users")
 }
 
 model Address {
@@ -69,9 +136,11 @@ enum ProductCategory {
 
 model Product {
   id              String          @id @default(cuid())
-  sku             String          @unique
+  tenantId        String
+  tenant          Tenant          @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  sku             String
   name            String
-  slug            String          @unique
+  slug            String
   description     String
   category        ProductCategory
   price           Decimal         @db.Decimal(10, 2)
@@ -93,8 +162,10 @@ model Product {
   subscriptions    Subscription[]
   flashSale        FlashSale?
 
+  @@unique([tenantId, sku])
+  @@unique([tenantId, slug])
+  @@index([tenantId])
   @@index([category])
-  @@index([slug])
   @@map("products")
 }
 
@@ -102,8 +173,10 @@ model Product {
 
 model Warehouse {
   id        String  @id @default(cuid())
+  tenantId  String
+  tenant    Tenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   name      String
-  code      String  @unique // e.g., "LOS", "ABJ", "LON"
+  code      String
   address   String
   city      String
   state     String
@@ -115,11 +188,15 @@ model Warehouse {
   inventoryBatches InventoryBatch[]
   orders           Order[]
 
+  @@unique([tenantId, code])
+  @@index([tenantId])
   @@map("warehouses")
 }
 
 model InventoryBatch {
   id          String    @id @default(cuid())
+  tenantId    String
+  tenant      Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   productId   String
   product     Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
   warehouseId String
@@ -131,6 +208,7 @@ model InventoryBatch {
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 
+  @@index([tenantId])
   @@index([productId, warehouseId])
   @@index([expiryDate])
   @@map("inventory_batches")
@@ -140,15 +218,17 @@ model InventoryBatch {
 
 model CartItem {
   id        String  @id @default(cuid())
+  tenantId  String
+  tenant    Tenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   userId    String
-  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   productId String
   product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
   quantity  Int     @default(1)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@unique([userId, productId])
+  @@unique([userId, productId, tenantId])
+  @@index([tenantId])
   @@map("cart_items")
 }
 
@@ -186,9 +266,10 @@ enum ShippingMethod {
 
 model Order {
   id              String         @id @default(cuid())
+  tenantId        String
+  tenant          Tenant         @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   orderNumber     String         @unique
   userId          String
-  user            User           @relation(fields: [userId], references: [id])
   addressId       String
   address         Address        @relation(fields: [addressId], references: [id])
   warehouseId     String?
@@ -216,6 +297,7 @@ model Order {
 
   items           OrderItem[]
 
+  @@index([tenantId])
   @@index([userId])
   @@index([status])
   @@index([orderNumber])
@@ -252,8 +334,9 @@ enum SubscriptionInterval {
 
 model Subscription {
   id              String             @id @default(cuid())
+  tenantId        String
+  tenant          Tenant             @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   userId          String
-  user            User               @relation(fields: [userId], references: [id], onDelete: Cascade)
   productId       String
   product         Product            @relation(fields: [productId], references: [id])
   quantity        Int                @default(1)
@@ -265,6 +348,7 @@ model Subscription {
   createdAt       DateTime           @default(now())
   updatedAt       DateTime           @updatedAt
 
+  @@index([tenantId])
   @@index([userId])
   @@index([nextDelivery])
   @@map("subscriptions")
@@ -274,8 +358,10 @@ model Subscription {
 
 model Recipe {
   id          String       @id @default(cuid())
+  tenantId    String
+  tenant      Tenant       @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   title       String
-  slug        String       @unique
+  slug        String
   description String
   image       String?
   prepTime    Int          // minutes
@@ -287,6 +373,8 @@ model Recipe {
 
   items       RecipeItem[]
 
+  @@unique([tenantId, slug])
+  @@index([tenantId])
   @@map("recipes")
 }
 
@@ -306,6 +394,8 @@ model RecipeItem {
 
 model FlashSale {
   id              String   @id @default(cuid())
+  tenantId        String
+  tenant          Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   productId       String   @unique
   product         Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
   discountPercent Decimal  @db.Decimal(4, 2)
@@ -315,6 +405,7 @@ model FlashSale {
   isActive        Boolean  @default(true)
   createdAt       DateTime @default(now())
 
+  @@index([tenantId])
   @@index([isActive, endsAt])
   @@map("flash_sales")
 }
@@ -323,6 +414,8 @@ model FlashSale {
 
 model ShippingRule {
   id            String        @id @default(cuid())
+  tenantId      String
+  tenant        Tenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   name          String
   method        ShippingMethod
   minWeightKg   Decimal       @db.Decimal(8, 3)
@@ -332,5 +425,47 @@ model ShippingRule {
   estimatedDays Int
   isActive      Boolean       @default(true)
 
+  @@index([tenantId])
   @@map("shipping_rules")
+}
+
+// ─── SEO SETTINGS ──────────────────────────────────────────
+
+model SeoSettings {
+  id              String   @id @default(cuid())
+  tenantId        String
+  tenant          Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  pageType        String   // "home", "category", "product", "recipe", "custom"
+  pageSlug        String?  // null for home, category slug, product slug, etc.
+  metaTitle       String?
+  metaDescription String?
+  ogImage         String?
+  jsonLd          String?  // JSON-LD structured data as string
+  canonicalUrl    String?
+  noIndex         Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@unique([tenantId, pageType, pageSlug])
+  @@index([tenantId])
+  @@map("seo_settings")
+}
+
+// ─── ONBOARDING ────────────────────────────────────────────
+
+model OnboardingProgress {
+  id          String   @id @default(cuid())
+  tenantId    String   @unique
+  tenant      Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  branding    Boolean  @default(false)
+  domain      Boolean  @default(false)
+  warehouse   Boolean  @default(false)
+  inventory   Boolean  @default(false)
+  shipping    Boolean  @default(false)
+  seo         Boolean  @default(false)
+  adminUsers  Boolean  @default(false)
+  completedAt DateTime?
+  updatedAt   DateTime @updatedAt
+
+  @@map("onboarding_progress")
 }
