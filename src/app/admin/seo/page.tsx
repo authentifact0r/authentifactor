@@ -1,6 +1,6 @@
 export const dynamic = "force-dynamic";
 
-import { getScopedDb } from "@/lib/db";
+import { getScopedDb, TENANT_ID } from "@/lib/db";
 import { requireAdmin } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -34,7 +34,7 @@ async function saveSeoSettings(formData: FormData) {
   await tdb.seoSettings.upsert({
     where: {
       tenantId_pageType_pageSlug: {
-        tenantId: "",
+        tenantId: TENANT_ID,
         pageType,
         pageSlug: pageSlug ?? "",
       },
@@ -47,7 +47,7 @@ async function saveSeoSettings(formData: FormData) {
       noIndex,
     },
     create: {
-      tenantId: "", // injected by scoped client
+      tenantId: TENANT_ID, // injected by scoped client
       pageType,
       pageSlug,
       metaTitle,

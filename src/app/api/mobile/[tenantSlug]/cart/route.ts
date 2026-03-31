@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { db, tenantDb } from "@/lib/db";
+import { db, tenantDb, TENANT_ID } from "@/lib/db";
 
 interface CartSyncItem {
   productId: string;
@@ -82,6 +82,7 @@ export async function POST(
       },
       update: { quantity: item.quantity },
       create: {
+        tenantId: TENANT_ID,
         userId,
         productId: item.productId,
         quantity: item.quantity,

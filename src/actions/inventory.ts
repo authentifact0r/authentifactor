@@ -1,6 +1,6 @@
 "use server";
 
-import { getScopedDb } from "@/lib/db";
+import { getScopedDb, TENANT_ID } from "@/lib/db";
 import { requireAdmin } from "@/lib/auth";
 import { slugify } from "@/lib/utils";
 import { revalidatePath } from "next/cache";
@@ -49,6 +49,7 @@ export async function createProduct(formData: FormData): Promise<void> {
   await tdb.product.create({
     data: {
       ...data,
+      tenantId: TENANT_ID,
       slug,
       tags: tags ? tags.split(",").map((t) => t.trim().toLowerCase()) : [],
       images: [],
@@ -140,6 +141,7 @@ export async function addInventoryBatch(formData: FormData): Promise<void> {
 
   await tdb.inventoryBatch.create({
     data: {
+      tenantId: TENANT_ID,
       productId,
       warehouseId,
       quantity,
@@ -165,6 +167,7 @@ export async function createFlashSale(formData: FormData): Promise<void> {
     where: { productId },
     update: { discountPercent, reason, endsAt, isActive: true, startsAt: new Date() },
     create: {
+      tenantId: TENANT_ID,
       productId,
       discountPercent,
       reason,

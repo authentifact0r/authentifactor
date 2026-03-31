@@ -1,6 +1,6 @@
 "use server";
 
-import { getScopedDb } from "@/lib/db";
+import { getScopedDb, TENANT_ID } from "@/lib/db";
 import { db } from "@/lib/db";
 import { requireAuth } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
@@ -31,6 +31,7 @@ export async function createSubscription(
 
   const subscription = await tdb.subscription.create({
     data: {
+      tenantId: TENANT_ID,
       userId: user.id,
       productId,
       quantity,

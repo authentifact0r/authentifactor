@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { db, getScopedDb } from "@/lib/db";
+import { db, getScopedDb, TENANT_ID } from "@/lib/db";
 import { getCurrentUser } from "@/lib/auth";
 import { getTenant } from "@/lib/tenant";
 import { generateOrderNumber } from "@/lib/utils";
@@ -113,6 +113,7 @@ export async function POST(req: NextRequest) {
     const orderNumber = generateOrderNumber();
     const order = await tdb.order.create({
       data: {
+        tenantId: TENANT_ID,
         orderNumber,
         userId: user.id,
         addressId: savedAddress.id,

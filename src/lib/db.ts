@@ -122,3 +122,10 @@ export async function getScopedDb() {
   const id = await getTenantId();
   return tenantDb(id);
 }
+
+/**
+ * Placeholder tenantId for create operations on scoped clients.
+ * The tenant middleware injects the real tenantId at runtime,
+ * but TypeScript needs a value to satisfy the required field type.
+ */
+export const TENANT_ID = "" as string;

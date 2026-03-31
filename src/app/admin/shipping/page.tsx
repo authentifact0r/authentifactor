@@ -1,6 +1,6 @@
 export const dynamic = "force-dynamic";
 
-import { getScopedDb } from "@/lib/db";
+import { getScopedDb, TENANT_ID } from "@/lib/db";
 import { requireAdmin } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
 import { formatPrice } from "@/lib/utils";
@@ -34,7 +34,7 @@ async function addShippingRule(formData: FormData) {
 
   await tdb.shippingRule.create({
     data: {
-      tenantId: "", // injected by scoped client
+      tenantId: TENANT_ID,
       name,
       method: method as "LOCAL_FRESH" | "STANDARD" | "EXPRESS" | "LOCAL_VAN" | "DHL",
       minWeightKg,

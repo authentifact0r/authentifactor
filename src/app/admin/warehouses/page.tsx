@@ -1,6 +1,6 @@
 export const dynamic = "force-dynamic";
 
-import { getScopedDb } from "@/lib/db";
+import { getScopedDb, TENANT_ID } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { requireAdmin } from "@/lib/auth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -16,6 +16,7 @@ async function addWarehouse(formData: FormData) {
 
   await tdb.warehouse.create({
     data: {
+      tenantId: TENANT_ID,
       name: formData.get("name") as string,
       code: (formData.get("code") as string).toUpperCase(),
       address: formData.get("address") as string,
