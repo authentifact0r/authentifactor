@@ -47,6 +47,16 @@ model Tenant {
   heroBannerTitle     String?
   heroBannerSubtitle  String?
 
+  // ── Billing ──
+  billingPlan            String   @default("standard") // basic | standard | premium
+  billingStatus          String   @default("active")   // active | delinquent | paused
+  stripeCustomerId       String?
+  stripeSubscriptionId   String?
+  nextInvoiceDate        DateTime?
+  lastPaymentStatus      String?  // succeeded | failed | pending
+  lastPaymentDate        DateTime?
+  billingEmail           String?  // override for billing notifications
+
   tenantUsers      TenantUser[]
   products         Product[]
   warehouses       Warehouse[]

@@ -1,49 +1,72 @@
 import { NextResponse, type NextRequest } from "next/server";
 
-// Known platform domains (not tenant subdomains)
+// Known platform domains (not tenant custom domains)
 const PLATFORM_HOSTS = ["vercel.app", "localhost", "authentifactor.com"];
 
-function resolveTenantSlug(request: NextRequest): string {
+// Routes that belong to the platform itself (not tenant storefronts)
+const PLATFORM_ROUTES = [
+  "/platform",
+  "/login",
+  "/register",
+  "/superadmin",
+  "/api",
+];
+
+function isPlatformHost(host: string): boolean {
+  return PLATFORM_HOSTS.some((ph) => host.includes(ph));
+}
+
+function resolveTenantSlug(request: NextRequest): string | null {
   // Dev/preview override via query param
   const paramSlug = request.nextUrl.searchParams.get("tenant");
   if (paramSlug) return paramSlug;
 
   const host = request.headers.get("host") ?? "";
 
-  // Skip subdomain extraction for platform hosts (e.g., *.vercel.app)
-  const isPlatformHost = PLATFORM_HOSTS.some((ph) => host.endsWith(ph));
-  if (isPlatformHost) return "taste-of-motherland";
+  // Platform hosts don't have tenants (unless using ?tenant= override)
+  if (isPlatformHost(host)) return null;
 
-  // Custom domain mapping (e.g., tmfoods.co.uk → taste-of-motherland)
-  // The actual mapping is done via DB lookup in tenant.ts
-  // Here we pass the full host for custom domain resolution
+  // Custom domain mapping (e.g., tmfoods.co.uk → resolved via DB in tenant.ts)
+  // Subdomain extraction (e.g., tom.authentifactor.com → tom)
   const parts = host.split(".");
-  if (parts.length >= 3) return parts[0]; // subdomain extraction
+  if (parts.length >= 3) return parts[0];
 
-  // Default tenant
-  return "taste-of-motherland";
+  // Custom domain — pass full host, tenant.ts will resolve from DB
+  return host;
 }
 
 const protectedPrefixes = ["/account", "/admin"];
 
 const publicPaths = [
   "/api/webhooks",
+  "/api/billing/webhook",
   "/login",
   "/register",
+  "/billing-issue",
   "/_next",
   "/favicon.ico",
   "/images",
+  "/platform",
 ];
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+  const host = request.headers.get("host") ?? "";
 
-  // Resolve tenant slug and inject into request headers
+  // ── Platform host hitting root "/" → redirect to /platform ──
+  if (isPlatformHost(host) && pathname === "/") {
+    return NextResponse.redirect(new URL("/platform", request.url));
+  }
+
+  // ── Resolve tenant ──
   const tenantSlug = resolveTenantSlug(request);
   const requestHeaders = new Headers(request.headers);
-  requestHeaders.set("x-tenant-slug", tenantSlug);
 
-  // Allow public paths, static assets, and API webhooks
+  if (tenantSlug) {
+    requestHeaders.set("x-tenant-slug", tenantSlug);
+  }
+
+  // Allow public paths, static assets, platform routes
   if (publicPaths.some((path) => pathname.startsWith(path))) {
     return NextResponse.next({
       request: { headers: requestHeaders },
@@ -77,6 +100,16 @@ export function middleware(request: NextRequest) {
     }
   }
 
+  // ── Tenant custom domain hitting "/" → serve their storefront ──
+  // ── Platform host hitting tenant routes (e.g., /shop) without tenant → redirect to /platform ──
+  if (isPlatformHost(host) && !tenantSlug) {
+    const isPlatformRoute = PLATFORM_ROUTES.some((r) => pathname.startsWith(r));
+    if (!isPlatformRoute && pathname !== "/") {
+      // Non-platform route on platform host with no tenant → redirect
+      return NextResponse.redirect(new URL("/platform", request.url));
+    }
+  }
+
   return NextResponse.next({
     request: { headers: requestHeaders },
   });
@@ -84,13 +117,6 @@ export function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except:
-     * - _next/static (static files)
-     * - _next/image (image optimization)
-     * - favicon.ico
-     * - public folder assets
-     */
     "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
   ],
 };
