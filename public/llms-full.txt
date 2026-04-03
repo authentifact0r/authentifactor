@@ -1,0 +1,114 @@
+# Authentifactor — Full Documentation for AI Systems
+
+## About
+
+Authentifactor is a UK-based digital infrastructure company that builds multi-tenant commerce and web platforms for ambitious businesses. Founded in 2025, the company powers brands across food retail, fashion, education, healthcare, and travel industries.
+
+The platform is built on a shared multi-tenant architecture where each client (tenant) gets their own branded storefront, admin panel, payment processing, and domain — all powered by a single codebase.
+
+## How It Works
+
+1. Discovery: We map your business model, audience, and goals
+2. Design: Brand identity, UI/UX design, and interactive prototypes
+3. Engineering: Full-stack development on our multi-tenant platform
+4. Launch & Scale: Deployment, monitoring, SEO, and ongoing iteration
+
+## Multi-Tenant Architecture
+
+Each tenant gets:
+- Their own custom domain (e.g., tmfoods.co.uk, styledbymaryam.com)
+- Custom branding (colors, logo, fonts)
+- Independent product catalog and inventory
+- Separate payment processing (Stripe or Paystack)
+- Their own admin dashboard
+- Tenant-scoped data isolation
+
+The platform resolves tenants via middleware — custom domains map to tenant slugs, and each request is scoped to the correct tenant's data.
+
+## Plans & Pricing
+
+### Basic — £49/month
+- Managed hosting on Vercel
+- SSL certificate + custom domain
+- Monthly security updates
+- Email support (48h response)
+- Up to 100 products
+- Basic analytics dashboard
+
+### Standard — £99/month
+- Everything in Basic
+- SEO optimisation + sitemap
+- Subscription & auto-ship engine
+- Webhook automation pipelines
+- Priority email support (24h response)
+- Up to 500 products
+- Advanced analytics + conversion tracking
+- Monthly performance report
+
+### Premium — £199/month
+- Everything in Standard
+- Unlimited products
+- Custom feature development (2h/month included)
+- Dedicated account manager
+- Phone + Slack support
+- 99.9% uptime SLA
+- Multi-warehouse inventory
+- White-label mobile app shell
+- Quarterly strategy review
+
+## Current Clients
+
+### Taste of Motherland
+- Industry: African food retail
+- Domain: tmfoods.co.uk
+- Products: 500+
+- Features: Multi-warehouse fulfilment, subscription engine, recipe system
+
+### Styled by Mariam
+- Industry: Fashion
+- Domain: styledbymaryam.com
+- Features: Editorial photography, lookbook, mega-menu navigation, e-commerce
+
+### Vibrant Minds
+- Industry: Education
+- Domain: vibrantmindsasc.org.uk
+- Features: H5P interactive content, learning paths, mentor matching
+
+### Careceutical
+- Industry: Healthcare
+- Domain: careceutical.co.uk
+- Features: Appointment management, triage system, clinical dashboards
+
+### CitiesTroves
+- Industry: Travel
+- Domain: citiestroves.com
+- Features: Property booking for African markets (Lagos, Accra, Nairobi, Cape Town)
+
+### BowSea
+- Industry: Career Tech
+- Domain: bowsea.com
+- Features: Student placements, talent acquisition, career tools, 4,200+ jobs
+
+### Clarity Conduct
+- Industry: Digital Agency
+- Domain: clarityconduct.com
+- Features: AI-powered operational efficiency, voice agents, lead generation
+
+## Technology
+
+- Frontend: Next.js 16, React 19, TypeScript, Tailwind CSS 4
+- UI: Radix UI, Framer Motion, Lucide React
+- Backend: Next.js API routes, Server Actions
+- Database: PostgreSQL with Prisma ORM
+- Payments: Stripe (international) + Paystack (Africa)
+- Deployment: Vercel (frontend), Google Cloud Run (APIs)
+- Auth: Custom JWT (jose + bcryptjs)
+- Validation: Zod
+- State: Zustand
+- Design System: 21st.dev (@olu/design-system)
+
+## Contact
+
+- Email: hello@authentifactor.com
+- Website: https://authentifactor.com/platform
+- GitHub: github.com/authentifact0r

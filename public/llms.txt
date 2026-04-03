@@ -1,0 +1,45 @@
+# Authentifactor
+
+> Multi-tenant commerce and web platform powering ambitious brands.
+
+Authentifactor is a digital infrastructure company that architects, designs, and engineers world-class digital products for businesses. We build e-commerce platforms, brand websites, mobile apps, and custom development solutions on a shared multi-tenant architecture.
+
+## Services
+
+- E-Commerce Platforms: Full-featured online stores with inventory, payments (Stripe + Paystack), subscriptions, and multi-warehouse logistics
+- Custom Websites & Domains: Bespoke web experiences with custom domains, SSL, editorial layouts, and premium design
+- Brand Identity & Design: Custom branding, design systems, and visual identities using our 21st.dev token architecture
+- SEO & Digital Growth: Built-in SEO tools, structured data, sitemaps, and analytics strategies
+- Mobile Applications: White-label iOS and Android apps with push notifications and deep linking
+- Custom Development: Bespoke features, API integrations, webhook pipelines, and technical architecture
+
+## Pricing
+
+- Basic: £49/month — hosting, SSL, monthly updates, email support, up to 100 products
+- Standard: £99/month — SEO, subscriptions, webhook automation, priority support, up to 500 products
+- Premium: £199/month — unlimited products, custom development (2h/mo), dedicated account manager, 99.9% SLA
+
+## Technology Stack
+
+Next.js 16, React 19, TypeScript, Tailwind CSS 4, PostgreSQL, Prisma, Stripe, Paystack, Vercel, Google Cloud Run, Docker, Framer Motion, Radix UI, Zod, Redis
+
+## Clients
+
+- Taste of Motherland (tmfoods.co.uk) — African food retail
+- Styled by Mariam (styledbymaryam.com) — Fashion brand
+- Vibrant Minds (vibrantmindsasc.org.uk) — Education platform
+- Careceutical — Enterprise clinical management
+- CitiesTroves (citiestroves.com) — Serviced apartment booking
+- BowSea — Career tech platform
+- Clarity Conduct (clarityconduct.com) — Digital agency
+
+## Contact
+
+- Website: https://authentifactor.com/platform
+- Email: hello@authentifactor.com
+
+## Links
+
+- Platform: https://authentifactor.com/platform
+- Login: https://authentifactor.com/login
+- Register: https://authentifactor.com/register
