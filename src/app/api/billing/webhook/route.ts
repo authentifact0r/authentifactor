@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { stripe, STRIPE_WEBHOOK_SECRET } from "@/lib/stripe";
-import { prisma } from "@/lib/prisma";
+import { db as prisma } from "@/lib/db";
 import Stripe from "stripe";
 
 export async function POST(request: NextRequest) {

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { stripe } from "@/lib/stripe";
-import { prisma } from "@/lib/prisma";
+import { db as prisma } from "@/lib/db";
 import { BILLING_PLANS, type BillingPlanId } from "@/config/billingPlans";
 
 export async function POST(request: NextRequest) {
