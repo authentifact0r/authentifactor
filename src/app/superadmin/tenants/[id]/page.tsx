@@ -1,17 +1,12 @@
 export const dynamic = "force-dynamic";
 
 import { db } from "@/lib/db";
-import { updateTenant } from "@/actions/tenants";
 import { notFound } from "next/navigation";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Select } from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
-import { Building2, Save } from "lucide-react";
-import Link from "next/link";
+import { TenantAnalyticsView } from "./analytics-view";
+import { computeBillingMetrics } from "@/lib/usageBilling";
+import type { PlanId } from "@/config/usagePricing";
 
-export default async function EditTenantPage({
+export default async function TenantDetailPage({
   params,
 }: {
   params: Promise<{ id: string }>;
@@ -21,199 +16,64 @@ export default async function EditTenantPage({
   const tenant = await db.tenant.findUnique({
     where: { id },
     include: {
-      _count: { select: { products: true, orders: true, tenantUsers: true } },
+      _count: { select: { products: true, orders: true, tenantUsers: true, usageRecords: true } },
+      onboardingProgress: true,
     },
   });
 
-  if (!tenant) notFound();
+  if (!tenant) return notFound();
 
-  const boundUpdate = updateTenant.bind(null, tenant.id);
+  // Get latest usage
+  const now = new Date();
+  const periodStart = new Date(now.getFullYear(), now.getMonth(), 1);
+  const periodEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+
+  const latestUsage = await db.tenantUsage.findFirst({
+    where: { tenantId: id, periodStart: { gte: periodStart } },
+    orderBy: { periodStart: "desc" },
+  });
+
+  // Get usage history (3 months)
+  const threeMonthsAgo = new Date();
+  threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
+  const usageHistory = await db.tenantUsage.findMany({
+    where: { tenantId: id, periodStart: { gte: threeMonthsAgo } },
+    orderBy: { periodStart: "desc" },
+  });
+
+  // Get order stats
+  const orderStats = await db.order.aggregate({
+    where: { tenantId: id, paymentStatus: "PAID" },
+    _sum: { total: true },
+    _count: true,
+  });
+
+  // Compute billing metrics
+  const plan = (tenant.billingPlan || "standard") as PlanId;
+  const provider = tenant.hostingProvider || "vercel";
+  const metrics = latestUsage
+    ? computeBillingMetrics(plan, latestUsage as any, provider)
+    : null;
+
+  // Serialize dates
+  const serialized = {
+    ...tenant,
+    createdAt: tenant.createdAt.toISOString(),
+    updatedAt: tenant.updatedAt.toISOString(),
+    nextInvoiceDate: tenant.nextInvoiceDate?.toISOString() || null,
+    lastPaymentDate: tenant.lastPaymentDate?.toISOString() || null,
+    onboardingProgress: tenant.onboardingProgress
+      ? { ...tenant.onboardingProgress, updatedAt: tenant.onboardingProgress.updatedAt.toISOString(), completedAt: tenant.onboardingProgress.completedAt?.toISOString() || null }
+      : null,
+  };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center gap-4">
-        <Link
-          href="/superadmin/tenants"
-          className="text-sm text-gray-500 hover:text-gray-900"
-        >
-          Tenants
-        </Link>
-        <span className="text-gray-300">/</span>
-        <h1 className="text-2xl font-bold">{tenant.name}</h1>
-        <Badge variant={tenant.isActive ? "success" : "destructive"}>
-          {tenant.isActive ? "Active" : "Inactive"}
-        </Badge>
-      </div>
-
-      {/* Stats */}
-      <div className="grid gap-4 sm:grid-cols-3">
-        <Card>
-          <CardContent className="p-4 text-center">
-            <p className="text-2xl font-bold">{tenant._count.products}</p>
-            <p className="text-sm text-gray-500">Products</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4 text-center">
-            <p className="text-2xl font-bold">{tenant._count.orders}</p>
-            <p className="text-sm text-gray-500">Orders</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4 text-center">
-            <p className="text-2xl font-bold">{tenant._count.tenantUsers}</p>
-            <p className="text-sm text-gray-500">Users</p>
-          </CardContent>
-        </Card>
-      </div>
-
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Building2 className="h-4 w-4" />
-            Edit Tenant
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <form action={boundUpdate} className="space-y-6">
-            {/* Basic Info */}
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Store Name</label>
-                <Input name="name" defaultValue={tenant.name} required />
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Slug</label>
-                <Input name="slug" defaultValue={tenant.slug} required />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Tagline</label>
-              <Input
-                name="tagline"
-                defaultValue={tenant.tagline || ""}
-                placeholder="Authentic African groceries"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Custom Domain</label>
-              <Input
-                name="customDomain"
-                defaultValue={tenant.customDomain || ""}
-                placeholder="store.example.com"
-              />
-            </div>
-
-            {/* Colors & Currency */}
-            <div className="grid gap-4 sm:grid-cols-3">
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Primary Color</label>
-                <div className="flex items-center gap-3">
-                  <input
-                    type="color"
-                    name="primaryColor"
-                    defaultValue={tenant.primaryColor}
-                    className="h-10 w-14 cursor-pointer rounded-lg border border-gray-300"
-                  />
-                  <span className="text-sm text-gray-500">
-                    {tenant.primaryColor}
-                  </span>
-                </div>
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Accent Color</label>
-                <div className="flex items-center gap-3">
-                  <input
-                    type="color"
-                    name="accentColor"
-                    defaultValue={tenant.accentColor}
-                    className="h-10 w-14 cursor-pointer rounded-lg border border-gray-300"
-                  />
-                  <span className="text-sm text-gray-500">
-                    {tenant.accentColor}
-                  </span>
-                </div>
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Currency</label>
-                <Select name="currency" defaultValue={tenant.currency}>
-                  <option value="NGN">NGN - Nigerian Naira</option>
-                  <option value="GBP">GBP - British Pound</option>
-                  <option value="USD">USD - US Dollar</option>
-                  <option value="EUR">EUR - Euro</option>
-                  <option value="GHS">GHS - Ghanaian Cedi</option>
-                  <option value="KES">KES - Kenyan Shilling</option>
-                </Select>
-              </div>
-            </div>
-
-            {/* Payment Keys */}
-            <div className="border-t pt-6">
-              <h3 className="mb-4 text-sm font-semibold text-gray-900">
-                Payment Integration
-              </h3>
-              <div className="grid gap-4 sm:grid-cols-2">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">
-                    Paystack Secret Key
-                  </label>
-                  <Input
-                    name="paystackSecretKey"
-                    type="password"
-                    defaultValue={tenant.paystackSecretKey || ""}
-                    placeholder="sk_..."
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">
-                    Paystack Public Key
-                  </label>
-                  <Input
-                    name="paystackPublicKey"
-                    defaultValue={tenant.paystackPublicKey || ""}
-                    placeholder="pk_..."
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">
-                    Stripe Secret Key
-                  </label>
-                  <Input
-                    name="stripeSecretKey"
-                    type="password"
-                    defaultValue={tenant.stripeSecretKey || ""}
-                    placeholder="sk_..."
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">
-                    Stripe Public Key
-                  </label>
-                  <Input
-                    name="stripePublicKey"
-                    defaultValue={tenant.stripePublicKey || ""}
-                    placeholder="pk_..."
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div className="flex justify-end gap-3">
-              <Link href="/superadmin/tenants">
-                <Button variant="outline" type="button">
-                  Cancel
-                </Button>
-              </Link>
-              <Button type="submit">
-                <Save className="mr-2 h-4 w-4" />
-                Save Changes
-              </Button>
-            </div>
-          </form>
-        </CardContent>
-      </Card>
-    </div>
+    <TenantAnalyticsView
+      tenant={serialized as any}
+      metrics={metrics}
+      latestUsage={latestUsage ? { ...latestUsage, periodStart: latestUsage.periodStart.toISOString(), periodEnd: latestUsage.periodEnd.toISOString(), reportedAt: latestUsage.reportedAt.toISOString() } : null}
+      usageHistory={usageHistory.map((u) => ({ ...u, periodStart: u.periodStart.toISOString(), periodEnd: u.periodEnd.toISOString(), reportedAt: u.reportedAt.toISOString() }))}
+      orderStats={{ revenue: Number(orderStats._sum.total ?? 0), count: orderStats._count }}
+    />
   );
 }
