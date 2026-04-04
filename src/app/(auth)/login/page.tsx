@@ -4,16 +4,49 @@ import Link from "next/link";
 import Image from "next/image";
 import { GradientBackground } from "@/components/ui/gradient-background";
 import { ArrowRight } from "lucide-react";
+import { useRef, useState } from "react";
 
 export default function LoginPage() {
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const emailRef = useRef<HTMLInputElement>(null);
+  const passwordRef = useRef<HTMLInputElement>(null);
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const formData = new FormData(e.currentTarget);
+    setError("");
+    setLoading(true);
+
+    const email = emailRef.current?.value || "";
+    const password = passwordRef.current?.value || "";
+
+    if (!email || !password) {
+      setError("Please enter email and password");
+      setLoading(false);
+      return;
+    }
+
     try {
-      const { loginAction } = await import("@/actions/auth");
-      await loginAction(formData);
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.error || "Invalid email or password");
+        setLoading(false);
+        return;
+      }
+
+      // Cookie is set by the response — navigate
+      window.location.replace(data.redirectTo || "/admin");
     } catch (err) {
-      console.error("Login error:", err);
+      setError("Connection error. Please try again.");
+      setLoading(false);
     }
   };
 
@@ -21,7 +54,6 @@ export default function LoginPage() {
     <GradientBackground>
       <div className="flex min-h-screen items-center justify-center p-4">
         <div className="w-full max-w-md p-10 bg-white/[0.08] backdrop-blur-2xl rounded-3xl border border-white/[0.12] shadow-[0_32px_80px_rgba(0,0,0,0.5)]">
-          {/* Logo */}
           <div className="text-center mb-8">
             <Image
               src="/images/authentifactor-logo.png"
@@ -35,22 +67,28 @@ export default function LoginPage() {
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-5">
-            {/* Email */}
+            {error && (
+              <div className="rounded-xl bg-red-500/10 border border-red-500/20 px-4 py-3 text-sm text-red-300">
+                {error}
+              </div>
+            )}
+
             <div>
               <label htmlFor="login-email" className="block text-sm font-medium text-white/80 mb-2">
                 Email Address
               </label>
               <input
+                ref={emailRef}
                 type="email"
                 id="login-email"
                 name="email"
                 placeholder="you@company.com"
+                autoComplete="email"
                 required
                 className="w-full h-12 px-4 rounded-xl bg-white/[0.06] border border-white/[0.12] text-base text-white placeholder:text-white/30 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition"
               />
             </div>
 
-            {/* Password */}
             <div>
               <div className="flex items-center justify-between mb-2">
                 <label htmlFor="login-password" className="block text-sm font-medium text-white/80">
@@ -61,32 +99,32 @@ export default function LoginPage() {
                 </a>
               </div>
               <input
+                ref={passwordRef}
                 type="password"
                 id="login-password"
                 name="password"
                 placeholder="••••••••"
+                autoComplete="current-password"
                 required
                 className="w-full h-12 px-4 rounded-xl bg-white/[0.06] border border-white/[0.12] text-base text-white placeholder:text-white/30 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition"
               />
             </div>
 
-            {/* Submit */}
             <button
               type="submit"
-              className="group w-full h-12 flex items-center justify-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-base transition-all duration-200"
+              disabled={loading}
+              className="group w-full h-12 flex items-center justify-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold text-base transition-all duration-200"
             >
-              Sign In
-              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+              {loading ? "Signing in..." : "Sign In"}
+              {!loading && <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />}
             </button>
 
-            {/* Divider */}
             <div className="relative flex items-center py-2">
               <div className="flex-grow border-t border-white/10" />
               <span className="px-4 text-sm text-white/40">or</span>
               <div className="flex-grow border-t border-white/10" />
             </div>
 
-            {/* Google Login */}
             <button
               type="button"
               className="w-full h-12 flex items-center justify-center gap-2 rounded-xl bg-white hover:bg-gray-100 text-gray-800 font-semibold text-base transition-all duration-200"

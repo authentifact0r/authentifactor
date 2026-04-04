@@ -40,6 +40,8 @@ const protectedPrefixes = ["/account", "/admin"];
 const publicPaths = [
   "/api/webhooks",
   "/api/billing/webhook",
+  "/api/auth",
+  "/api/admin/sales-snapshot",
   "/login",
   "/register",
   "/billing-issue",
