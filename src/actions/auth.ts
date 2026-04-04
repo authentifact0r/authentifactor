@@ -94,31 +94,56 @@ export async function loginAction(formData: FormData): Promise<void> {
     redirect("/login?error=" + encodeURIComponent("Invalid email or password"));
   }
 
-  const tenant = await getTenant();
+  let tenantId = "";
+  let tenantRole = "CUSTOMER";
 
-  // Find or create TenantUser for this user + tenant
-  let tenantUser = await db.tenantUser.findUnique({
-    where: { userId_tenantId: { userId: user.id, tenantId: tenant.id } },
-  });
+  try {
+    const tenant = await getTenant();
+    tenantId = tenant.id;
 
-  if (!tenantUser) {
-    tenantUser = await db.tenantUser.create({
-      data: {
-        userId: user.id,
-        tenantId: tenant.id,
-        role: "CUSTOMER",
-      },
+    // Find or create TenantUser for this user + tenant
+    let tenantUser = await db.tenantUser.findUnique({
+      where: { userId_tenantId: { userId: user.id, tenantId: tenant.id } },
     });
+
+    if (!tenantUser) {
+      tenantUser = await db.tenantUser.create({
+        data: {
+          userId: user.id,
+          tenantId: tenant.id,
+          role: "CUSTOMER",
+        },
+      });
+    }
+
+    tenantRole = tenantUser.role;
+  } catch {
+    // No tenant context (platform host) — find first linked tenant or use superadmin
+    if (user.isSuperAdmin) {
+      const firstLink = await db.tenantUser.findFirst({
+        where: { userId: user.id },
+        orderBy: { createdAt: "asc" },
+      });
+      tenantId = firstLink?.tenantId || "";
+      tenantRole = firstLink?.role || "ADMIN";
+    } else {
+      redirect("/login?error=" + encodeURIComponent("No tenant context. Access your storefront domain directly."));
+    }
   }
 
   const payload: JWTPayload = {
     userId: user.id,
     email: user.email,
-    tenantId: tenant.id,
-    tenantRole: tenantUser.role,
+    tenantId,
+    tenantRole,
   };
 
   await setAuthCookies(payload);
+
+  // Superadmins go to superadmin dashboard, others to account
+  if (user.isSuperAdmin) {
+    redirect("/superadmin");
+  }
   redirect("/account");
 }
 

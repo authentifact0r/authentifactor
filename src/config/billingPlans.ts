@@ -20,8 +20,8 @@ export const BILLING_PLANS: Record<BillingPlanId, BillingPlan> = {
   basic: {
     id: "basic",
     name: "Basic",
-    stripePriceId: process.env.STRIPE_PRICE_BASIC || "price_basic_placeholder",
-    stripeProductId: process.env.STRIPE_PRODUCT_BASIC || "prod_basic_placeholder",
+    stripePriceId: process.env.STRIPE_PRICE_BASIC || "price_1TIOXA0UXmT8UaSajj68p0dp",
+    stripeProductId: process.env.STRIPE_PRODUCT_BASIC || "prod_UGwQuFo4hlZrOQ",
     priceMonthly: 49,
     currency: "gbp",
     description: "Essential hosting, maintenance, and support for a single tenant storefront.",
@@ -37,8 +37,8 @@ export const BILLING_PLANS: Record<BillingPlanId, BillingPlan> = {
   standard: {
     id: "standard",
     name: "Standard",
-    stripePriceId: process.env.STRIPE_PRICE_STANDARD || "price_standard_placeholder",
-    stripeProductId: process.env.STRIPE_PRODUCT_STANDARD || "prod_standard_placeholder",
+    stripePriceId: process.env.STRIPE_PRICE_STANDARD || "price_1TIOXB0UXmT8UaSaZm4pxf9Y",
+    stripeProductId: process.env.STRIPE_PRODUCT_STANDARD || "prod_UGwQwhHudeI2Vs",
     priceMonthly: 99,
     currency: "gbp",
     description: "Full platform with SEO, automation, and priority support.",
@@ -56,8 +56,8 @@ export const BILLING_PLANS: Record<BillingPlanId, BillingPlan> = {
   premium: {
     id: "premium",
     name: "Premium",
-    stripePriceId: process.env.STRIPE_PRICE_PREMIUM || "price_premium_placeholder",
-    stripeProductId: process.env.STRIPE_PRODUCT_PREMIUM || "prod_premium_placeholder",
+    stripePriceId: process.env.STRIPE_PRICE_PREMIUM || "price_1TIOXC0UXmT8UaSaFaF3KBwU",
+    stripeProductId: process.env.STRIPE_PRODUCT_PREMIUM || "prod_UGwQjvPYOryoPm",
     priceMonthly: 199,
     currency: "gbp",
     description: "Enterprise-grade with dedicated support, custom features, and SLA.",
