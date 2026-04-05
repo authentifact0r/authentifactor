@@ -31,6 +31,18 @@ export function OrdersManager({ orders, products, tenantSlug }: Props) {
   const [trackingInput, setTrackingInput] = useState<Record<string, string>>({});
   const [notesInput, setNotesInput] = useState<Record<string, string>>({});
   const [statusFilter, setStatusFilter] = useState("all");
+  const [showCreate, setShowCreate] = useState(false);
+  const [creating, setCreating] = useState(false);
+  const [cart, setCart] = useState<{ productId: string; qty: number }[]>([]);
+  const [customerName, setCustomerName] = useState("");
+  const [customerEmail, setCustomerEmail] = useState("");
+  const [customerPhone, setCustomerPhone] = useState("");
+  const [addressLine1, setAddressLine1] = useState("");
+  const [addressLine2, setAddressLine2] = useState("");
+  const [addressCity, setAddressCity] = useState("");
+  const [addressPostcode, setAddressPostcode] = useState("");
+  const [shippingMethod, setShippingMethod] = useState("STANDARD");
+  const [orderNotes, setOrderNotes] = useState("");
 
   const pending = orders.filter(o => o.status === "PENDING").length;
   const processing = orders.filter(o => ["CONFIRMED", "PROCESSING"].includes(o.status)).length;
@@ -67,6 +79,50 @@ export function OrdersManager({ orders, products, tenantSlug }: Props) {
     await updateStatus(orderId, "CANCELLED");
   };
 
+  const addToCart = (productId: string) => {
+    setCart(prev => {
+      const existing = prev.find(c => c.productId === productId);
+      if (existing) return prev.map(c => c.productId === productId ? { ...c, qty: c.qty + 1 } : c);
+      return [...prev, { productId, qty: 1 }];
+    });
+  };
+
+  const removeFromCart = (productId: string) => {
+    setCart(prev => prev.filter(c => c.productId !== productId));
+  };
+
+  const updateCartQty = (productId: string, qty: number) => {
+    if (qty <= 0) return removeFromCart(productId);
+    setCart(prev => prev.map(c => c.productId === productId ? { ...c, qty } : c));
+  };
+
+  const cartTotal = cart.reduce((sum, c) => {
+    const prod = products.find(p => p.id === c.productId);
+    return sum + (prod ? prod.price * c.qty : 0);
+  }, 0);
+
+  const createOrder = async () => {
+    if (cart.length === 0) return alert("Add at least one product");
+    if (!customerName || !customerEmail || !addressLine1 || !addressCity || !addressPostcode) return alert("Fill in customer details and address");
+    setCreating(true);
+    try {
+      const res = await fetch("/api/admin/orders/create", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          items: cart, customerName, customerEmail, customerPhone,
+          address: { line1: addressLine1, line2: addressLine2, city: addressCity, postcode: addressPostcode },
+          shippingMethod, notes: orderNotes,
+        }),
+      });
+      if (!res.ok) { const e = await res.json(); alert("Failed: " + (e.error || "Unknown")); setCreating(false); return; }
+      setShowCreate(false); setCart([]); setCustomerName(""); setCustomerEmail(""); setCustomerPhone("");
+      setAddressLine1(""); setAddressLine2(""); setAddressCity(""); setAddressPostcode(""); setOrderNotes("");
+      setCreating(false);
+      router.refresh();
+    } catch { alert("Network error"); setCreating(false); }
+  };
+
   return (
     <div className="p-6 md:p-8 space-y-6">
       <div className="flex items-center justify-between">
@@ -79,6 +135,9 @@ export function OrdersManager({ orders, products, tenantSlug }: Props) {
         <div className="flex gap-2">
           {pending > 0 && <span className="rounded-xl bg-amber-500/[0.08] border border-amber-500/20 px-3 py-1.5 text-xs font-semibold text-amber-400">{pending} pending</span>}
           {processing > 0 && <span className="rounded-xl bg-violet-500/[0.08] border border-violet-500/20 px-3 py-1.5 text-xs font-semibold text-violet-400">{processing} processing</span>}
+          <button onClick={() => setShowCreate(!showCreate)} className="inline-flex items-center gap-1.5 rounded-xl bg-emerald-600 px-4 py-2 text-xs font-semibold text-white hover:bg-emerald-500 transition">
+            <Plus className="h-3.5 w-3.5" /> Create Order
+          </button>
         </div>
       </div>
 
@@ -97,6 +156,87 @@ export function OrdersManager({ orders, products, tenantSlug }: Props) {
           </div>
         ))}
       </div>
+
+      {/* Create Order Form */}
+      {showCreate && (
+        <div className="rounded-2xl border border-emerald-500/20 bg-emerald-500/[0.03] p-6 space-y-5">
+          <h2 className="text-sm font-semibold text-white uppercase tracking-wider">Create Manual Order</h2>
+
+          {/* Product Selector */}
+          <div>
+            <label className="block text-xs font-medium text-white/50 mb-2">Add Products</label>
+            <div className="flex flex-wrap gap-2 mb-3">
+              {products.map(pr => (
+                <button key={pr.id} onClick={() => addToCart(pr.id)} className="inline-flex items-center gap-1.5 rounded-lg bg-white/[0.06] border border-white/[0.08] px-3 py-1.5 text-xs text-white/60 hover:bg-white/[0.1] hover:text-white transition">
+                  {pr.images?.[0] && <img src={pr.images[0]} alt="" className="h-5 w-5 rounded object-cover" />}
+                  {pr.name} — {formatPrice(pr.price)}
+                </button>
+              ))}
+            </div>
+            {cart.length > 0 && (
+              <div className="rounded-xl bg-white/[0.02] border border-white/[0.04] p-3 space-y-2">
+                {cart.map(c => {
+                  const pr = products.find(p => p.id === c.productId);
+                  if (!pr) return null;
+                  return (
+                    <div key={c.productId} className="flex items-center gap-3">
+                      {pr.images?.[0] && <img src={pr.images[0]} alt="" className="h-8 w-8 rounded-lg object-cover" />}
+                      <span className="text-sm text-white flex-1">{pr.name}</span>
+                      <div className="flex items-center gap-1">
+                        <button onClick={() => updateCartQty(c.productId, c.qty - 1)} className="h-7 w-7 rounded bg-white/[0.06] text-white/50 hover:text-white text-xs flex items-center justify-center">-</button>
+                        <span className="w-8 text-center text-sm text-white tabular-nums">{c.qty}</span>
+                        <button onClick={() => updateCartQty(c.productId, c.qty + 1)} className="h-7 w-7 rounded bg-white/[0.06] text-white/50 hover:text-white text-xs flex items-center justify-center">+</button>
+                      </div>
+                      <span className="text-sm text-white tabular-nums w-20 text-right">{formatPrice(pr.price * c.qty)}</span>
+                      <button onClick={() => removeFromCart(c.productId)} className="text-red-400/50 hover:text-red-400"><XCircle className="h-4 w-4" /></button>
+                    </div>
+                  );
+                })}
+                <div className="flex justify-between pt-2 border-t border-white/[0.04] text-sm font-semibold">
+                  <span className="text-white/60">Subtotal</span>
+                  <span className="text-emerald-400">{formatPrice(cartTotal)}</span>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Customer */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <div><label className="block text-xs font-medium text-white/50 mb-1">Customer Name *</label><input value={customerName} onChange={e => setCustomerName(e.target.value)} placeholder="Sarah Thompson" className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.12] text-sm text-white placeholder:text-white/25 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition" /></div>
+            <div><label className="block text-xs font-medium text-white/50 mb-1">Email *</label><input value={customerEmail} onChange={e => setCustomerEmail(e.target.value)} type="email" placeholder="sarah@example.com" className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.12] text-sm text-white placeholder:text-white/25 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition" /></div>
+            <div><label className="block text-xs font-medium text-white/50 mb-1">Phone</label><input value={customerPhone} onChange={e => setCustomerPhone(e.target.value)} placeholder="+44 7700 900123" className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.12] text-sm text-white placeholder:text-white/25 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition" /></div>
+          </div>
+
+          {/* Address */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div><label className="block text-xs font-medium text-white/50 mb-1">Address Line 1 *</label><input value={addressLine1} onChange={e => setAddressLine1(e.target.value)} placeholder="42 King Street" className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.12] text-sm text-white placeholder:text-white/25 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition" /></div>
+            <div><label className="block text-xs font-medium text-white/50 mb-1">Line 2</label><input value={addressLine2} onChange={e => setAddressLine2(e.target.value)} placeholder="Flat 3" className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.12] text-sm text-white placeholder:text-white/25 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition" /></div>
+            <div><label className="block text-xs font-medium text-white/50 mb-1">City *</label><input value={addressCity} onChange={e => setAddressCity(e.target.value)} placeholder="London" className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.12] text-sm text-white placeholder:text-white/25 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition" /></div>
+            <div><label className="block text-xs font-medium text-white/50 mb-1">Postcode *</label><input value={addressPostcode} onChange={e => setAddressPostcode(e.target.value)} placeholder="EC2R 8AH" className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.12] text-sm text-white placeholder:text-white/25 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition" /></div>
+          </div>
+
+          {/* Shipping + Notes */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div><label className="block text-xs font-medium text-white/50 mb-1">Shipping Method</label>
+              <select value={shippingMethod} onChange={e => setShippingMethod(e.target.value)} className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.12] text-sm text-white focus:outline-none">
+                <option value="STANDARD" className="bg-gray-900">Standard</option>
+                <option value="EXPRESS" className="bg-gray-900">Express</option>
+                <option value="LOCAL_FRESH" className="bg-gray-900">Local Fresh</option>
+                <option value="LOCAL_VAN" className="bg-gray-900">Local Van</option>
+              </select>
+            </div>
+            <div><label className="block text-xs font-medium text-white/50 mb-1">Notes</label><input value={orderNotes} onChange={e => setOrderNotes(e.target.value)} placeholder="Internal notes..." className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.12] text-sm text-white placeholder:text-white/25 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition" /></div>
+          </div>
+
+          {/* Submit */}
+          <div className="flex gap-2">
+            <button onClick={createOrder} disabled={creating || cart.length === 0} className="inline-flex items-center gap-1.5 h-10 px-5 rounded-lg bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white text-sm font-semibold transition">
+              <Save className="h-4 w-4" /> {creating ? "Creating..." : `Create Order (${formatPrice(cartTotal)})`}
+            </button>
+            <button onClick={() => { setShowCreate(false); setCart([]); }} className="h-10 px-4 rounded-lg bg-white/[0.06] text-white/50 text-sm hover:text-white transition">Cancel</button>
+          </div>
+        </div>
+      )}
 
       {/* Filter */}
       <div className="flex gap-2">
