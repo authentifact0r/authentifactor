@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { Search, Edit, Image as ImageIcon, AlertTriangle, Package, Eye, EyeOff } from "lucide-react";
 import { formatPrice } from "@/lib/utils";
 
@@ -21,6 +22,8 @@ interface Product {
 }
 
 export function ProductsTable({ products }: { products: Product[] }) {
+  const searchParams = useSearchParams();
+  const tenantParam = searchParams.get("tenant") ? `?tenant=${searchParams.get("tenant")}` : "";
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [stockFilter, setStockFilter] = useState("all");
@@ -159,7 +162,7 @@ export function ProductsTable({ products }: { products: Product[] }) {
                     </td>
                     <td className="px-5 py-3 text-right">
                       <Link
-                        href={`/admin/products/${p.id}`}
+                        href={`/admin/products/${p.id}${tenantParam}`}
                         className="inline-flex items-center gap-1 rounded-lg bg-white/[0.06] px-3 py-1.5 text-xs font-medium text-white/60 hover:bg-white/[0.1] hover:text-white transition"
                       >
                         <Edit className="h-3 w-3" /> Edit

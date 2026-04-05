@@ -10,6 +10,13 @@ import { ProductsTable } from "./products-table";
 export default async function AdminProductsPage() {
   await requireAdmin();
 
+  let tenantSlug = "";
+  try {
+    const { headers } = await import("next/headers");
+    const h = await headers();
+    tenantSlug = h.get("x-tenant-slug") || "";
+  } catch {}
+
   let products: any[] = [];
   try {
     const tdb = await getScopedDb();
@@ -38,7 +45,7 @@ export default async function AdminProductsPage() {
           <p className="text-sm text-white/40 mt-1">{products.length} items in catalogue</p>
         </div>
         <Link
-          href="/admin/products/new"
+          href={`/admin/products/new${tenantSlug ? `?tenant=${tenantSlug}` : ""}`}
           className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-emerald-500 transition"
         >
           <Plus className="h-4 w-4" /> Add Product

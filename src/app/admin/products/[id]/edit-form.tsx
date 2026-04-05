@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Save, Trash2, Plus, X, Eye, EyeOff } from "lucide-react";
 
@@ -9,6 +9,8 @@ const CATEGORIES = ["GROCERIES", "SPICES", "DRINKS", "BEAUTY", "FASHION", "ACCES
 
 export function EditProductForm({ product }: { product: any }) {
   const router = useRouter();
+  const sp = useSearchParams();
+  const tp = sp.get("tenant") ? `?tenant=${sp.get("tenant")}` : "";
   const [loading, setLoading] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [error, setError] = useState("");
@@ -45,7 +47,7 @@ export function EditProductForm({ product }: { product: any }) {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Update failed");
-      router.push("/admin/products");
+      router.push("/admin/products" + tp);
     } catch (err: any) {
       setError(err.message);
       setLoading(false);
@@ -57,7 +59,7 @@ export function EditProductForm({ product }: { product: any }) {
     setDeleting(true);
     try {
       await fetch(`/api/admin/products/${product.id}`, { method: "DELETE" });
-      router.push("/admin/products");
+      router.push("/admin/products" + tp);
     } catch {
       setDeleting(false);
     }
@@ -65,7 +67,7 @@ export function EditProductForm({ product }: { product: any }) {
 
   return (
     <div className="p-6 md:p-8 max-w-3xl mx-auto">
-      <Link href="/admin/products" className="inline-flex items-center gap-1.5 text-sm text-white/40 hover:text-white/60 transition mb-6">
+      <Link href={`/admin/products${tp}`} className="inline-flex items-center gap-1.5 text-sm text-white/40 hover:text-white/60 transition mb-6">
         <ArrowLeft className="h-3.5 w-3.5" /> Back to Products
       </Link>
 

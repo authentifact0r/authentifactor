@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Save, Plus, X, ImageIcon } from "lucide-react";
 
@@ -12,6 +12,8 @@ const CATEGORIES = [
 
 export default function NewProductPage() {
   const router = useRouter();
+  const sp = useSearchParams();
+  const tp = sp.get("tenant") ? `?tenant=${sp.get("tenant")}` : "";
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [images, setImages] = useState<string[]>([]);
@@ -55,7 +57,7 @@ export default function NewProductPage() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Failed to create product");
-      router.push("/admin/products");
+      router.push("/admin/products" + tp);
     } catch (err: any) {
       setError(err.message);
       setLoading(false);
@@ -64,7 +66,7 @@ export default function NewProductPage() {
 
   return (
     <div className="p-6 md:p-8 max-w-3xl mx-auto">
-      <Link href="/admin/products" className="inline-flex items-center gap-1.5 text-sm text-white/40 hover:text-white/60 transition mb-6">
+      <Link href={`/admin/products${tp}`} className="inline-flex items-center gap-1.5 text-sm text-white/40 hover:text-white/60 transition mb-6">
         <ArrowLeft className="h-3.5 w-3.5" /> Back to Products
       </Link>
 
