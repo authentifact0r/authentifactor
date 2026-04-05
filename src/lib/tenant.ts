@@ -9,12 +9,12 @@ export const getTenant = cache(async (): Promise<Tenant> => {
   if (!slug) throw new Error("No tenant context");
 
   const tenant = await db.tenant.findUnique({ where: { slug } });
-  if (!tenant || !tenant.isActive) throw new Error("Tenant not found or inactive");
+  if (!tenant || !tenant.isActive) throw new Error(`Tenant not found or inactive: ${slug}`);
 
   return tenant;
 });
 
-export const getTenantId = cache(async (): Promise<string> => {
+export async function getTenantId(): Promise<string> {
   const tenant = await getTenant();
   return tenant.id;
-});
+}

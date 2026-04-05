@@ -27,8 +27,13 @@ const TENANT_SCOPED_MODELS = [
 
 type TenantScopedModel = (typeof TENANT_SCOPED_MODELS)[number];
 
-function isTenantScoped(model: string): model is TenantScopedModel {
-  return (TENANT_SCOPED_MODELS as readonly string[]).includes(model);
+function isTenantScoped(model: string): boolean {
+  // Prisma passes PascalCase model names (e.g. "InventoryBatch")
+  // but our list uses camelCase. Compare case-insensitively.
+  const lower = model.toLowerCase();
+  return (TENANT_SCOPED_MODELS as readonly string[]).some(
+    (m) => m.toLowerCase() === lower
+  );
 }
 
 export function tenantDb(tenantId: string) {

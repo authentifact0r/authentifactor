@@ -157,6 +157,10 @@ enum ProductCategory {
   SPICES
   DRINKS
   BEAUTY
+  FASHION
+  ACCESSORIES
+  HOME
+  OTHER
 }
 
 model Product {
