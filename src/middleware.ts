@@ -52,6 +52,7 @@ const publicPaths = [
   "/favicon.ico",
   "/images",
   "/platform",
+  "/legal",
 ];
 
 export function middleware(request: NextRequest) {
