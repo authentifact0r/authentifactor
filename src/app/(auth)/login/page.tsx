@@ -4,13 +4,29 @@ import Link from "next/link";
 import Image from "next/image";
 import { GradientBackground } from "@/components/ui/gradient-background";
 import { ArrowRight } from "lucide-react";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
+
+interface TenantBrand {
+  name: string;
+  logo: string | null;
+  primaryColor: string;
+  tagline: string | null;
+}
 
 export default function LoginPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [tenant, setTenant] = useState<TenantBrand | null>(null);
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
+
+  // Fetch tenant branding if on a custom domain
+  useEffect(() => {
+    fetch("/api/tenant/brand")
+      .then((r) => r.ok ? r.json() : null)
+      .then((data) => { if (data?.tenant) setTenant(data.tenant); })
+      .catch(() => {});
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -42,41 +58,47 @@ export default function LoginPage() {
         return;
       }
 
-      // Cookie is set by the response — navigate
       window.location.replace(data.redirectTo || "/admin");
-    } catch (err) {
+    } catch {
       setError("Connection error. Please try again.");
       setLoading(false);
     }
   };
+
+  const brandName = tenant?.name || "Authentifactor";
+  const brandColor = tenant?.primaryColor || "#059669";
 
   return (
     <GradientBackground>
       <div className="flex min-h-screen items-center justify-center p-4">
         <div className="w-full max-w-md p-10 bg-white/[0.08] backdrop-blur-2xl rounded-3xl border border-white/[0.12] shadow-[0_32px_80px_rgba(0,0,0,0.5)]">
           <div className="text-center mb-8">
-            <Image
-              src="/images/authentifactor-logo.png"
-              alt="Authentifactor"
-              width={375}
-              height={375}
-              className="mx-auto h-20 w-auto"
-            />
-            <h2 className="mt-5 text-3xl font-bold text-white tracking-tight">Welcome Back</h2>
-            <p className="mt-2 text-base text-white/60">Sign in to your account</p>
+            {tenant?.logo ? (
+              <img src={tenant.logo} alt={brandName} className="mx-auto h-20 w-auto object-contain" />
+            ) : (
+              <Image
+                src="/images/authentifactor-logo.png"
+                alt="Authentifactor"
+                width={375}
+                height={375}
+                className="mx-auto h-20 w-auto"
+              />
+            )}
+            <h2 className="mt-5 text-3xl font-bold text-white tracking-tight">
+              {tenant ? `Welcome to ${brandName}` : "Welcome Back"}
+            </h2>
+            <p className="mt-2 text-base text-white/60">
+              {tenant?.tagline || "Sign in to your account"}
+            </p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-5">
             {error && (
-              <div className="rounded-xl bg-red-500/10 border border-red-500/20 px-4 py-3 text-sm text-red-300">
-                {error}
-              </div>
+              <div className="rounded-xl bg-red-500/10 border border-red-500/20 px-4 py-3 text-sm text-red-300">{error}</div>
             )}
 
             <div>
-              <label htmlFor="login-email" className="block text-sm font-medium text-white/80 mb-2">
-                Email Address
-              </label>
+              <label htmlFor="login-email" className="block text-sm font-medium text-white/80 mb-2">Email Address</label>
               <input
                 ref={emailRef}
                 type="email"
@@ -91,12 +113,8 @@ export default function LoginPage() {
 
             <div>
               <div className="flex items-center justify-between mb-2">
-                <label htmlFor="login-password" className="block text-sm font-medium text-white/80">
-                  Password
-                </label>
-                <a href="#" className="text-sm text-emerald-400 hover:text-emerald-300 transition">
-                  Forgot?
-                </a>
+                <label htmlFor="login-password" className="block text-sm font-medium text-white/80">Password</label>
+                <a href="#" className="text-sm text-emerald-400 hover:text-emerald-300 transition">Forgot?</a>
               </div>
               <input
                 ref={passwordRef}
@@ -113,7 +131,8 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="group w-full h-12 flex items-center justify-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold text-base transition-all duration-200"
+              style={tenant ? { backgroundColor: brandColor } : undefined}
+              className="group w-full h-12 flex items-center justify-center gap-2 rounded-xl bg-emerald-600 hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold text-base transition-all duration-200"
             >
               {loading ? "Signing in..." : "Sign In"}
               {!loading && <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />}
@@ -141,10 +160,14 @@ export default function LoginPage() {
 
           <p className="mt-8 text-center text-sm text-white/50">
             Don&apos;t have an account?{" "}
-            <Link href="/register" className="font-semibold text-emerald-400 hover:text-emerald-300 transition">
-              Sign Up
-            </Link>
+            <Link href="/register" className="font-semibold text-emerald-400 hover:text-emerald-300 transition">Sign Up</Link>
           </p>
+
+          {tenant && (
+            <p className="mt-4 text-center text-[10px] text-white/20">
+              Powered by Authentifactor
+            </p>
+          )}
         </div>
       </div>
     </GradientBackground>
