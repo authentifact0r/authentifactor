@@ -4,6 +4,7 @@ import { useState } from "react";
 import {
   Box, Package, AlertTriangle, TrendingDown, Plus, Minus,
   ChevronDown, ChevronRight, Save, Warehouse, Image as ImageIcon,
+  Banknote,
 } from "lucide-react";
 
 interface Batch {
@@ -20,6 +21,7 @@ interface Product {
   id: string;
   name: string;
   sku: string;
+  price: number;
   image: string | null;
   isActive: boolean;
   totalStock: number;
@@ -41,6 +43,7 @@ export function InventoryManager({ products, warehouses, tenantSlug }: Props) {
   const [restockWarehouse, setRestockWarehouse] = useState(warehouses[0]?.id || "");
 
   const totalStock = products.reduce((s, p) => s + p.totalStock, 0);
+  const inventoryValue = products.reduce((s, p) => s + (p.price * p.totalStock), 0);
   const lowStock = products.filter((p) => p.totalStock > 0 && p.totalStock <= 5).length;
   const outOfStock = products.filter((p) => p.totalStock <= 0).length;
 
@@ -104,8 +107,8 @@ export function InventoryManager({ products, warehouses, tenantSlug }: Props) {
         {[
           { label: "Products", value: products.length, icon: Package, color: "text-blue-400" },
           { label: "Total Units", value: totalStock, icon: Box, color: "text-emerald-400" },
-          { label: "Low Stock (≤5)", value: lowStock, icon: TrendingDown, color: lowStock > 0 ? "text-amber-400" : "text-white/40" },
-          { label: "Out of Stock", value: outOfStock, icon: AlertTriangle, color: outOfStock > 0 ? "text-red-400" : "text-white/40" },
+          { label: "Inventory Value", value: `£${inventoryValue.toLocaleString(undefined, { minimumFractionDigits: 2 })}`, icon: Banknote, color: "text-violet-400" },
+          { label: "Low / Out", value: `${lowStock} / ${outOfStock}`, icon: AlertTriangle, color: (lowStock + outOfStock) > 0 ? "text-amber-400" : "text-white/40" },
         ].map((s) => (
           <div key={s.label} className="rounded-2xl border border-white/[0.06] bg-white/[0.03] p-5">
             <s.icon className={`h-5 w-5 ${s.color} mb-3`} />
@@ -140,6 +143,7 @@ export function InventoryManager({ products, warehouses, tenantSlug }: Props) {
                   <p className="font-medium text-white truncate">{product.name}</p>
                   <p className="text-xs text-white/30 font-mono">{product.sku}</p>
                 </div>
+                <span className="hidden sm:inline text-xs text-white/30 tabular-nums">£{(product.price * product.totalStock).toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
                 <span className={`rounded-full px-3 py-1 text-xs font-semibold tabular-nums ${
                   isOut ? "bg-red-500/15 text-red-400" :
                   isLow ? "bg-amber-500/15 text-amber-400" :

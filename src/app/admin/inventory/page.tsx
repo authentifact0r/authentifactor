@@ -30,6 +30,7 @@ export default async function AdminInventoryPage() {
       id: p.id,
       name: p.name,
       sku: p.sku,
+      price: Number(p.price),
       image: p.images?.[0] || null,
       isActive: p.isActive,
       totalStock: p.inventoryBatches.reduce((s: number, b: any) => s + b.quantity, 0),
