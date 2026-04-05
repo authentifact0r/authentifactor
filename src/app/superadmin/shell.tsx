@@ -13,6 +13,7 @@ const pageTitles: Record<string, string> = {
   "/superadmin/billing": "Billing",
   "/superadmin/billing/usage": "Usage Analytics",
   "/superadmin/users": "Users",
+  "/superadmin/security": "Security Posture",
   "/superadmin/settings": "Settings",
 };
 

@@ -45,6 +45,7 @@ const publicPaths = [
   "/api/superadmin",
   "/api/tenant",
   "/api/billing",
+  "/api/security",
   "/login",
   "/register",
   "/billing-issue",
