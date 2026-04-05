@@ -1,103 +1,175 @@
-import { createProduct } from "@/actions/inventory";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Select } from "@/components/ui/select";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { ArrowLeft, Save, Plus, X, ImageIcon } from "lucide-react";
+
+const CATEGORIES = [
+  "GROCERIES", "SPICES", "DRINKS", "BEAUTY",
+  "FASHION", "ACCESSORIES", "HOME", "OTHER",
+];
 
 export default function NewProductPage() {
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [images, setImages] = useState<string[]>([]);
+  const [newImage, setNewImage] = useState("");
+
+  const addImage = () => {
+    if (newImage.trim()) {
+      setImages((prev) => [...prev, newImage.trim()]);
+      setNewImage("");
+    }
+  };
+
+  const removeImage = (i: number) => setImages((prev) => prev.filter((_, idx) => idx !== i));
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+
+    const form = new FormData(e.currentTarget);
+    const body = {
+      name: form.get("name"),
+      description: form.get("description"),
+      category: form.get("category"),
+      price: parseFloat(form.get("price") as string),
+      compareAtPrice: form.get("compareAtPrice") ? parseFloat(form.get("compareAtPrice") as string) : null,
+      weightKg: parseFloat(form.get("weightKg") as string) || 0.1,
+      tags: (form.get("tags") as string)?.split(",").map((t) => t.trim()).filter(Boolean) || [],
+      images,
+      isActive: form.get("isActive") === "on",
+      isPerishable: form.get("isPerishable") === "on",
+      isSubscribable: form.get("isSubscribable") === "on",
+      stock: parseInt(form.get("stock") as string) || 0,
+    };
+
+    try {
+      const res = await fetch("/api/admin/products", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to create product");
+      router.push("/admin/products");
+    } catch (err: any) {
+      setError(err.message);
+      setLoading(false);
+    }
+  };
+
   return (
-    <div className="mx-auto max-w-2xl">
-      <h1 className="text-2xl font-bold">Add Product</h1>
+    <div className="p-6 md:p-8 max-w-3xl mx-auto">
+      <Link href="/admin/products" className="inline-flex items-center gap-1.5 text-sm text-white/40 hover:text-white/60 transition mb-6">
+        <ArrowLeft className="h-3.5 w-3.5" /> Back to Products
+      </Link>
 
-      <Card className="mt-6">
-        <CardContent className="pt-6">
-          <form action={createProduct} className="grid gap-4 sm:grid-cols-2">
-            <div className="sm:col-span-2">
-              <label className="block text-sm font-medium text-gray-700">
-                Product Name
-              </label>
-              <Input name="name" required className="mt-1" placeholder="e.g., Premium Garri (White)" />
-            </div>
+      <h1 className="text-2xl font-bold text-white tracking-tight">Add Product</h1>
+      <p className="text-sm text-white/40 mt-1 mb-8">Create a new product in your catalogue.</p>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700">SKU</label>
-              <Input name="sku" required className="mt-1" placeholder="e.g., GRO-GAR-001" />
-            </div>
+      {error && (
+        <div className="rounded-xl bg-red-500/10 border border-red-500/20 px-4 py-3 text-sm text-red-400 mb-6">{error}</div>
+      )}
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Category
-              </label>
-              <Select name="category" required className="mt-1">
-                <option value="GROCERIES">Groceries</option>
-                <option value="SPICES">Spices</option>
-                <option value="DRINKS">Drinks</option>
-                <option value="BEAUTY">Beauty</option>
-              </Select>
-            </div>
+      <form onSubmit={handleSubmit} className="space-y-6">
+        {/* Name */}
+        <div>
+          <label className="block text-sm font-medium text-white/80 mb-2">Product Name</label>
+          <input name="name" required placeholder="e.g. Cashmere Wrap Coat" className="w-full h-12 px-4 rounded-xl bg-white/[0.06] border border-white/[0.12] text-base text-white placeholder:text-white/25 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition" />
+        </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Price (NGN)
-              </label>
-              <Input name="price" type="number" step="0.01" required className="mt-1" />
-            </div>
+        {/* Description */}
+        <div>
+          <label className="block text-sm font-medium text-white/80 mb-2">Description</label>
+          <textarea name="description" required rows={3} placeholder="Describe the product..." className="w-full px-4 py-3 rounded-xl bg-white/[0.06] border border-white/[0.12] text-base text-white placeholder:text-white/25 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition resize-none" />
+        </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Compare-at Price (NGN)
-              </label>
-              <Input name="compareAtPrice" type="number" step="0.01" className="mt-1" />
-            </div>
+        {/* Price + Compare */}
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-white/80 mb-2">Price (£)</label>
+            <input name="price" type="number" step="0.01" required placeholder="49.99" className="w-full h-12 px-4 rounded-xl bg-white/[0.06] border border-white/[0.12] text-base text-white placeholder:text-white/25 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition" />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-white/80 mb-2">Compare at Price <span className="text-white/30">(optional)</span></label>
+            <input name="compareAtPrice" type="number" step="0.01" placeholder="79.99" className="w-full h-12 px-4 rounded-xl bg-white/[0.06] border border-white/[0.12] text-base text-white placeholder:text-white/25 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition" />
+          </div>
+        </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Weight (kg)
-              </label>
-              <Input name="weightKg" type="number" step="0.001" required className="mt-1" />
-            </div>
+        {/* Category + Weight */}
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-white/80 mb-2">Category</label>
+            <select name="category" required className="w-full h-12 px-4 rounded-xl bg-white/[0.06] border border-white/[0.12] text-base text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition">
+              {CATEGORIES.map((c) => (
+                <option key={c} value={c} className="bg-gray-900">{c.charAt(0) + c.slice(1).toLowerCase()}</option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-white/80 mb-2">Stock Quantity</label>
+            <input name="stock" type="number" required placeholder="50" className="w-full h-12 px-4 rounded-xl bg-white/[0.06] border border-white/[0.12] text-base text-white placeholder:text-white/25 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition" />
+          </div>
+        </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Tags</label>
-              <Input name="tags" className="mt-1" placeholder="staple, nigerian, vegan" />
-            </div>
+        {/* Tags */}
+        <div>
+          <label className="block text-sm font-medium text-white/80 mb-2">Tags <span className="text-white/30">(comma separated)</span></label>
+          <input name="tags" placeholder="luxury, cashmere, winter" className="w-full h-12 px-4 rounded-xl bg-white/[0.06] border border-white/[0.12] text-base text-white placeholder:text-white/25 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition" />
+        </div>
 
-            <div className="sm:col-span-2">
-              <label className="block text-sm font-medium text-gray-700">
-                Description
-              </label>
-              <textarea
-                name="description"
-                required
-                rows={4}
-                className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                placeholder="Product description..."
-              />
+        {/* Images */}
+        <div>
+          <label className="block text-sm font-medium text-white/80 mb-2">Images</label>
+          <div className="flex gap-2 mb-3">
+            <input value={newImage} onChange={(e) => setNewImage(e.target.value)} placeholder="Paste image URL..." className="flex-1 h-10 px-4 rounded-xl bg-white/[0.06] border border-white/[0.12] text-sm text-white placeholder:text-white/25 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition" />
+            <button type="button" onClick={addImage} className="h-10 px-4 rounded-xl bg-white/[0.06] border border-white/[0.08] text-sm font-medium text-white/60 hover:bg-white/[0.1] transition">
+              <Plus className="h-4 w-4" />
+            </button>
+          </div>
+          {images.length > 0 && (
+            <div className="flex flex-wrap gap-2">
+              {images.map((img, i) => (
+                <div key={i} className="relative group">
+                  <img src={img} alt="" className="h-16 w-16 rounded-lg object-cover border border-white/[0.08]" />
+                  <button type="button" onClick={() => removeImage(i)} className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-red-500 flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
+                    <X className="h-3 w-3 text-white" />
+                  </button>
+                </div>
+              ))}
             </div>
+          )}
+        </div>
 
-            <div className="flex flex-wrap gap-6 sm:col-span-2">
-              <label className="flex items-center gap-2 text-sm">
-                <input type="checkbox" name="isPerishable" className="accent-emerald-800" />
-                Perishable
-              </label>
-              <label className="flex items-center gap-2 text-sm">
-                <input type="checkbox" name="isFragile" className="accent-emerald-800" />
-                Fragile
-              </label>
-              <label className="flex items-center gap-2 text-sm">
-                <input type="checkbox" name="isSubscribable" className="accent-emerald-800" />
-                Subscribable (Auto-ship)
-              </label>
-            </div>
+        {/* Hidden weight */}
+        <input type="hidden" name="weightKg" value="0.5" />
 
-            <div className="sm:col-span-2">
-              <Button type="submit" size="lg">
-                Create Product
-              </Button>
-            </div>
-          </form>
-        </CardContent>
-      </Card>
+        {/* Toggles */}
+        <div className="flex flex-wrap gap-6">
+          <label className="flex items-center gap-2 text-sm text-white/60 cursor-pointer">
+            <input type="checkbox" name="isActive" defaultChecked className="rounded border-white/20 bg-white/[0.06] text-emerald-500 focus:ring-emerald-500/50" />
+            Active (visible in store)
+          </label>
+          <label className="flex items-center gap-2 text-sm text-white/60 cursor-pointer">
+            <input type="checkbox" name="isPerishable" className="rounded border-white/20 bg-white/[0.06] text-emerald-500 focus:ring-emerald-500/50" />
+            Perishable
+          </label>
+          <label className="flex items-center gap-2 text-sm text-white/60 cursor-pointer">
+            <input type="checkbox" name="isSubscribable" className="rounded border-white/20 bg-white/[0.06] text-emerald-500 focus:ring-emerald-500/50" />
+            Subscribable
+          </label>
+        </div>
+
+        {/* Submit */}
+        <button type="submit" disabled={loading} className="w-full h-12 rounded-xl bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white font-semibold text-base transition flex items-center justify-center gap-2">
+          <Save className="h-4 w-4" />
+          {loading ? "Creating..." : "Create Product"}
+        </button>
+      </form>
     </div>
   );
 }
