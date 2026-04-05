@@ -29,6 +29,8 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
         description: body.description,
         shortDescription: body.shortDescription || null,
         category: body.category,
+        subcategory: body.subcategory || null,
+        collection: body.collection || null,
         price: body.price,
         compareAtPrice: body.compareAtPrice || null,
         material: body.material || null,

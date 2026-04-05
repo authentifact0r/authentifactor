@@ -29,9 +29,10 @@ interface Product {
   brand: string | null;
   metaTitle: string | null;
   metaDescription: string | null;
+  subcategory: string | null;
+  collection: string | null;
+  shortDescription: string | null;
 }
-
-const CATEGORIES = ["GROCERIES", "SPICES", "DRINKS", "BEAUTY", "FASHION", "ACCESSORIES", "HOME", "OTHER"];
 
 export function ProductsTable({ products }: { products: Product[] }) {
   const searchParams = useSearchParams();
@@ -77,6 +78,8 @@ export function ProductsTable({ products }: { products: Product[] }) {
         tags: [...(p.tags || [])],
         images: [...(p.images || [])],
         material: p.material || "",
+        subcategory: p.subcategory || "",
+        collection: p.collection || "",
         brand: p.brand || "",
         metaTitle: p.metaTitle || "",
         metaDescription: p.metaDescription || "",
@@ -182,7 +185,11 @@ export function ProductsTable({ products }: { products: Product[] }) {
                   )}
                   <div className="flex-1 min-w-0">
                     <p className="font-medium text-white truncate">{p.name}</p>
-                    <p className="text-xs text-white/30">{p.sku} · {p.category.toLowerCase()}</p>
+                    <div className="flex items-center gap-2 mt-0.5">
+                      <span className="text-xs text-white/30">{p.sku}</span>
+                      <span className="rounded bg-white/[0.06] px-1.5 py-0.5 text-[10px] text-white/50">{p.category}</span>
+                      {p.collection && <span className="rounded bg-violet-500/10 px-1.5 py-0.5 text-[10px] text-violet-400">{p.collection}</span>}
+                    </div>
                   </div>
                   <span className="text-white font-medium tabular-nums">{formatPrice(p.price)}</span>
                   {p.compareAtPrice && p.compareAtPrice > p.price && (
@@ -235,13 +242,26 @@ export function ProductsTable({ products }: { products: Product[] }) {
                       </div>
                       <div>
                         <label className="block text-xs font-medium text-white/50 mb-1">Category</label>
-                        <select value={editData.category || ""} onChange={(e) => updateField("category", e.target.value)} className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.12] text-sm text-white focus:outline-none">
-                          {CATEGORIES.map((c) => <option key={c} value={c} className="bg-gray-900">{c}</option>)}
-                        </select>
+                        <input value={editData.category || ""} onChange={(e) => updateField("category", e.target.value)} placeholder="e.g. Blazers & Jackets" className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.12] text-sm text-white placeholder:text-white/25 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition" />
                       </div>
                       <div>
                         <label className="block text-xs font-medium text-white/50 mb-1">Material</label>
                         <input value={editData.material || ""} onChange={(e) => updateField("material", e.target.value)} placeholder="e.g. Cashmere" className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.12] text-sm text-white placeholder:text-white/25 focus:outline-none" />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                      <div>
+                        <label className="block text-xs font-medium text-white/50 mb-1">Subcategory</label>
+                        <input value={editData.subcategory || ""} onChange={(e) => updateField("subcategory", e.target.value)} placeholder="e.g. Evening Gowns" className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.12] text-sm text-white placeholder:text-white/25 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition" />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-medium text-white/50 mb-1">Collection</label>
+                        <input value={editData.collection || ""} onChange={(e) => updateField("collection", e.target.value)} placeholder="e.g. Spring/Summer 2026" className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.12] text-sm text-white placeholder:text-white/25 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition" />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-medium text-white/50 mb-1">Brand</label>
+                        <input value={editData.brand || ""} onChange={(e) => updateField("brand", e.target.value)} placeholder="Styled by Maryam" className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.12] text-sm text-white placeholder:text-white/25 focus:outline-none" />
                       </div>
                     </div>
 

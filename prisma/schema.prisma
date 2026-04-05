@@ -171,7 +171,9 @@ model Product {
   name            String
   slug            String
   description     String
-  category        ProductCategory
+  category        String          // Free-text, tenant-defined (e.g. "Blazers & Jackets", "Groceries")
+  subcategory     String?         // e.g. "Coats & Outerwear", "Earrings"
+  collection      String?         // e.g. "Spring/Summer 2026", "The Essentials Edit"
   price           Decimal         @db.Decimal(10, 2)
   compareAtPrice  Decimal?        @db.Decimal(10, 2) // original price for sales
   weightKg        Decimal         @db.Decimal(6, 3)  // critical for shipping
