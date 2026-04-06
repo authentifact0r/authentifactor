@@ -68,9 +68,12 @@ export function DashboardOrders({ orders, pendingOrders, tenantParam }: Props) {
           const isOpen = expanded === order.id;
           return (
             <div key={order.id} className="rounded-xl border border-white/[0.06] bg-white/[0.02] overflow-hidden">
-              <button
+              <div
+                role="button"
+                tabIndex={0}
                 onClick={() => setExpanded(isOpen ? null : order.id)}
-                className="w-full flex items-center justify-between p-3 text-sm hover:bg-white/[0.04] transition-all cursor-pointer text-left"
+                onKeyDown={(e) => e.key === "Enter" && setExpanded(isOpen ? null : order.id)}
+                className="w-full flex items-center justify-between p-3 text-sm hover:bg-white/[0.04] transition-all cursor-pointer text-left select-none"
               >
                 <div className="flex items-center gap-3 min-w-0">
                   {isOpen ? <ChevronDown className="h-3.5 w-3.5 text-white/40 shrink-0" /> : <ChevronRight className="h-3.5 w-3.5 text-white/40 shrink-0" />}
@@ -85,7 +88,7 @@ export function DashboardOrders({ orders, pendingOrders, tenantParam }: Props) {
                   </span>
                   <p className="font-semibold text-white tabular-nums">{formatPrice(order.total)}</p>
                 </div>
-              </button>
+              </div>
 
               {isOpen && (
                 <div className="border-t border-white/[0.04] bg-white/[0.01] p-4 space-y-3">

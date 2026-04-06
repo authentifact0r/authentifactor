@@ -75,22 +75,26 @@ export default async function AdminDashboard() {
     const { db: rawDb } = await import("@/lib/db");
     recentOrders = [];
     for (const o of rawOrders) {
-      const usr = await rawDb.user.findUnique({ where: { id: o.userId }, select: { firstName: true, lastName: true, email: true, phone: true } });
-      const addr = o.address;
-      recentOrders.push({
-        id: o.id,
-        orderNumber: o.orderNumber,
-        total: Number(o.total),
-        status: o.status,
-        createdAt: o.createdAt.toISOString(),
-        customerName: usr ? `${usr.firstName} ${usr.lastName}`.trim() : addr ? `${addr.firstName} ${addr.lastName}`.trim() : "—",
-        customerEmail: usr?.email || "",
-        customerPhone: usr?.phone || addr?.phone || "",
-        shippingAddress: addr ? `${addr.line1}${addr.line2 ? ", " + addr.line2 : ""}, ${addr.city} ${addr.postcode}` : "",
-        notes: o.notes || "",
-        trackingNumber: o.trackingNumber || "",
-        items: o.items.map((i: any) => ({ name: i.product?.name || "Product", qty: i.quantity, price: Number(i.product?.price || i.unitPrice) })),
-      });
+      try {
+        const usr = await rawDb.user.findUnique({ where: { id: o.userId }, select: { firstName: true, lastName: true, email: true, phone: true } });
+        const addr = o.address;
+        recentOrders.push({
+          id: o.id,
+          orderNumber: o.orderNumber,
+          total: Number(o.total),
+          status: o.status,
+          createdAt: o.createdAt.toISOString(),
+          customerName: usr ? `${usr.firstName} ${usr.lastName}`.trim() : addr ? `${addr.firstName} ${addr.lastName}`.trim() : "—",
+          customerEmail: usr?.email || "",
+          customerPhone: usr?.phone || addr?.phone || "",
+          shippingAddress: addr ? `${addr.line1}${addr.line2 ? ", " + addr.line2 : ""}, ${addr.city} ${addr.postcode}` : "",
+          notes: o.notes || "",
+          trackingNumber: o.trackingNumber || "",
+          items: (o.items || []).map((i: any) => ({ name: i.product?.name || "Product", qty: i.quantity, price: Number(i.product?.price || i.unitPrice || 0) })),
+        });
+      } catch {
+        // Skip orders with missing user data
+      }
     }
     totalRevenue = Number(results[6]._sum.total ?? 0);
 
