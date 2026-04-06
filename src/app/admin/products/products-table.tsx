@@ -78,12 +78,18 @@ export function ProductsTable({ products }: { products: Product[] }) {
         isActive: p.isActive,
         tags: [...(p.tags || [])],
         images: [...(p.images || [])],
+        sizes: [...(p.sizes || [])],
+        colors: [...(p.colors || [])],
         material: p.material || "",
         subcategory: p.subcategory || "",
         collection: p.collection || "",
         brand: p.brand || "",
         metaTitle: p.metaTitle || "",
         metaDescription: p.metaDescription || "",
+        // Raw text state for comma-separated fields (edit as text, save as array)
+        _sizesText: (p.sizes || []).join(", "),
+        _colorsText: (p.colors || []).join(", "),
+        _tagsText: (p.tags || []).join(", "),
       });
     }
     setExpanded(id);
@@ -95,11 +101,17 @@ export function ProductsTable({ products }: { products: Product[] }) {
 
   const handleSave = async (id: string) => {
     setSaving(true);
+    // Convert text fields to arrays before saving, strip internal fields
+    const payload = { ...editData };
+    if (payload._sizesText !== undefined) { payload.sizes = payload._sizesText.split(",").map((s: string) => s.trim()).filter(Boolean); }
+    if (payload._colorsText !== undefined) { payload.colors = payload._colorsText.split(",").map((s: string) => s.trim()).filter(Boolean); }
+    if (payload._tagsText !== undefined) { payload.tags = payload._tagsText.split(",").map((s: string) => s.trim()).filter(Boolean); }
+    delete payload._sizesText; delete payload._colorsText; delete payload._tagsText;
     try {
       const res = await fetch(apiUrl(`/api/admin/products/${id}`), {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(editData),
+        body: JSON.stringify(payload),
       });
       if (!res.ok) throw new Error("Save failed");
       router.refresh();
@@ -278,7 +290,7 @@ export function ProductsTable({ products }: { products: Product[] }) {
                         </div>
                         <div>
                           <label className="block text-xs font-medium text-white/60 mb-1">Tags <span className="text-white/30">(comma)</span></label>
-                          <input value={(editData.tags || []).join(", ")} onChange={(e) => updateField("tags", e.target.value.split(",").map((s: string) => s.trim()).filter(Boolean))} placeholder="new, summer" className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.12] text-sm text-white placeholder:text-white/25 focus:outline-none" />
+                          <input value={editData._tagsText ?? (editData.tags || []).join(", ")} onChange={(e) => updateField("_tagsText", e.target.value)} onBlur={() => updateField("tags", (editData._tagsText || "").split(",").map((s: string) => s.trim()).filter(Boolean))} placeholder="new, summer, dropship" className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.12] text-sm text-white placeholder:text-white/25 focus:outline-none" />
                         </div>
                       </div>
                     </div>
@@ -289,12 +301,12 @@ export function ProductsTable({ products }: { products: Product[] }) {
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                         <div>
                           <label className="block text-xs font-medium text-white/60 mb-1">Sizes <span className="text-white/30">(comma separated)</span></label>
-                          <input value={(editData.sizes || []).join(", ")} onChange={(e) => updateField("sizes", e.target.value.split(",").map((s: string) => s.trim()).filter(Boolean))} placeholder="XS, S, M, L, XL, XXL" className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.12] text-sm text-white placeholder:text-white/25 focus:outline-none" />
+                          <input value={editData._sizesText ?? (editData.sizes || []).join(", ")} onChange={(e) => updateField("_sizesText", e.target.value)} onBlur={() => updateField("sizes", (editData._sizesText || "").split(",").map((s: string) => s.trim()).filter(Boolean))} placeholder="XS, S, M, L, XL, XXL" className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.12] text-sm text-white placeholder:text-white/25 focus:outline-none" />
                           {(editData.sizes || []).length > 0 && <div className="flex flex-wrap gap-1 mt-1.5">{(editData.sizes || []).map((s: string) => <span key={s} className="rounded bg-emerald-500/15 px-2 py-0.5 text-[10px] text-emerald-400 font-medium">{s}</span>)}</div>}
                         </div>
                         <div>
                           <label className="block text-xs font-medium text-white/60 mb-1">Colors <span className="text-white/30">(comma separated)</span></label>
-                          <input value={(editData.colors || []).join(", ")} onChange={(e) => updateField("colors", e.target.value.split(",").map((s: string) => s.trim()).filter(Boolean))} placeholder="Black, Ivory, Yellow, Red" className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.12] text-sm text-white placeholder:text-white/25 focus:outline-none" />
+                          <input value={editData._colorsText ?? (editData.colors || []).join(", ")} onChange={(e) => updateField("_colorsText", e.target.value)} onBlur={() => updateField("colors", (editData._colorsText || "").split(",").map((s: string) => s.trim()).filter(Boolean))} placeholder="Black, Ivory, Yellow, Red" className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.12] text-sm text-white placeholder:text-white/25 focus:outline-none" />
                           {(editData.colors || []).length > 0 && <div className="flex flex-wrap gap-1 mt-1.5">{(editData.colors || []).map((c: string) => <span key={c} className="rounded bg-cyan-500/15 px-2 py-0.5 text-[10px] text-cyan-400 font-medium">{c}</span>)}</div>}
                         </div>
                       </div>
