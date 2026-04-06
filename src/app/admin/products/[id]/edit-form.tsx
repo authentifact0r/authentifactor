@@ -1,4 +1,5 @@
 "use client";
+import { apiUrl } from "@/lib/api";
 
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -52,7 +53,7 @@ export function EditProductForm({ product }: { product: any }) {
       tags, images, sizes, colors, seoKeywords, isActive,
     };
     try {
-      const res = await fetch(`/api/admin/products/${product.id}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+      const res = await fetch(apiUrl(`/api/admin/products/${product.id}`), { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
       if (!res.ok) throw new Error((await res.json()).error || "Update failed");
       router.push("/admin/products" + tp);
     } catch (err: any) { setError(err.message); setLoading(false); }
@@ -61,7 +62,7 @@ export function EditProductForm({ product }: { product: any }) {
   const handleDelete = async () => {
     if (!confirm("Delete this product permanently?")) return;
     setDeleting(true);
-    try { await fetch(`/api/admin/products/${product.id}`, { method: "DELETE" }); router.push("/admin/products" + tp); } catch { setDeleting(false); }
+    try { await fetch(apiUrl(`/api/admin/products/${product.id}`), { method: "DELETE" }); router.push("/admin/products" + tp); } catch { setDeleting(false); }
   };
 
   return (

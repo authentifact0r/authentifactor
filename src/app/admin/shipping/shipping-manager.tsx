@@ -1,4 +1,5 @@
 "use client";
+import { apiUrl } from "@/lib/api";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -63,7 +64,7 @@ export function ShippingManager({ rules, tenantSlug }: Props) {
     if (!name.trim() || baseCost < 0) return;
     setSaving(true);
     try {
-      const res = await fetch("/api/admin/shipping", {
+      const res = await fetch(apiUrl("/api/admin/shipping"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, method, minWeightKg: minWeight, maxWeightKg: maxWeight, baseCost, perKgCost, estimatedDays }),
@@ -77,7 +78,7 @@ export function ShippingManager({ rules, tenantSlug }: Props) {
   };
 
   const toggleActive = async (id: string, current: boolean) => {
-    await fetch("/api/admin/shipping/update", {
+    await fetch(apiUrl("/api/admin/shipping/update"), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ id, isActive: !current }),
@@ -87,7 +88,7 @@ export function ShippingManager({ rules, tenantSlug }: Props) {
 
   const deleteRule = async (id: string) => {
     if (!confirm("Remove this shipping rule?")) return;
-    await fetch("/api/admin/shipping/delete", {
+    await fetch(apiUrl("/api/admin/shipping/delete"), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ id }),
@@ -267,3 +268,4 @@ export function ShippingManager({ rules, tenantSlug }: Props) {
     </div>
   );
 }
+

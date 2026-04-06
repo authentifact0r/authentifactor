@@ -1,4 +1,5 @@
 "use client";
+import { apiUrl } from "@/lib/api";
 
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -50,7 +51,7 @@ export default function NewProductPage() {
     };
 
     try {
-      const res = await fetch("/api/admin/products", {
+      const res = await fetch(apiUrl("/api/admin/products"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),

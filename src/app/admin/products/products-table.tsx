@@ -1,4 +1,5 @@
 "use client";
+import { apiUrl } from "@/lib/api";
 
 import { useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
@@ -95,13 +96,13 @@ export function ProductsTable({ products }: { products: Product[] }) {
   const handleSave = async (id: string) => {
     setSaving(true);
     try {
-      const res = await fetch(`/api/admin/products/${id}`, {
+      const res = await fetch(apiUrl(`/api/admin/products/${id}`), {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(editData),
       });
       if (!res.ok) throw new Error("Save failed");
-      window.location.reload();
+      router.refresh();
     } catch {
       setSaving(false);
     }
@@ -111,20 +112,20 @@ export function ProductsTable({ products }: { products: Product[] }) {
     if (!confirm("Delete this product permanently?")) return;
     setDeleting(true);
     try {
-      await fetch(`/api/admin/products/${id}`, { method: "DELETE" });
-      window.location.reload();
+      await fetch(apiUrl(`/api/admin/products/${id}`), { method: "DELETE" });
+      router.refresh();
     } catch {
       setDeleting(false);
     }
   };
 
   const handleToggleActive = async (id: string, current: boolean) => {
-    await fetch(`/api/admin/products/${id}`, {
+    await fetch(apiUrl(`/api/admin/products/${id}`), {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ isActive: !current }),
     });
-    window.location.reload();
+    router.refresh();
   };
 
   return (
@@ -330,3 +331,4 @@ export function ProductsTable({ products }: { products: Product[] }) {
     </>
   );
 }
+

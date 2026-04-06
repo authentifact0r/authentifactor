@@ -1,4 +1,5 @@
 "use client";
+import { apiUrl } from "@/lib/api";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -46,7 +47,7 @@ export function ImportManager({ tenantSlug }: { tenantSlug: string }) {
     if (!url.trim()) return;
     setFetching(true); setError(""); setScraped(null); setImported(null);
     try {
-      const res = await fetch("/api/admin/import/scrape", {
+      const res = await fetch(apiUrl("/api/admin/import/scrape"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ url: url.trim() }),
@@ -82,7 +83,7 @@ export function ImportManager({ tenantSlug }: { tenantSlug: string }) {
     if (!name.trim() || retailPrice <= 0) return;
     setImporting(true);
     try {
-      const res = await fetch("/api/admin/import/product", {
+      const res = await fetch(apiUrl("/api/admin/import/product"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -314,3 +315,4 @@ export function ImportManager({ tenantSlug }: { tenantSlug: string }) {
     </div>
   );
 }
+

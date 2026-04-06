@@ -1,4 +1,5 @@
 "use client";
+import { apiUrl } from "@/lib/api";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -56,7 +57,7 @@ export function OrdersManager({ orders, products, tenantSlug }: Props) {
   const updateStatus = async (orderId: string, newStatus: string) => {
     setSaving(orderId);
     try {
-      const res = await fetch("/api/admin/orders/update", {
+      const res = await fetch(apiUrl("/api/admin/orders/update"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ orderId, status: newStatus, trackingNumber: trackingInput[orderId] || null, notes: notesInput[orderId] || null }),
@@ -132,7 +133,7 @@ export function OrdersManager({ orders, products, tenantSlug }: Props) {
     if (!customerName || !customerEmail || !addressLine1 || !addressCity || !addressPostcode) return alert("Fill in customer details and address");
     setCreating(true);
     try {
-      const res = await fetch("/api/admin/orders/create", {
+      const res = await fetch(apiUrl("/api/admin/orders/create"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -480,3 +481,4 @@ export function OrdersManager({ orders, products, tenantSlug }: Props) {
     </div>
   );
 }
+

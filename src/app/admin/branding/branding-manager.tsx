@@ -1,4 +1,5 @@
 "use client";
+import { apiUrl } from "@/lib/api";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -39,7 +40,7 @@ export function BrandingManager({ branding, tenantSlug }: Props) {
   const saveBranding = async () => {
     setSaving(true); setSaved(false);
     try {
-      const res = await fetch("/api/admin/branding", {
+      const res = await fetch(apiUrl("/api/admin/branding"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, tagline, logo, primaryColor, accentColor, heroBannerImage, heroBannerTitle, heroBannerSubtitle }),
@@ -214,3 +215,4 @@ export function BrandingManager({ branding, tenantSlug }: Props) {
     </div>
   );
 }
+

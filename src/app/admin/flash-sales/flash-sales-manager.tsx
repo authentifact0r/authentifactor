@@ -1,4 +1,5 @@
 "use client";
+import { apiUrl } from "@/lib/api";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -45,7 +46,7 @@ export function FlashSalesManager({ sales, products, tenantSlug }: Props) {
     if (!selectedProduct || discount <= 0 || discount > 99) return;
     setSaving(true);
     try {
-      const res = await fetch("/api/admin/flash-sales", {
+      const res = await fetch(apiUrl("/api/admin/flash-sales"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ productId: selectedProduct, discountPercent: discount, reason, durationHours: duration }),
@@ -58,7 +59,7 @@ export function FlashSalesManager({ sales, products, tenantSlug }: Props) {
   };
 
   const toggleActive = async (id: string, current: boolean) => {
-    await fetch("/api/admin/flash-sales/update", {
+    await fetch(apiUrl("/api/admin/flash-sales/update"), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ id, isActive: !current }),
@@ -68,7 +69,7 @@ export function FlashSalesManager({ sales, products, tenantSlug }: Props) {
 
   const deleteSale = async (id: string) => {
     if (!confirm("Remove this flash sale?")) return;
-    await fetch("/api/admin/flash-sales/delete", {
+    await fetch(apiUrl("/api/admin/flash-sales/delete"), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ id }),
@@ -238,3 +239,4 @@ export function FlashSalesManager({ sales, products, tenantSlug }: Props) {
     </div>
   );
 }
+

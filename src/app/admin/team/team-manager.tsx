@@ -1,4 +1,5 @@
 "use client";
+import { apiUrl } from "@/lib/api";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -48,7 +49,7 @@ export function TeamManager({ members, tenantSlug }: Props) {
     setError(""); setSuccess("");
     setSaving(true);
     try {
-      const res = await fetch("/api/admin/team/invite", {
+      const res = await fetch(apiUrl("/api/admin/team/invite"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: email.trim().toLowerCase(), role }),
@@ -63,7 +64,7 @@ export function TeamManager({ members, tenantSlug }: Props) {
   };
 
   const changeRole = async (memberId: string, newRole: string) => {
-    await fetch("/api/admin/team/update", {
+    await fetch(apiUrl("/api/admin/team/update"), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ id: memberId, role: newRole }),
@@ -73,7 +74,7 @@ export function TeamManager({ members, tenantSlug }: Props) {
 
   const removeMember = async (memberId: string, name: string) => {
     if (!confirm(`Remove ${name} from the team?`)) return;
-    const res = await fetch("/api/admin/team/remove", {
+    const res = await fetch(apiUrl("/api/admin/team/remove"), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ id: memberId }),
@@ -240,3 +241,4 @@ export function TeamManager({ members, tenantSlug }: Props) {
     </div>
   );
 }
+

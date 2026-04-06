@@ -1,4 +1,5 @@
 "use client";
+import { apiUrl } from "@/lib/api";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -63,7 +64,7 @@ export function SeoManager({ settings, tenantSlug }: Props) {
     if (!pageType) return;
     setSaving(true);
     try {
-      const res = await fetch("/api/admin/seo", {
+      const res = await fetch(apiUrl("/api/admin/seo"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ pageType, pageSlug, metaTitle, metaDescription, ogImage, canonicalUrl, noIndex }),
@@ -77,7 +78,7 @@ export function SeoManager({ settings, tenantSlug }: Props) {
   const updateRule = async (id: string) => {
     setSaving(true);
     try {
-      const res = await fetch("/api/admin/seo/update", {
+      const res = await fetch(apiUrl("/api/admin/seo/update"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id, ...editData }),
@@ -90,7 +91,7 @@ export function SeoManager({ settings, tenantSlug }: Props) {
 
   const deleteRule = async (id: string) => {
     if (!confirm("Remove this SEO rule?")) return;
-    await fetch("/api/admin/seo/delete", {
+    await fetch(apiUrl("/api/admin/seo/delete"), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ id }),
@@ -320,3 +321,4 @@ export function SeoManager({ settings, tenantSlug }: Props) {
     </div>
   );
 }
+

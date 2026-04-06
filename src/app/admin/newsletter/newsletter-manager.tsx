@@ -1,4 +1,5 @@
 "use client";
+import { apiUrl } from "@/lib/api";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -66,7 +67,7 @@ export function NewsletterManager({ subscribers, campaigns, tenantSlug }: Props)
     if (!title.trim() || !body.trim()) return;
     setSaving(true);
     try {
-      const res = await fetch("/api/admin/newsletter/campaigns", {
+      const res = await fetch(apiUrl("/api/admin/newsletter/campaigns"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ title, subject, body, channel, audience }),
@@ -79,7 +80,7 @@ export function NewsletterManager({ subscribers, campaigns, tenantSlug }: Props)
 
   const sendCampaign = async (id: string) => {
     if (!confirm("Send this campaign to all matching subscribers now?")) return;
-    await fetch("/api/admin/newsletter/campaigns/send", {
+    await fetch(apiUrl("/api/admin/newsletter/campaigns/send"), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ id }),
@@ -89,7 +90,7 @@ export function NewsletterManager({ subscribers, campaigns, tenantSlug }: Props)
 
   const deleteCampaign = async (id: string) => {
     if (!confirm("Delete this campaign?")) return;
-    await fetch("/api/admin/newsletter/campaigns/delete", {
+    await fetch(apiUrl("/api/admin/newsletter/campaigns/delete"), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ id }),
@@ -101,7 +102,7 @@ export function NewsletterManager({ subscribers, campaigns, tenantSlug }: Props)
     if (!subEmail && !subPhone) return;
     setSaving(true);
     try {
-      const res = await fetch("/api/admin/newsletter/subscribers", {
+      const res = await fetch(apiUrl("/api/admin/newsletter/subscribers"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: subEmail, phone: subPhone, firstName: subFirst, lastName: subLast, emailOptIn: subEmailOpt, smsOptIn: subSmsOpt }),
@@ -114,7 +115,7 @@ export function NewsletterManager({ subscribers, campaigns, tenantSlug }: Props)
 
   const removeSubscriber = async (id: string) => {
     if (!confirm("Remove this subscriber?")) return;
-    await fetch("/api/admin/newsletter/subscribers/remove", {
+    await fetch(apiUrl("/api/admin/newsletter/subscribers/remove"), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ id }),
@@ -375,3 +376,4 @@ export function NewsletterManager({ subscribers, campaigns, tenantSlug }: Props)
     </div>
   );
 }
+

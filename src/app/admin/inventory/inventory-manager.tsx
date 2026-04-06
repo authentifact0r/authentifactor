@@ -1,4 +1,5 @@
 "use client";
+import { apiUrl } from "@/lib/api";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -71,7 +72,7 @@ export function InventoryManager({ products, warehouses, tenantSlug }: Props) {
     if (!delta) return;
     setSaving(batchId);
     try {
-      await fetch("/api/admin/inventory/adjust", {
+      await fetch(apiUrl("/api/admin/inventory/adjust"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ batchId, delta }),
@@ -86,7 +87,7 @@ export function InventoryManager({ products, warehouses, tenantSlug }: Props) {
     if (restockQty <= 0 || !restockWarehouse) return;
     setSaving(productId);
     try {
-      await fetch("/api/admin/inventory/restock", {
+      await fetch(apiUrl("/api/admin/inventory/restock"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ productId, quantity: restockQty, warehouseId: restockWarehouse }),
@@ -196,7 +197,7 @@ export function InventoryManager({ products, warehouses, tenantSlug }: Props) {
 
     for (const row of validRows) {
       try {
-        const res = await fetch("/api/admin/inventory/restock", {
+        const res = await fetch(apiUrl("/api/admin/inventory/restock"), {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -496,3 +497,4 @@ export function InventoryManager({ products, warehouses, tenantSlug }: Props) {
     </div>
   );
 }
+
