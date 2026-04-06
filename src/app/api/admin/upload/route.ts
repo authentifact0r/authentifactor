@@ -1,6 +1,29 @@
 import { NextRequest, NextResponse } from "next/server";
-import { put } from "@vercel/blob";
 import { requireAdmin } from "@/lib/auth";
+import { writeFile, mkdir } from "fs/promises";
+import path from "path";
+
+// Try Vercel Blob first, fall back to local filesystem
+async function uploadToBlob(name: string, file: File): Promise<string | null> {
+  try {
+    if (!process.env.BLOB_READ_WRITE_TOKEN) return null;
+    const { put } = await import("@vercel/blob");
+    const blob = await put(name, file, { access: "public", addRandomSuffix: false });
+    return blob.url;
+  } catch {
+    return null;
+  }
+}
+
+async function uploadToLocal(name: string, buffer: Buffer): Promise<string> {
+  const uploadDir = path.join(process.cwd(), "public", "uploads");
+  await mkdir(uploadDir, { recursive: true });
+  const filePath = path.join(uploadDir, name);
+  // Ensure subdirectories exist
+  await mkdir(path.dirname(filePath), { recursive: true });
+  await writeFile(filePath, buffer);
+  return `/uploads/${name}`;
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -10,32 +33,28 @@ export async function POST(request: NextRequest) {
     const file = formData.get("file") as File;
     if (!file) return NextResponse.json({ error: "No file provided" }, { status: 400 });
 
-    // Validate file type
     const allowed = ["image/jpeg", "image/png", "image/webp", "image/gif", "image/avif"];
     if (!allowed.includes(file.type)) {
       return NextResponse.json({ error: "Only images allowed (JPEG, PNG, WebP, GIF)" }, { status: 400 });
     }
 
-    // Max 10MB
     if (file.size > 10 * 1024 * 1024) {
       return NextResponse.json({ error: "File too large (max 10MB)" }, { status: 400 });
     }
 
-    // Generate a clean filename
     const ext = file.name.split(".").pop() || "jpg";
-    const name = `products/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+    const name = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
 
-    const blob = await put(name, file, {
-      access: "public",
-      addRandomSuffix: false,
-    });
+    // Try Vercel Blob first (production), fall back to local (dev)
+    let url = await uploadToBlob(`products/${name}`, file);
 
-    return NextResponse.json({ url: blob.url });
-  } catch (error: any) {
-    // If Vercel Blob isn't configured, return a helpful error
-    if (error.message?.includes("BLOB")) {
-      return NextResponse.json({ error: "Image storage not configured. Add BLOB_READ_WRITE_TOKEN to environment." }, { status: 500 });
+    if (!url) {
+      const buffer = Buffer.from(await file.arrayBuffer());
+      url = await uploadToLocal(name, buffer);
     }
+
+    return NextResponse.json({ url });
+  } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
