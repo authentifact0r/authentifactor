@@ -45,11 +45,9 @@ export default async function AdminDashboard() {
       tdb.order.findMany({
         orderBy: { createdAt: "desc" },
         take: 5,
-        select: {
-          id: true, orderNumber: true, total: true, status: true, createdAt: true,
-          customerName: true, customerEmail: true, customerPhone: true,
-          shippingAddress: true, notes: true, trackingNumber: true,
-          items: { select: { productName: true, quantity: true, price: true } },
+        include: {
+          address: { select: { firstName: true, lastName: true, line1: true, line2: true, city: true, postcode: true, phone: true } },
+          items: { include: { product: { select: { name: true, price: true } } } },
         },
       }),
       tdb.order.aggregate({ where: { paymentStatus: "PAID" }, _sum: { total: true } }),
@@ -72,20 +70,28 @@ export default async function AdminDashboard() {
       batchNumber: b.batchNumber,
     }));
     expiringBatches = results[4];
-    recentOrders = (results[5] as any[]).map((o: any) => ({
-      id: o.id,
-      orderNumber: o.orderNumber,
-      total: Number(o.total),
-      status: o.status,
-      createdAt: o.createdAt.toISOString(),
-      customerName: o.customerName || "—",
-      customerEmail: o.customerEmail || "",
-      customerPhone: o.customerPhone || "",
-      shippingAddress: o.shippingAddress || "",
-      notes: o.notes || "",
-      trackingNumber: o.trackingNumber || "",
-      items: o.items.map((i: any) => ({ name: i.productName, qty: i.quantity, price: Number(i.price) })),
-    }));
+    // Fetch user names for recent orders
+    const rawOrders = results[5] as any[];
+    const { db: rawDb } = await import("@/lib/db");
+    recentOrders = [];
+    for (const o of rawOrders) {
+      const usr = await rawDb.user.findUnique({ where: { id: o.userId }, select: { firstName: true, lastName: true, email: true, phone: true } });
+      const addr = o.address;
+      recentOrders.push({
+        id: o.id,
+        orderNumber: o.orderNumber,
+        total: Number(o.total),
+        status: o.status,
+        createdAt: o.createdAt.toISOString(),
+        customerName: usr ? `${usr.firstName} ${usr.lastName}`.trim() : addr ? `${addr.firstName} ${addr.lastName}`.trim() : "—",
+        customerEmail: usr?.email || "",
+        customerPhone: usr?.phone || addr?.phone || "",
+        shippingAddress: addr ? `${addr.line1}${addr.line2 ? ", " + addr.line2 : ""}, ${addr.city} ${addr.postcode}` : "",
+        notes: o.notes || "",
+        trackingNumber: o.trackingNumber || "",
+        items: o.items.map((i: any) => ({ name: i.product?.name || "Product", qty: i.quantity, price: Number(i.product?.price || i.unitPrice) })),
+      });
+    }
     totalRevenue = Number(results[6]._sum.total ?? 0);
 
     const products = results[7] as any[];
