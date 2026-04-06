@@ -1,12 +1,19 @@
 export const dynamic = "force-dynamic";
 
+import type { Metadata } from "next";
 import { getScopedDb } from "@/lib/db";
 import { ProductCard } from "@/components/shop/product-card";
 import { Badge } from "@/components/ui/badge";
+import { productsListMetadata } from "@/lib/seo";
 import type { Prisma } from "@prisma/client";
 
 interface Props {
   searchParams: Promise<{ category?: string; q?: string; page?: string }>;
+}
+
+export async function generateMetadata({ searchParams }: Props): Promise<Metadata> {
+  const { category } = await searchParams;
+  try { return await productsListMetadata(category); } catch { return { title: "Products" }; }
 }
 
 const VALID_CATEGORIES = ["GROCERIES", "SPICES", "DRINKS", "BEAUTY"] as const;

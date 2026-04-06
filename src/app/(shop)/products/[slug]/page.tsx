@@ -1,13 +1,22 @@
 import { notFound } from "next/navigation";
 import Image from "next/image";
+import type { Metadata } from "next";
 import { getScopedDb } from "@/lib/db";
+import { getTenant } from "@/lib/tenant";
 import { formatPrice, getStockStatus } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { AddToCartButton } from "./add-to-cart-button";
 import { SubscribeToggle } from "./subscribe-toggle";
+import { productMetadata, productJsonLd, breadcrumbJsonLd } from "@/lib/seo";
 
 interface Props {
   params: Promise<{ slug: string }>;
+}
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug } = await params;
+  const meta = await productMetadata(slug);
+  return meta || { title: "Product Not Found" };
 }
 
 async function getProduct(slug: string) {
@@ -61,8 +70,37 @@ export default async function ProductPage({ params }: Props) {
     ? price * (1 - parseFloat(product.flashSale!.discountPercent) / 100)
     : price;
 
+  // JSON-LD structured data for Google rich results
+  let jsonLd: object[] = [];
+  try {
+    const tenant = await getTenant();
+    jsonLd = [
+      productJsonLd({
+        name: product.name,
+        description: product.description,
+        shortDescription: product.shortDescription,
+        price: salePrice,
+        compareAtPrice: product.compareAtPrice ? parseFloat(product.compareAtPrice) : null,
+        images: product.images,
+        sku: product.sku,
+        slug: product.slug,
+        brand: product.brand,
+        category: product.category,
+        stock: product.totalStock,
+      }, tenant),
+      breadcrumbJsonLd([
+        { name: "Home", url: "/" },
+        { name: "Products", url: "/products" },
+        { name: product.name, url: `/products/${product.slug}` },
+      ], tenant),
+    ];
+  } catch {}
+
   return (
     <div className="mx-auto max-w-7xl px-4 py-8">
+      {jsonLd.map((ld, i) => (
+        <script key={i} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(ld) }} />
+      ))}
       <div className="grid gap-8 lg:grid-cols-2">
         {/* Images */}
         <div className="space-y-4">

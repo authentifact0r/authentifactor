@@ -1,5 +1,6 @@
 export const dynamic = "force-dynamic";
 
+import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, Truck, RefreshCw, Shield, Leaf } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -7,6 +8,11 @@ import { Badge } from "@/components/ui/badge";
 import { getScopedDb } from "@/lib/db";
 import { getTenant } from "@/lib/tenant";
 import { ProductCard } from "@/components/shop/product-card";
+import { homeMetadata } from "@/lib/seo";
+
+export async function generateMetadata(): Promise<Metadata> {
+  try { return await homeMetadata(); } catch { return { title: "Shop" }; }
+}
 
 async function getFeaturedProducts() {
   const tdb = await getScopedDb();
