@@ -78,21 +78,21 @@ export default function LoginPage() {
     <div className="min-h-screen w-full bg-[#F9F7F2]">
       <div className="flex min-h-screen items-center justify-center p-4 md:p-0">
         <div
-          className={`w-full max-w-5xl overflow-hidden rounded-2xl bg-white shadow-xl shadow-gray-200/50 transition-all duration-500 ${formVisible ? "opacity-100 scale-100" : "opacity-0 scale-95"}`}
+          className={`w-full max-w-4xl overflow-hidden rounded-2xl bg-white shadow-xl shadow-gray-200/50 transition-all duration-500 ${formVisible ? "opacity-100 scale-100" : "opacity-0 scale-95"}`}
         >
           <div className="flex flex-col md:flex-row">
 
             {/* Left side — Fashion imagery collage */}
-            <div className="hidden md:block w-full md:w-3/5 bg-[#F5F0E8] p-5">
-              <div className="grid grid-cols-2 grid-rows-3 gap-3 h-full overflow-hidden">
+            <div className="hidden md:flex w-full md:w-1/2 bg-[#F5F0E8] p-4 items-center">
+              <div className="grid grid-cols-3 grid-rows-2 gap-2.5 w-full" style={{ height: "420px" }}>
                 {/* Image 1 — Dress */}
                 <div className="overflow-hidden rounded-xl row-span-2">
                   <img src={collageImages[0].src} alt={collageImages[0].alt} className="w-full h-full object-cover" />
                 </div>
 
-                {/* Stat card — accent color */}
+                {/* Stat card */}
                 <div
-                  className="rounded-xl flex flex-col justify-center items-center p-5 text-white"
+                  className="rounded-xl flex flex-col justify-center items-center p-3 text-white"
                   style={{
                     backgroundColor: accent,
                     transform: formVisible ? "translateY(0)" : "translateY(20px)",
@@ -101,8 +101,8 @@ export default function LoginPage() {
                     transitionDelay: "0.2s",
                   }}
                 >
-                  <h2 className="text-4xl font-bold mb-1" style={{ fontFamily: "var(--font-display, Georgia), serif" }}>13+</h2>
-                  <p className="text-center text-xs leading-relaxed opacity-90">Curated pieces in the collection</p>
+                  <h2 className="text-3xl font-bold mb-0.5" style={{ fontFamily: "var(--font-display, Georgia), serif" }}>13+</h2>
+                  <p className="text-center text-[10px] leading-tight opacity-90">Curated pieces</p>
                 </div>
 
                 {/* Image 2 — Earrings */}
@@ -115,23 +115,6 @@ export default function LoginPage() {
                   <img src={collageImages[2].src} alt={collageImages[2].alt} className="w-full h-full object-cover" />
                 </div>
 
-                {/* Brand card */}
-                <div
-                  className="rounded-xl flex flex-col justify-center items-center p-5 bg-[#1a1a1a] text-white"
-                  style={{
-                    transform: formVisible ? "translateY(0)" : "translateY(20px)",
-                    opacity: formVisible ? 1 : 0,
-                    transition: "transform 0.6s ease-out, opacity 0.6s ease-out",
-                    transitionDelay: "0.4s",
-                  }}
-                >
-                  <p className="text-[0.6rem] uppercase tracking-[0.2em] mb-2 opacity-50">Powered by</p>
-                  <h2 className="text-lg font-medium" style={{ fontFamily: "var(--font-display, Georgia), serif", fontStyle: "italic" }}>
-                    {isTenant ? brandName : "Authentifactor"}
-                  </h2>
-                  {isTenant && <p className="text-[0.6rem] mt-1 opacity-40">Commerce Platform</p>}
-                </div>
-
                 {/* Image 4 — Fashion */}
                 <div className="overflow-hidden rounded-xl">
                   <img src={collageImages[3].src} alt={collageImages[3].alt} className="w-full h-full object-cover" />
@@ -141,7 +124,7 @@ export default function LoginPage() {
 
             {/* Right side — Sign in form */}
             <div
-              className="w-full md:w-2/5 p-8 md:p-10 bg-white"
+              className="w-full md:w-1/2 p-8 md:p-10 bg-white flex flex-col justify-center"
               style={{
                 transform: formVisible ? "translateX(0)" : "translateX(20px)",
                 opacity: formVisible ? 1 : 0,
