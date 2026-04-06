@@ -57,101 +57,101 @@ body {
    Swap dark-theme text/bg colors to work on cream background.
    Applied to .min-h-screen.bg-\[#F9F7F2\] descendants (admin layout). */
 
-.bg-\[\#F9F7F2\] .text-white { color: #1a1a1a !important; }
+[data-theme="luxury"] .text-white { color: #1a1a1a !important; }
 /* Keep white text on elements that also have a dark/colored background */
-.bg-\[\#F9F7F2\] .bg-emerald-600.text-white,
-.bg-\[\#F9F7F2\] .bg-emerald-500.text-white,
-.bg-\[\#F9F7F2\] .bg-black.text-white,
-.bg-\[\#F9F7F2\] .bg-gray-900.text-white,
-.bg-\[\#F9F7F2\] .bg-red-600.text-white,
-.bg-\[\#F9F7F2\] .text-white.bg-emerald-600,
-.bg-\[\#F9F7F2\] .text-white.bg-black,
-.bg-\[\#F9F7F2\] .text-white.bg-gray-900,
-.bg-\[\#F9F7F2\] .text-white[style*="background"],
-.bg-\[\#F9F7F2\] button.bg-emerald-600,
-.bg-\[\#F9F7F2\] button.bg-black,
-.bg-\[\#F9F7F2\] button.bg-gray-900,
-.bg-\[\#F9F7F2\] a.bg-emerald-600,
-.bg-\[\#F9F7F2\] a.bg-black { color: #fff !important; }
-.bg-\[\#F9F7F2\] .text-white\/80 { color: #333 !important; }
-.bg-\[\#F9F7F2\] .text-white\/70 { color: #444 !important; }
-.bg-\[\#F9F7F2\] .text-white\/60 { color: #555 !important; }
-.bg-\[\#F9F7F2\] .text-white\/50 { color: #777 !important; }
-.bg-\[\#F9F7F2\] .text-white\/40 { color: #999 !important; }
-.bg-\[\#F9F7F2\] .text-white\/30 { color: #aaa !important; }
-.bg-\[\#F9F7F2\] .text-white\/25 { color: #bbb !important; }
-.bg-\[\#F9F7F2\] .placeholder\:text-white\/25::placeholder { color: #bbb !important; }
-.bg-\[\#F9F7F2\] .placeholder\:text-white\/30::placeholder { color: #aaa !important; }
+[data-theme="luxury"] .bg-emerald-600.text-white,
+[data-theme="luxury"] .bg-emerald-500.text-white,
+[data-theme="luxury"] .bg-black.text-white,
+[data-theme="luxury"] .bg-gray-900.text-white,
+[data-theme="luxury"] .bg-red-600.text-white,
+[data-theme="luxury"] .text-white.bg-emerald-600,
+[data-theme="luxury"] .text-white.bg-black,
+[data-theme="luxury"] .text-white.bg-gray-900,
+[data-theme="luxury"] .text-white[style*="background"],
+[data-theme="luxury"] button.bg-emerald-600,
+[data-theme="luxury"] button.bg-black,
+[data-theme="luxury"] button.bg-gray-900,
+[data-theme="luxury"] a.bg-emerald-600,
+[data-theme="luxury"] a.bg-black { color: #fff !important; }
+[data-theme="luxury"] .text-white\/80 { color: #333 !important; }
+[data-theme="luxury"] .text-white\/70 { color: #444 !important; }
+[data-theme="luxury"] .text-white\/60 { color: #555 !important; }
+[data-theme="luxury"] .text-white\/50 { color: #777 !important; }
+[data-theme="luxury"] .text-white\/40 { color: #999 !important; }
+[data-theme="luxury"] .text-white\/30 { color: #aaa !important; }
+[data-theme="luxury"] .text-white\/25 { color: #bbb !important; }
+[data-theme="luxury"] .placeholder\:text-white\/25::placeholder { color: #bbb !important; }
+[data-theme="luxury"] .placeholder\:text-white\/30::placeholder { color: #aaa !important; }
 
 /* Backgrounds */
-.bg-\[\#F9F7F2\] .bg-white\/\[0\.03\] { background-color: #fff !important; }
-.bg-\[\#F9F7F2\] .bg-white\/\[0\.04\] { background-color: #f5f0e8 !important; }
-.bg-\[\#F9F7F2\] .bg-white\/\[0\.06\] { background-color: rgba(255,255,255,0.9) !important; }
-.bg-\[\#F9F7F2\] .bg-white\/\[0\.08\] { background-color: #f5f0e8 !important; }
-.bg-\[\#F9F7F2\] .bg-white\/\[0\.1\] { background-color: #f0ece6 !important; }
-.bg-\[\#F9F7F2\] .bg-black\/40 { background-color: #fff !important; }
+[data-theme="luxury"] .bg-white\/\[0\.03\] { background-color: #fff !important; }
+[data-theme="luxury"] .bg-white\/\[0\.04\] { background-color: #f5f0e8 !important; }
+[data-theme="luxury"] .bg-white\/\[0\.06\] { background-color: rgba(255,255,255,0.9) !important; }
+[data-theme="luxury"] .bg-white\/\[0\.08\] { background-color: #f5f0e8 !important; }
+[data-theme="luxury"] .bg-white\/\[0\.1\] { background-color: #f0ece6 !important; }
+[data-theme="luxury"] .bg-black\/40 { background-color: #fff !important; }
 
 /* Borders */
-.bg-\[\#F9F7F2\] .border-white\/\[0\.06\] { border-color: #E5E5E5 !important; }
-.bg-\[\#F9F7F2\] .border-white\/\[0\.08\] { border-color: #E5E5E5 !important; }
-.bg-\[\#F9F7F2\] .border-white\/\[0\.1\] { border-color: #E5E5E5 !important; }
-.bg-\[\#F9F7F2\] .border-white\/\[0\.12\] { border-color: #C5A059 !important; }
-.bg-\[\#F9F7F2\] .border-white\/10 { border-color: #E5E5E5 !important; }
+[data-theme="luxury"] .border-white\/\[0\.06\] { border-color: #E5E5E5 !important; }
+[data-theme="luxury"] .border-white\/\[0\.08\] { border-color: #E5E5E5 !important; }
+[data-theme="luxury"] .border-white\/\[0\.1\] { border-color: #E5E5E5 !important; }
+[data-theme="luxury"] .border-white\/\[0\.12\] { border-color: #C5A059 !important; }
+[data-theme="luxury"] .border-white\/10 { border-color: #E5E5E5 !important; }
 
 /* Inputs — dark bg inputs to light */
-.bg-\[\#F9F7F2\] .bg-white\/\[0\.06\] {
+[data-theme="luxury"] .bg-white\/\[0\.06\] {
   background-color: #fff !important;
   border-color: #E5E5E5 !important;
   color: #1a1a1a !important;
 }
 
 /* Hover states */
-.bg-\[\#F9F7F2\] .hover\:bg-white\/\[0\.04\]:hover { background-color: #f9f7f2 !important; }
-.bg-\[\#F9F7F2\] .hover\:bg-white\/\[0\.06\]:hover { background-color: #f5f0e8 !important; }
-.bg-\[\#F9F7F2\] .hover\:text-white\/60:hover { color: #555 !important; }
-.bg-\[\#F9F7F2\] .hover\:text-white\/80:hover { color: #333 !important; }
+[data-theme="luxury"] .hover\:bg-white\/\[0\.04\]:hover { background-color: #f9f7f2 !important; }
+[data-theme="luxury"] .hover\:bg-white\/\[0\.06\]:hover { background-color: #f5f0e8 !important; }
+[data-theme="luxury"] .hover\:text-white\/60:hover { color: #555 !important; }
+[data-theme="luxury"] .hover\:text-white\/80:hover { color: #333 !important; }
 
 /* Emerald accents → gold */
-.bg-\[\#F9F7F2\] .text-emerald-400 { color: #C5A059 !important; }
-.bg-\[\#F9F7F2\] .text-emerald-300 { color: #d4b06a !important; }
-.bg-\[\#F9F7F2\] .bg-emerald-500\/15 { background-color: rgba(197, 160, 89, 0.15) !important; }
-.bg-\[\#F9F7F2\] .bg-emerald-500\/10 { background-color: rgba(197, 160, 89, 0.1) !important; }
-.bg-\[\#F9F7F2\] .bg-emerald-600 { background-color: #C5A059 !important; }
-.bg-\[\#F9F7F2\] .hover\:bg-emerald-500:hover { background-color: #b8934d !important; }
-.bg-\[\#F9F7F2\] .ring-emerald-500\/50 { --tw-ring-color: rgba(197, 160, 89, 0.5) !important; }
-.bg-\[\#F9F7F2\] .focus\:ring-emerald-500\/50:focus { --tw-ring-color: rgba(197, 160, 89, 0.5) !important; }
-.bg-\[\#F9F7F2\] .border-emerald-500\/30 { border-color: rgba(197, 160, 89, 0.3) !important; }
+[data-theme="luxury"] .text-emerald-400 { color: #C5A059 !important; }
+[data-theme="luxury"] .text-emerald-300 { color: #d4b06a !important; }
+[data-theme="luxury"] .bg-emerald-500\/15 { background-color: rgba(197, 160, 89, 0.15) !important; }
+[data-theme="luxury"] .bg-emerald-500\/10 { background-color: rgba(197, 160, 89, 0.1) !important; }
+[data-theme="luxury"] .bg-emerald-600 { background-color: #C5A059 !important; }
+[data-theme="luxury"] .hover\:bg-emerald-500:hover { background-color: #b8934d !important; }
+[data-theme="luxury"] .ring-emerald-500\/50 { --tw-ring-color: rgba(197, 160, 89, 0.5) !important; }
+[data-theme="luxury"] .focus\:ring-emerald-500\/50:focus { --tw-ring-color: rgba(197, 160, 89, 0.5) !important; }
+[data-theme="luxury"] .border-emerald-500\/30 { border-color: rgba(197, 160, 89, 0.3) !important; }
 
 /* Backdrop blur panels */
-.bg-\[\#F9F7F2\] .backdrop-blur-xl { backdrop-filter: none !important; }
-.bg-\[\#F9F7F2\] .backdrop-blur-sm { backdrop-filter: none !important; }
+[data-theme="luxury"] .backdrop-blur-xl { backdrop-filter: none !important; }
+[data-theme="luxury"] .backdrop-blur-sm { backdrop-filter: none !important; }
 
 /* Amber alerts — darken for readability on cream */
-.bg-\[\#F9F7F2\] .text-amber-400 { color: #b8860b !important; }
-.bg-\[\#F9F7F2\] .text-amber-300 { color: #c4960f !important; }
-.bg-\[\#F9F7F2\] .text-amber-500 { color: #a67c00 !important; }
+[data-theme="luxury"] .text-amber-400 { color: #b8860b !important; }
+[data-theme="luxury"] .text-amber-300 { color: #c4960f !important; }
+[data-theme="luxury"] .text-amber-500 { color: #a67c00 !important; }
 
 /* Status badge text — darken for cream bg */
-.bg-\[\#F9F7F2\] .text-yellow-400 { color: #a67c00 !important; }
-.bg-\[\#F9F7F2\] .text-green-400 { color: #2d6a4f !important; }
-.bg-\[\#F9F7F2\] .text-blue-400 { color: #1d4ed8 !important; }
-.bg-\[\#F9F7F2\] .text-cyan-400 { color: #0e7490 !important; }
-.bg-\[\#F9F7F2\] .text-violet-400 { color: #6d28d9 !important; }
-.bg-\[\#F9F7F2\] .text-red-400 { color: #c53030 !important; }
-.bg-\[\#F9F7F2\] .text-gray-400 { color: #777 !important; }
-.bg-\[\#F9F7F2\] .text-gray-500 { color: #666 !important; }
-.bg-\[\#F9F7F2\] .text-gray-700 { color: #333 !important; }
+[data-theme="luxury"] .text-yellow-400 { color: #a67c00 !important; }
+[data-theme="luxury"] .text-green-400 { color: #2d6a4f !important; }
+[data-theme="luxury"] .text-blue-400 { color: #1d4ed8 !important; }
+[data-theme="luxury"] .text-cyan-400 { color: #0e7490 !important; }
+[data-theme="luxury"] .text-violet-400 { color: #6d28d9 !important; }
+[data-theme="luxury"] .text-red-400 { color: #c53030 !important; }
+[data-theme="luxury"] .text-gray-400 { color: #777 !important; }
+[data-theme="luxury"] .text-gray-500 { color: #666 !important; }
+[data-theme="luxury"] .text-gray-700 { color: #333 !important; }
 
 /* Font weight boost for readability */
-.bg-\[\#F9F7F2\] .font-medium { font-weight: 500 !important; }
-.bg-\[\#F9F7F2\] .font-semibold { font-weight: 600 !important; }
+[data-theme="luxury"] .font-medium { font-weight: 500 !important; }
+[data-theme="luxury"] .font-semibold { font-weight: 600 !important; }
 
 /* Table/card text readability */
-.bg-\[\#F9F7F2\] .text-sm { color: inherit; }
-.bg-\[\#F9F7F2\] p.text-sm { color: #444 !important; }
+[data-theme="luxury"] .text-sm { color: inherit; }
+[data-theme="luxury"] p.text-sm { color: #444 !important; }
 
 /* Specific badge backgrounds — soften for cream */
-.bg-\[\#F9F7F2\] .bg-amber-500\/\[0\.06\] { background-color: rgba(184, 134, 11, 0.08) !important; }
-.bg-\[\#F9F7F2\] .border-amber-500\/20 { border-color: rgba(184, 134, 11, 0.2) !important; }
-.bg-\[\#F9F7F2\] .border-amber-500\/10 { border-color: rgba(184, 134, 11, 0.15) !important; }
-.bg-\[\#F9F7F2\] .bg-amber-500\/\[0\.1\] { background-color: rgba(184, 134, 11, 0.1) !important; }
+[data-theme="luxury"] .bg-amber-500\/\[0\.06\] { background-color: rgba(184, 134, 11, 0.08) !important; }
+[data-theme="luxury"] .border-amber-500\/20 { border-color: rgba(184, 134, 11, 0.2) !important; }
+[data-theme="luxury"] .border-amber-500\/10 { border-color: rgba(184, 134, 11, 0.15) !important; }
+[data-theme="luxury"] .bg-amber-500\/\[0\.1\] { background-color: rgba(184, 134, 11, 0.1) !important; }

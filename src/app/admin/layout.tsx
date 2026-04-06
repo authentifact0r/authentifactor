@@ -30,7 +30,7 @@ export default async function AdminLayout({
   }
 
   return (
-    <div className="min-h-screen bg-[#F9F7F2]">
+    <div className="min-h-screen bg-[#F9F7F2]" data-theme="luxury">
       <div className="flex min-h-screen">
         <AdminSidebar tenantName={tenantName} tenantInitial={tenantInitial} tenantColor={tenantColor} tenantSlug={tenantSlug} />
         <main className="flex-1 overflow-auto">
