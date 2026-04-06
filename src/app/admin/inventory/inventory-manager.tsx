@@ -141,9 +141,9 @@ export function InventoryManager({ products, warehouses, tenantSlug }: Props) {
                 )}
                 <div className="flex-1 min-w-0">
                   <p className="font-medium text-white truncate">{product.name}</p>
-                  <p className="text-xs text-white/30 font-mono">{product.sku}</p>
+                  <p className="text-xs text-white/50 font-mono">{product.sku}</p>
                 </div>
-                <span className="hidden sm:inline text-xs text-white/30 tabular-nums">£{(product.price * product.totalStock).toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
+                <span className="hidden sm:inline text-xs text-white/50 tabular-nums">£{(product.price * product.totalStock).toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
                 <span className={`rounded-full px-3 py-1 text-xs font-semibold tabular-nums ${
                   isOut ? "bg-red-500/15 text-red-400" :
                   isLow ? "bg-amber-500/15 text-amber-400" :
@@ -151,8 +151,8 @@ export function InventoryManager({ products, warehouses, tenantSlug }: Props) {
                 }`}>
                   {product.totalStock} units
                 </span>
-                <span className="text-xs text-white/30">{product.batches.length} batch{product.batches.length !== 1 ? "es" : ""}</span>
-                {isExpanded ? <ChevronDown className="h-4 w-4 text-white/30" /> : <ChevronRight className="h-4 w-4 text-white/30" />}
+                <span className="text-xs text-white/50">{product.batches.length} batch{product.batches.length !== 1 ? "es" : ""}</span>
+                {isExpanded ? <ChevronDown className="h-4 w-4 text-white/50" /> : <ChevronRight className="h-4 w-4 text-white/50" />}
               </button>
 
               {/* Expanded: Batch Details + Actions */}
@@ -166,7 +166,7 @@ export function InventoryManager({ products, warehouses, tenantSlug }: Props) {
                         <div key={batch.id} className="flex items-center gap-4 px-5 py-3">
                           <div className="flex-1 min-w-0">
                             <p className="text-sm text-white/70 font-mono">{batch.batchNumber}</p>
-                            <p className="text-xs text-white/30 flex items-center gap-1">
+                            <p className="text-xs text-white/50 flex items-center gap-1">
                               <Warehouse className="h-3 w-3" /> {batch.warehouse}
                               {batch.expiryDate && <span> · Expires {new Date(batch.expiryDate).toLocaleDateString("en-GB")}</span>}
                             </p>

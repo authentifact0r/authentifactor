@@ -265,14 +265,14 @@ export function OrdersManager({ orders, products, tenantSlug }: Props) {
               <button onClick={() => setExpanded(isOpen ? null : order.id)} className="w-full flex items-center gap-4 px-5 py-4 hover:bg-white/[0.02] transition-colors text-left">
                 <div className="flex-1 min-w-0">
                   <p className="font-semibold text-white">{order.orderNumber}</p>
-                  <p className="text-xs text-white/30">{new Date(order.createdAt).toLocaleDateString("en-GB")} · {order.items.length} item{order.items.length !== 1 ? "s" : ""}</p>
+                  <p className="text-xs text-white/50">{new Date(order.createdAt).toLocaleDateString("en-GB")} · {order.items.length} item{order.items.length !== 1 ? "s" : ""}</p>
                 </div>
                 <span className="text-white font-semibold tabular-nums">{formatPrice(order.total)}</span>
                 <span className="hidden sm:inline rounded-full bg-white/[0.06] px-2 py-0.5 text-[10px] text-white/50">{order.shippingMethod}</span>
                 <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-semibold ${config.color}`}>
                   <Icon className="h-3 w-3" /> {order.status}
                 </span>
-                {isOpen ? <ChevronDown className="h-4 w-4 text-white/30" /> : <ChevronRight className="h-4 w-4 text-white/30" />}
+                {isOpen ? <ChevronDown className="h-4 w-4 text-white/50" /> : <ChevronRight className="h-4 w-4 text-white/50" />}
               </button>
 
               {/* Expanded */}
@@ -291,7 +291,7 @@ export function OrdersManager({ orders, products, tenantSlug }: Props) {
                           )}
                           <div className="flex-1 min-w-0">
                             <p className="text-sm text-white truncate">{item.product?.name}</p>
-                            <p className="text-xs text-white/30">{item.product?.sku} · Qty: {item.quantity}</p>
+                            <p className="text-xs text-white/50">{item.product?.sku} · Qty: {item.quantity}</p>
                           </div>
                           <span className="text-sm font-medium text-white tabular-nums">{formatPrice(item.totalPrice)}</span>
                         </div>

@@ -148,7 +148,7 @@ export function ProductsTable({ products }: { products: Product[] }) {
       {/* Filters */}
       <div className="flex flex-wrap gap-3">
         <div className="flex items-center gap-2 rounded-xl bg-white/[0.04] border border-white/[0.08] px-3 h-10 flex-1 min-w-[200px] max-w-sm">
-          <Search className="h-4 w-4 text-white/30" />
+          <Search className="h-4 w-4 text-white/50" />
           <input type="text" placeholder="Search products..." value={search} onChange={(e) => setSearch(e.target.value)} className="flex-1 bg-transparent text-sm text-white placeholder:text-white/25 focus:outline-none" />
         </div>
         <select value={categoryFilter} onChange={(e) => setCategoryFilter(e.target.value)} className="rounded-xl bg-white/[0.04] border border-white/[0.08] px-3 h-10 text-sm text-white/60 focus:outline-none">
@@ -186,14 +186,14 @@ export function ProductsTable({ products }: { products: Product[] }) {
                   <div className="flex-1 min-w-0">
                     <p className="font-medium text-white truncate">{p.name}</p>
                     <div className="flex items-center gap-2 mt-0.5">
-                      <span className="text-xs text-white/30">{p.sku}</span>
+                      <span className="text-xs text-white/50">{p.sku}</span>
                       <span className="rounded bg-white/[0.06] px-1.5 py-0.5 text-[10px] text-white/50">{p.category}</span>
                       {p.collection && <span className="rounded bg-violet-500/10 px-1.5 py-0.5 text-[10px] text-violet-400">{p.collection}</span>}
                     </div>
                   </div>
                   <span className="text-white font-medium tabular-nums">{formatPrice(p.price)}</span>
                   {p.compareAtPrice && p.compareAtPrice > p.price && (
-                    <span className="text-xs text-white/30 line-through tabular-nums">{formatPrice(p.compareAtPrice)}</span>
+                    <span className="text-xs text-white/50 line-through tabular-nums">{formatPrice(p.compareAtPrice)}</span>
                   )}
                   <span className={`rounded-full px-2.5 py-1 text-[11px] font-semibold tabular-nums ${
                     p.totalStock <= 0 ? "bg-red-500/15 text-red-400" :
@@ -204,12 +204,12 @@ export function ProductsTable({ products }: { products: Product[] }) {
                   </span>
                   <button
                     onClick={(e) => { e.stopPropagation(); handleToggleActive(p.id, p.isActive); }}
-                    className={`inline-flex items-center gap-1 text-xs ${p.isActive ? "text-emerald-400" : "text-white/30"}`}
+                    className={`inline-flex items-center gap-1 text-xs ${p.isActive ? "text-emerald-400" : "text-white/50"}`}
                   >
                     {p.isActive ? <Eye className="h-3 w-3" /> : <EyeOff className="h-3 w-3" />}
                     {p.isActive ? "Live" : "Draft"}
                   </button>
-                  {isOpen ? <ChevronDown className="h-4 w-4 text-white/30" /> : <ChevronRight className="h-4 w-4 text-white/30" />}
+                  {isOpen ? <ChevronDown className="h-4 w-4 text-white/50" /> : <ChevronRight className="h-4 w-4 text-white/50" />}
                 </button>
 
                 {/* Expanded Inline Edit */}
@@ -282,7 +282,7 @@ export function ProductsTable({ products }: { products: Product[] }) {
                             const url = prompt("Paste image URL:");
                             if (url?.trim()) updateField("images", [...(editData.images || []), url.trim()]);
                           }}
-                          className="h-16 w-16 rounded-lg border border-dashed border-white/[0.12] flex items-center justify-center text-white/30 hover:text-white/50 hover:border-white/[0.2] transition"
+                          className="h-16 w-16 rounded-lg border border-dashed border-white/[0.12] flex items-center justify-center text-white/50 hover:text-white/50 hover:border-white/[0.2] transition"
                         >
                           <Plus className="h-5 w-5" />
                         </button>
@@ -292,7 +292,7 @@ export function ProductsTable({ products }: { products: Product[] }) {
                     {/* SEO quick fields */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-xs font-medium text-white/50 mb-1">SEO Title <span className="text-white/30">(60 chars)</span></label>
+                        <label className="block text-xs font-medium text-white/50 mb-1">SEO Title <span className="text-white/50">(60 chars)</span></label>
                         <input value={editData.metaTitle || ""} onChange={(e) => updateField("metaTitle", e.target.value)} maxLength={60} placeholder={p.name} className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.12] text-sm text-white placeholder:text-white/25 focus:outline-none" />
                       </div>
                       <div>
@@ -301,7 +301,7 @@ export function ProductsTable({ products }: { products: Product[] }) {
                       </div>
                     </div>
                     <div>
-                      <label className="block text-xs font-medium text-white/50 mb-1">SEO Description <span className="text-white/30">(160 chars)</span></label>
+                      <label className="block text-xs font-medium text-white/50 mb-1">SEO Description <span className="text-white/50">(160 chars)</span></label>
                       <textarea value={editData.metaDescription || ""} onChange={(e) => updateField("metaDescription", e.target.value)} maxLength={160} rows={2} placeholder={p.description?.substring(0, 160)} className="w-full px-3 py-2 rounded-lg bg-white/[0.06] border border-white/[0.12] text-sm text-white placeholder:text-white/25 focus:outline-none resize-none" />
                     </div>
 
