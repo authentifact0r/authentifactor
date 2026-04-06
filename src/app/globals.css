@@ -125,3 +125,33 @@ body {
 /* Backdrop blur panels */
 .bg-\[\#F9F7F2\] .backdrop-blur-xl { backdrop-filter: none !important; }
 .bg-\[\#F9F7F2\] .backdrop-blur-sm { backdrop-filter: none !important; }
+
+/* Amber alerts — darken for readability on cream */
+.bg-\[\#F9F7F2\] .text-amber-400 { color: #b8860b !important; }
+.bg-\[\#F9F7F2\] .text-amber-300 { color: #c4960f !important; }
+.bg-\[\#F9F7F2\] .text-amber-500 { color: #a67c00 !important; }
+
+/* Status badge text — darken for cream bg */
+.bg-\[\#F9F7F2\] .text-yellow-400 { color: #a67c00 !important; }
+.bg-\[\#F9F7F2\] .text-green-400 { color: #2d6a4f !important; }
+.bg-\[\#F9F7F2\] .text-blue-400 { color: #1d4ed8 !important; }
+.bg-\[\#F9F7F2\] .text-cyan-400 { color: #0e7490 !important; }
+.bg-\[\#F9F7F2\] .text-violet-400 { color: #6d28d9 !important; }
+.bg-\[\#F9F7F2\] .text-red-400 { color: #c53030 !important; }
+.bg-\[\#F9F7F2\] .text-gray-400 { color: #777 !important; }
+.bg-\[\#F9F7F2\] .text-gray-500 { color: #666 !important; }
+.bg-\[\#F9F7F2\] .text-gray-700 { color: #333 !important; }
+
+/* Font weight boost for readability */
+.bg-\[\#F9F7F2\] .font-medium { font-weight: 500 !important; }
+.bg-\[\#F9F7F2\] .font-semibold { font-weight: 600 !important; }
+
+/* Table/card text readability */
+.bg-\[\#F9F7F2\] .text-sm { color: inherit; }
+.bg-\[\#F9F7F2\] p.text-sm { color: #444 !important; }
+
+/* Specific badge backgrounds — soften for cream */
+.bg-\[\#F9F7F2\] .bg-amber-500\/\[0\.06\] { background-color: rgba(184, 134, 11, 0.08) !important; }
+.bg-\[\#F9F7F2\] .border-amber-500\/20 { border-color: rgba(184, 134, 11, 0.2) !important; }
+.bg-\[\#F9F7F2\] .border-amber-500\/10 { border-color: rgba(184, 134, 11, 0.15) !important; }
+.bg-\[\#F9F7F2\] .bg-amber-500\/\[0\.1\] { background-color: rgba(184, 134, 11, 0.1) !important; }
