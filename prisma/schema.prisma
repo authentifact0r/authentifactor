@@ -84,6 +84,8 @@ model Tenant {
   shippingRules    ShippingRule[]
   seoSettings      SeoSettings[]
   onboardingProgress OnboardingProgress?
+  subscribers      Subscriber[]
+  campaigns        Campaign[]
 
   @@map("tenants")
 }
@@ -554,4 +556,47 @@ model TenantUsage {
   @@unique([tenantId, periodStart, periodEnd])
   @@index([tenantId])
   @@map("tenant_usage")
+}
+
+// ─── NEWSLETTER & NOTIFICATIONS ─────────────────────────────
+
+model Subscriber {
+  id          String    @id @default(cuid())
+  tenantId    String
+  tenant      Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  email       String?
+  phone       String?
+  firstName   String?
+  lastName    String?
+  source      String    @default("manual") // manual, checkout, import, storefront
+  emailOptIn  Boolean   @default(true)
+  smsOptIn    Boolean   @default(false)
+  tags        String[]  // e.g. ["vip", "new-customer", "flash-sale-interest"]
+  createdAt   DateTime  @default(now())
+  unsubscribedAt DateTime?
+
+  @@unique([tenantId, email])
+  @@index([tenantId])
+  @@map("subscribers")
+}
+
+model Campaign {
+  id          String    @id @default(cuid())
+  tenantId    String
+  tenant      Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  title       String
+  subject     String?   // email subject line
+  body        String    // message body (supports basic HTML for email)
+  channel     String    @default("email") // email, sms, both
+  status      String    @default("draft") // draft, sending, sent, failed
+  audience    String    @default("all") // all, email-only, sms-only, tagged
+  audienceTag String?   // if audience = "tagged", which tag
+  sentCount   Int       @default(0)
+  failedCount Int       @default(0)
+  scheduledAt DateTime?
+  sentAt      DateTime?
+  createdAt   DateTime  @default(now())
+
+  @@index([tenantId])
+  @@map("campaigns")
 }

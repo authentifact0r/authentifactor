@@ -23,6 +23,8 @@ const TENANT_SCOPED_MODELS = [
   "flashSale",
   "shippingRule",
   "seoSettings",
+  "subscriber",
+  "campaign",
 ] as const;
 
 type TenantScopedModel = (typeof TENANT_SCOPED_MODELS)[number];

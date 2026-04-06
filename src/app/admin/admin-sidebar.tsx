@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import {
   Package, BarChart3, Warehouse, ShoppingCart, Zap, Box, LogOut,
-  CreditCard, Palette, Search, Users, Truck, ChevronRight,
+  CreditCard, Palette, Mail, Users, Truck, ChevronRight,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -18,7 +18,7 @@ const navItems = [
   { href: "/admin/shipping", label: "Shipping", icon: Truck },
   { href: "/admin/team", label: "Team", icon: Users },
   { href: "/admin/branding", label: "Branding", icon: Palette },
-  { href: "/admin/seo", label: "SEO", icon: Search },
+  { href: "/admin/newsletter", label: "Newsletter", icon: Mail },
   { href: "/admin/billing", label: "Account & Billing", icon: CreditCard },
 ];
 
