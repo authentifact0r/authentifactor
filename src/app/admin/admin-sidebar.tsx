@@ -5,12 +5,13 @@ import { usePathname, useSearchParams } from "next/navigation";
 import {
   Package, BarChart3, Warehouse, ShoppingCart, Zap, Box, LogOut,
   CreditCard, Palette, Mail, Users, Truck, ChevronRight, Download,
-  Settings, Gift,
+  Settings, Gift, TrendingUp,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navItems = [
   { href: "/admin", label: "Dashboard", icon: BarChart3 },
+  { href: "/admin/analytics", label: "Analytics", icon: TrendingUp },
   { href: "/admin/products", label: "Products", icon: Package },
   { href: "/admin/inventory", label: "Inventory", icon: Box },
   { href: "/admin/orders", label: "Orders", icon: ShoppingCart },
