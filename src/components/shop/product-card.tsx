@@ -2,12 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { ShoppingCart, Zap } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
-import { formatPrice, getStockStatus } from "@/lib/utils";
-import { useCart } from "@/hooks/use-cart";
+import { formatPrice } from "@/lib/utils";
 
 interface ProductCardProps {
   product: {
@@ -30,106 +25,63 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ product }: ProductCardProps) {
-  const { addItem } = useCart();
-  const stock = getStockStatus(product.totalStock);
   const hasFlashSale = product.flashSale != null;
   const price = parseFloat(product.price);
   const salePrice = hasFlashSale
     ? price * (1 - parseFloat(product.flashSale!.discountPercent) / 100)
     : price;
 
-  const handleAddToCart = () => {
-    addItem({
-      productId: product.id,
-      quantity: 1,
-      product: {
-        id: product.id,
-        name: product.name,
-        price: product.price,
-        images: product.images,
-        weightKg: product.weightKg,
-        isPerishable: product.isPerishable,
-        slug: product.slug,
-      },
-    });
-  };
-
   return (
-    <Card className="group overflow-hidden transition-shadow hover:shadow-md">
-      <Link href={`/products/${product.slug}`}>
-        <div className="relative aspect-square overflow-hidden bg-gray-100">
-          {product.images[0] ? (
-            <Image
-              src={product.images[0]}
-              alt={product.name}
-              fill
-              className="object-cover transition-transform group-hover:scale-105"
-              sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-            />
-          ) : (
-            <div className="flex h-full items-center justify-center text-gray-400">
-              No image
-            </div>
-          )}
-
-          {/* Badges */}
-          <div className="absolute left-2 top-2 flex flex-col gap-1">
-            <Badge variant={stock.variant}>{stock.label}</Badge>
-            {hasFlashSale && (
-              <Badge variant="destructive" className="gap-1">
-                <Zap className="h-3 w-3" />
-                {product.flashSale!.discountPercent}% OFF
-              </Badge>
-            )}
-            {product.isPerishable && (
-              <Badge variant="outline" className="bg-white/90">Fresh</Badge>
-            )}
+    <Link href={`/products/${product.slug}`} className="group block">
+      {/* Image */}
+      <div className="relative overflow-hidden" style={{ aspectRatio: "4/5", background: "linear-gradient(180deg, #f0ece6, #e5dfd6)" }}>
+        {product.images[0] ? (
+          <Image
+            src={product.images[0]}
+            alt={product.name}
+            fill
+            className="object-cover transition-all duration-700 ease-[cubic-bezier(.16,1,.3,1)] group-hover:scale-[1.04] group-hover:brightness-105"
+            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+          />
+        ) : (
+          <div className="flex h-full items-center justify-center" style={{ color: "#ccc" }}>
+            <svg className="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
           </div>
+        )}
 
-          {product.isSubscribable && (
-            <div className="absolute right-2 top-2">
-              <Badge variant="secondary" className="bg-amber-500 text-white">
-                Subscribe & Save
-              </Badge>
-            </div>
-          )}
-        </div>
-      </Link>
-
-      <CardContent className="p-4">
-        <p className="text-xs font-medium uppercase tracking-wider text-emerald-700">
-          {product.category}
-        </p>
-        <Link href={`/products/${product.slug}`}>
-          <h3 className="mt-1 font-semibold text-gray-900 line-clamp-2 hover:text-emerald-800">
-            {product.name}
-          </h3>
-        </Link>
-        <p className="mt-0.5 text-xs text-gray-500">{product.weightKg}kg</p>
-
-        <div className="mt-3 flex items-center justify-between">
-          <div className="flex items-baseline gap-2">
-            <span className="text-lg font-bold text-gray-900">
-              {formatPrice(salePrice)}
-            </span>
-            {(hasFlashSale || product.compareAtPrice) && (
-              <span className="text-sm text-gray-400 line-through">
-                {formatPrice(product.compareAtPrice || product.price)}
+        {/* Badges */}
+        {(hasFlashSale || product.totalStock <= 0) && (
+          <div className="absolute top-0 left-0">
+            {hasFlashSale && (
+              <span className="inline-block px-3 py-1.5 text-[0.6rem] font-medium uppercase tracking-[0.15em] bg-black text-white">
+                {product.flashSale!.discountPercent}% Off
+              </span>
+            )}
+            {product.totalStock <= 0 && (
+              <span className="inline-block px-3 py-1.5 text-[0.6rem] font-medium uppercase tracking-[0.15em] bg-[#1a1a1a] text-white">
+                Sold Out
               </span>
             )}
           </div>
+        )}
+      </div>
 
-          <Button
-            size="icon"
-            variant="default"
-            onClick={handleAddToCart}
-            disabled={product.totalStock <= 0}
-            aria-label={`Add ${product.name} to cart`}
-          >
-            <ShoppingCart className="h-4 w-4" />
-          </Button>
-        </div>
-      </CardContent>
-    </Card>
+      {/* Info */}
+      <div className="flex items-start justify-between pt-3 pb-1">
+        <h3 className="text-[0.85rem] font-medium uppercase tracking-[0.04em] leading-snug" style={{ color: "#1a1a1a", fontFamily: "var(--font-body, Inter), sans-serif" }}>
+          {product.name}
+        </h3>
+        <span className="text-[1.05rem] font-light italic shrink-0 ml-3" style={{ color: "#888", fontFamily: "var(--font-display, Georgia), serif" }}>
+          {hasFlashSale || product.compareAtPrice ? (
+            <>
+              <span className="line-through mr-1 text-[0.85rem]">{formatPrice(product.compareAtPrice || product.price)}</span>
+              {formatPrice(salePrice)}
+            </>
+          ) : (
+            formatPrice(price)
+          )}
+        </span>
+      </div>
+    </Link>
   );
 }
