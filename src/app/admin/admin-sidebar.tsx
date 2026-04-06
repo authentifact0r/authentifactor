@@ -5,6 +5,7 @@ import { usePathname, useSearchParams } from "next/navigation";
 import {
   Package, BarChart3, Warehouse, ShoppingCart, Zap, Box, LogOut,
   CreditCard, Palette, Mail, Users, Truck, ChevronRight, Download,
+  Settings, Gift,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -21,6 +22,8 @@ const navItems = [
   { href: "/admin/branding", label: "Branding", icon: Palette },
   { href: "/admin/newsletter", label: "Newsletter", icon: Mail },
   { href: "/admin/billing", label: "Account & Billing", icon: CreditCard },
+  { href: "/admin/referrals", label: "Referrals", icon: Gift },
+  { href: "/admin/settings", label: "Settings", icon: Settings },
 ];
 
 interface Props {

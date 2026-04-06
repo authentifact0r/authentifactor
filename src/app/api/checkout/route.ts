@@ -104,6 +104,10 @@ export async function POST(req: NextRequest) {
     const shippingCost = selectedShipping?.cost ?? 0;
     const total = subtotal + shippingCost;
 
+    // Platform fee
+    const feePercent = tenant.applicationFeePercent ?? 2.0;
+    const platformFee = Math.round(total * (feePercent / 100) * 100) / 100;
+
     // Find closest warehouse
     const warehouse = savedAddress.latitude && savedAddress.longitude
       ? await findClosestWarehouse(savedAddress.latitude, savedAddress.longitude, productIds)
@@ -121,6 +125,8 @@ export async function POST(req: NextRequest) {
         subtotal,
         shippingCost,
         total,
+        platformFee,
+        platformFeePercent: feePercent,
         totalWeightKg,
         shippingMethod: shippingMethod as ShippingMethod,
         paymentProvider: (paymentProvider || "PAYSTACK") as PaymentProvider,

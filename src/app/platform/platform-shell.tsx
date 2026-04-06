@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { motion, useScroll, useMotionValueEvent, AnimatePresence } from "framer-motion";
 import { useState } from "react";
 import { Menu, X, ArrowUpRight } from "lucide-react";
@@ -10,6 +11,7 @@ const navLinks = [
   { label: "Services", href: "#services" },
   { label: "Capabilities", href: "#capabilities" },
   { label: "Work", href: "#work" },
+  { label: "Marketplace", href: "/platform/marketplace" },
 ];
 
 export default function PlatformShell({
@@ -17,6 +19,7 @@ export default function PlatformShell({
 }: {
   children: React.ReactNode;
 }) {
+  const router = useRouter();
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const { scrollY } = useScroll();
@@ -68,7 +71,7 @@ export default function PlatformShell({
               Sign In
             </Link>
             <button
-              onClick={() => window.dispatchEvent(new Event("open-contact-form"))}
+              onClick={() => router.push("/platform/get-started")}
               className="ml-1 rounded-full bg-white px-6 py-2.5 text-[13px] font-semibold text-gray-950 transition-all hover:bg-gray-100 cursor-pointer"
             >
               Get Started
@@ -114,7 +117,7 @@ export default function PlatformShell({
                   Sign In
                 </Link>
                 <button
-                  onClick={() => { setMobileOpen(false); window.dispatchEvent(new Event("open-contact-form")); }}
+                  onClick={() => { setMobileOpen(false); router.push("/platform/get-started"); }}
                   className="mt-2 rounded-full bg-white py-3.5 text-center text-[15px] font-semibold text-gray-950 cursor-pointer"
                 >
                   Get Started
@@ -146,13 +149,13 @@ export default function PlatformShell({
                 Your vision, our engineering.
               </p>
             </div>
-            <button
-              onClick={() => window.dispatchEvent(new Event("open-contact-form"))}
-              className="group flex items-center gap-3 text-lg font-semibold text-white transition-colors hover:text-emerald-400 cursor-pointer"
+            <Link
+              href="/platform/get-started"
+              className="group flex items-center gap-3 text-lg font-semibold text-white transition-colors hover:text-emerald-400"
             >
               Start a project
               <ArrowUpRight className="h-5 w-5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-            </button>
+            </Link>
           </div>
 
           {/* Middle — Links grid */}

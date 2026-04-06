@@ -71,6 +71,15 @@ model Tenant {
   // Vercel project mapping
   vercelProjectId        String?
 
+  // ── Self-service signup ──
+  signupSource       String    @default("manual")   // manual | self-service | referral
+  trialEndsAt        DateTime?                       // null = no trial
+  isPublicListing    Boolean   @default(false)       // opt-in for marketplace
+  vertical           String?                         // grocery | fashion | catering | beauty | education
+  referralCode       String?   @unique               // for referral program
+  referredByTenantId String?                         // who referred this tenant
+  applicationFeePercent Float  @default(2.0)        // platform take rate on transactions
+
   tenantUsers      TenantUser[]
   usageRecords     TenantUsage[]
   products         Product[]
@@ -327,6 +336,9 @@ model Order {
   discount        Decimal        @db.Decimal(10, 2) @default(0)
   total           Decimal        @db.Decimal(10, 2)
   totalWeightKg   Decimal        @db.Decimal(8, 3)
+
+  platformFee     Decimal        @db.Decimal(10, 2) @default(0)
+  platformFeePercent Float       @default(0)
 
   shippingMethod  ShippingMethod
   paymentProvider PaymentProvider

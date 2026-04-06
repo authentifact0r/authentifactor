@@ -69,6 +69,8 @@ export default async function TenantsListPage() {
                     <TableHead>Domain</TableHead>
                     <TableHead>Products</TableHead>
                     <TableHead>Orders</TableHead>
+                    <TableHead>Source</TableHead>
+                    <TableHead>Trial</TableHead>
                     <TableHead>Status</TableHead>
                     <TableHead></TableHead>
                   </TableRow>
@@ -85,6 +87,22 @@ export default async function TenantsListPage() {
                       </TableCell>
                       <TableCell>{t._count.products}</TableCell>
                       <TableCell>{t._count.orders}</TableCell>
+                      <TableCell>
+                        <Badge variant={t.signupSource === "self-service" ? "default" : "secondary"}>
+                          {t.signupSource ?? "manual"}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        {t.trialEndsAt ? (
+                          <span className={`text-xs ${new Date(t.trialEndsAt) > new Date() ? "text-emerald-600" : "text-gray-400"}`}>
+                            {new Date(t.trialEndsAt) > new Date()
+                              ? `${Math.ceil((new Date(t.trialEndsAt).getTime() - Date.now()) / 86400000)}d left`
+                              : "Expired"}
+                          </span>
+                        ) : (
+                          <span className="text-xs text-gray-400">—</span>
+                        )}
+                      </TableCell>
                       <TableCell>
                         <form
                           action={async () => {

@@ -12,6 +12,7 @@ const pageTitles: Record<string, string> = {
   "/superadmin/tenants/new": "New Tenant",
   "/superadmin/billing": "Billing",
   "/superadmin/billing/usage": "Usage Analytics",
+  "/superadmin/revenue": "Platform Revenue",
   "/superadmin/users": "Users",
   "/superadmin/security": "Security Posture",
   "/superadmin/settings": "Settings",

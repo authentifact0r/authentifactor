@@ -39,12 +39,18 @@ export async function POST(request: NextRequest) {
     if (shipping?.cost > 0) totalPence += Math.round(shipping.cost * 100);
     if (giftWrap) totalPence += 500;
 
+    // Platform fee
+    const feePercent = tenant.applicationFeePercent ?? 2.0;
+    const platformFeePence = Math.round(totalPence * (feePercent / 100));
+
     const paymentIntent = await stripe.paymentIntents.create({
       amount: totalPence,
       currency: (tenant.currency || "GBP").toLowerCase(),
       metadata: {
         tenantId: tenant.id,
         tenantSlug: slug,
+        platformFeePence: platformFeePence.toString(),
+        platformFeePercent: feePercent.toString(),
         customerName: `${customer.firstName || ""} ${customer.lastName || ""}`.trim(),
         customerEmail: customer.email,
         customerPhone: customer.phone || "",

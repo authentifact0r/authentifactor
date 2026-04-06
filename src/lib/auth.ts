@@ -71,20 +71,25 @@ export async function setAuthCookies(payload: JWTPayload) {
   const accessToken = await createAccessToken(payload);
   const refreshToken = await createRefreshToken(payload);
 
-  cookieStore.set("access_token", accessToken, {
+  const baseCookieOpts = {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
-    maxAge: 15 * 60, // 15 minutes
+    sameSite: "lax" as const,
     path: "/",
+    // Cross-subdomain auth: allows cookies to work across *.authentifactor.com
+    ...(process.env.NODE_ENV === "production" && {
+      domain: ".authentifactor.com",
+    }),
+  };
+
+  cookieStore.set("access_token", accessToken, {
+    ...baseCookieOpts,
+    maxAge: 15 * 60, // 15 minutes
   });
 
   cookieStore.set("refresh_token", refreshToken, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
+    ...baseCookieOpts,
     maxAge: 7 * 24 * 60 * 60, // 7 days
-    path: "/",
   });
 }
 

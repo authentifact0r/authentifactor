@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 import {
   LayoutDashboard, Building2, Users, CreditCard, BarChart3,
-  Settings, Activity, LogOut, ChevronRight, Shield,
+  Settings, Activity, LogOut, ChevronRight, Shield, TrendingUp,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -15,6 +15,7 @@ const navItems = [
   { href: "/superadmin/tenants", label: "Tenants", icon: Building2 },
   { href: "/superadmin/billing", label: "Billing", icon: CreditCard },
   { href: "/superadmin/billing/usage", label: "Usage", icon: BarChart3 },
+  { href: "/superadmin/revenue", label: "Revenue", icon: TrendingUp },
   { href: "/superadmin/users", label: "Users", icon: Users },
   { href: "/superadmin/security", label: "Security", icon: Shield },
 ];
