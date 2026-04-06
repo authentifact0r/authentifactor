@@ -2,113 +2,78 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { stripe } from "@/lib/stripe";
 
-// Public storefront checkout — no auth required (guest checkout)
-// Creates a Stripe Checkout Session and returns the URL
+function cors(response: NextResponse) {
+  response.headers.set("Access-Control-Allow-Origin", "*");
+  response.headers.set("Access-Control-Allow-Methods", "POST, OPTIONS");
+  response.headers.set("Access-Control-Allow-Headers", "Content-Type");
+  return response;
+}
+
+// Creates a Stripe PaymentIntent for inline card payment
 // POST /api/storefront/checkout?tenant=styled-by-maryam
 export async function POST(request: NextRequest) {
   try {
     const slug = request.nextUrl.searchParams.get("tenant");
-    if (!slug) return NextResponse.json({ error: "tenant param required" }, { status: 400 });
+    if (!slug) return cors(NextResponse.json({ error: "tenant param required" }, { status: 400 }));
 
     const tenant = await db.tenant.findUnique({ where: { slug } });
     if (!tenant || !tenant.isActive) {
-      return NextResponse.json({ error: "Tenant not found" }, { status: 404 });
+      return cors(NextResponse.json({ error: "Tenant not found" }, { status: 404 }));
     }
 
     const body = await request.json();
-    const { items, customer, shipping, successUrl, cancelUrl, giftWrap, giftNote } = body;
+    const { items, customer, shipping, giftWrap, giftNote } = body;
 
-    if (!items?.length || !customer?.email || !successUrl) {
-      return NextResponse.json({ error: "Missing required fields: items, customer.email, successUrl" }, { status: 400 });
+    if (!items?.length || !customer?.email) {
+      return cors(NextResponse.json({ error: "Missing required fields: items, customer.email" }, { status: 400 }));
     }
 
-    // Build Stripe line items
-    const lineItems: Array<{
-      price_data: {
-        currency: string;
-        product_data: { name: string; images?: string[]; description?: string };
-        unit_amount: number;
-      };
-      quantity: number;
-    }> = [];
+    // Calculate total in pence
+    let totalPence = 0;
+    const description: string[] = [];
 
     for (const item of items) {
-      const unitAmount = Math.round(item.price * 100); // convert to pence
-
-      lineItems.push({
-        price_data: {
-          currency: (tenant.currency || "GBP").toLowerCase(),
-          product_data: {
-            name: item.name,
-            ...(item.image && item.image.startsWith("http") ? { images: [item.image] } : {}),
-            ...(item.variant ? { description: item.variant } : {}),
-          },
-          unit_amount: unitAmount,
-        },
-        quantity: item.qty || 1,
-      });
+      const amount = Math.round(item.price * 100) * (item.qty || 1);
+      totalPence += amount;
+      description.push(`${item.name}${item.variant ? ` (${item.variant})` : ''} x${item.qty || 1}`);
     }
 
-    // Shipping cost line item
     const shippingCost = shipping?.cost || 0;
     if (shippingCost > 0) {
-      lineItems.push({
-        price_data: {
-          currency: (tenant.currency || "GBP").toLowerCase(),
-          product_data: { name: `${shipping.method || "Express"} Delivery` },
-          unit_amount: Math.round(shippingCost * 100),
-        },
-        quantity: 1,
-      });
+      totalPence += Math.round(shippingCost * 100);
     }
 
-    // Gift wrap
     if (giftWrap) {
-      lineItems.push({
-        price_data: {
-          currency: (tenant.currency || "GBP").toLowerCase(),
-          product_data: { name: "Gift Wrap" },
-          unit_amount: 500,
-        },
-        quantity: 1,
-      });
+      totalPence += 500; // £5
     }
 
-    // Create Stripe Checkout Session
-    const session = await stripe.checkout.sessions.create({
-      mode: "payment",
-      payment_method_types: ["card"],
-      customer_email: customer.email,
-      line_items: lineItems,
-      shipping_address_collection: {
-        allowed_countries: ["GB", "US", "FR", "DE", "IT", "AE", "NG", "GH"],
-      },
+    // Create PaymentIntent
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: totalPence,
+      currency: (tenant.currency || "GBP").toLowerCase(),
       metadata: {
         tenantId: tenant.id,
         tenantSlug: slug,
         customerName: `${customer.firstName || ""} ${customer.lastName || ""}`.trim(),
         customerEmail: customer.email,
         customerPhone: customer.phone || "",
+        shippingAddress: [customer.address, customer.city, customer.postcode, customer.country].filter(Boolean).join(", "),
         shippingMethod: shipping?.method || "standard",
         giftNote: giftNote || "",
+        items: description.join("; ").slice(0, 500),
       },
-      success_url: `${successUrl}?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: cancelUrl || successUrl.replace("/success", ""),
+      receipt_email: customer.email,
+      description: `Order from ${tenant.name}: ${description.join(", ")}`.slice(0, 1000),
     });
 
-    const response = NextResponse.json({
-      sessionId: session.id,
-      url: session.url,
-    });
-
-    response.headers.set("Access-Control-Allow-Origin", "*");
-    response.headers.set("Access-Control-Allow-Methods", "POST, OPTIONS");
-    response.headers.set("Access-Control-Allow-Headers", "Content-Type");
-
-    return response;
+    return cors(NextResponse.json({
+      clientSecret: paymentIntent.client_secret,
+      amount: totalPence,
+      currency: (tenant.currency || "GBP").toLowerCase(),
+    }));
   } catch (error: any) {
     console.error("Storefront checkout error:", error);
-    return NextResponse.json({ error: error.message || "Checkout failed" }, { status: 500 });
+    return cors(NextResponse.json({ error: error.message || "Checkout failed" }, { status: 500 }));
   }
 }
 
