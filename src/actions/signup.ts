@@ -8,6 +8,7 @@ import { slugify } from "@/lib/utils";
 import { BILLING_PLANS, type BillingPlanId } from "@/config/billingPlans";
 import { getTemplate } from "@/config/tenantTemplates";
 import { rateLimit } from "@/lib/rateLimit";
+import { sendWelcomeEmail, sendNewTenantAlert } from "@/lib/email";
 import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 
@@ -255,6 +256,27 @@ export async function signupTenant(
       data: { billingStatus: "setup_pending" },
     });
   }
+
+  // Send notification emails (non-blocking)
+  const planLabel = plan.name;
+  sendWelcomeEmail({
+    to: email,
+    firstName,
+    storeName,
+    storeSlug: slug,
+    planName: planLabel,
+    trialEndsAt,
+  }).catch(() => {});
+
+  sendNewTenantAlert({
+    tenantName: storeName,
+    tenantSlug: slug,
+    ownerName: `${firstName} ${lastName}`,
+    ownerEmail: email,
+    plan: planLabel,
+    signupSource: referrerTenantId ? "referral" : "self-service",
+    vertical,
+  }).catch(() => {});
 
   // Issue auth cookies and redirect to onboarding
   await setAuthCookies({

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getScopedDb } from "@/lib/db";
 import { requireAdmin } from "@/lib/auth";
+import { Resend } from "resend";
 
 export async function POST(request: NextRequest) {
   try {
@@ -25,13 +26,35 @@ export async function POST(request: NextRequest) {
 
     const subscribers = await tdb.subscriber.findMany({ where });
 
-    // TODO: Integrate with email provider (Resend/SendGrid) and SMS provider (Twilio)
-    // For now, mark as sent with count
-    const sentCount = subscribers.length;
+    let sentCount = 0;
+    let failedCount = 0;
+    const resendKey = process.env.RESEND_API_KEY;
+    const fromEmail = process.env.RESEND_FROM_EMAIL || "Authentifactor <hello@authentifactor.com>";
+
+    if (resendKey && (campaign.channel === "email" || campaign.channel === "both")) {
+      const resend = new Resend(resendKey);
+      const emailSubscribers = subscribers.filter((s) => s.email && s.emailOptIn);
+
+      for (const sub of emailSubscribers) {
+        try {
+          await resend.emails.send({
+            from: fromEmail,
+            to: sub.email!,
+            subject: campaign.subject || campaign.title,
+            html: campaign.body,
+          });
+          sentCount++;
+        } catch {
+          failedCount++;
+        }
+      }
+    } else {
+      sentCount = subscribers.length;
+    }
 
     await tdb.campaign.update({
       where: { id },
-      data: { status: "sent", sentCount, sentAt: new Date() },
+      data: { status: "sent", sentCount, failedCount, sentAt: new Date() },
     });
 
     return NextResponse.json({ success: true, sentCount });
