@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getScopedDb } from "@/lib/db";
 import { requireAdmin } from "@/lib/auth";
+import { triggerStorefrontSync } from "@/lib/sync";
 
 export async function PATCH(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -40,6 +41,11 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
     }
 
     const updated = await tdb.product.update({ where: { id }, data });
+
+    // Auto-sync storefront
+    const tenantSlug = request.nextUrl.searchParams.get("tenant");
+    if (tenantSlug) triggerStorefrontSync(tenantSlug);
+
     return NextResponse.json({ product: { id: updated.id, name: updated.name } });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
@@ -56,6 +62,10 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
     if (!product) return NextResponse.json({ error: "Product not found" }, { status: 404 });
 
     await tdb.product.delete({ where: { id } });
+
+    const tenantSlug = request.nextUrl.searchParams.get("tenant");
+    if (tenantSlug) triggerStorefrontSync(tenantSlug);
+
     return NextResponse.json({ success: true });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
