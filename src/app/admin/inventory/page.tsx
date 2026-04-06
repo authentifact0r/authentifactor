@@ -44,8 +44,8 @@ export default async function AdminInventoryPage() {
         costPrice: Number(b.costPrice),
       })),
     }));
-  } catch {
-    // No tenant context
+  } catch (err: any) {
+    console.error("[inventory] Error:", err.message);
   }
 
   return (

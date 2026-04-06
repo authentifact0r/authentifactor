@@ -25,14 +25,17 @@ export default async function AdminFlashSalesPage() {
     });
 
     sales = sales.map((s: any) => ({
-      ...s,
+      id: s.id,
+      productId: s.productId,
       discountPercent: Number(s.discountPercent),
+      reason: s.reason || null,
+      isActive: s.isActive,
       startsAt: s.startsAt.toISOString(),
       endsAt: s.endsAt.toISOString(),
       createdAt: s.createdAt.toISOString(),
-      product: { ...s.product, price: Number(s.product.price) },
+      product: { name: s.product.name, sku: s.product.sku, price: Number(s.product.price), images: s.product.images },
     }));
-    products = products.map((p: any) => ({ ...p, price: Number(p.price) }));
+    products = products.map((p: any) => ({ id: p.id, name: p.name, sku: p.sku, price: Number(p.price), images: p.images }));
   } catch {}
 
   return <FlashSalesManager sales={sales} products={products} tenantSlug={tenantSlug} />;
