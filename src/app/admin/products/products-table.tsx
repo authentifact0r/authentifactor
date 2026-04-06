@@ -202,13 +202,14 @@ export function ProductsTable({ products }: { products: Product[] }) {
                   }`}>
                     {p.totalStock}
                   </span>
-                  <button
+                  <span
+                    role="button"
                     onClick={(e) => { e.stopPropagation(); handleToggleActive(p.id, p.isActive); }}
-                    className={`inline-flex items-center gap-1 text-xs ${p.isActive ? "text-emerald-400" : "text-white/50"}`}
+                    className={`inline-flex items-center gap-1 text-xs cursor-pointer ${p.isActive ? "text-emerald-400" : "text-white/50"}`}
                   >
                     {p.isActive ? <Eye className="h-3 w-3" /> : <EyeOff className="h-3 w-3" />}
                     {p.isActive ? "Live" : "Draft"}
-                  </button>
+                  </span>
                   {isOpen ? <ChevronDown className="h-4 w-4 text-white/50" /> : <ChevronRight className="h-4 w-4 text-white/50" />}
                 </button>
 
