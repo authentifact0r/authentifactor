@@ -76,6 +76,10 @@ export default function LoginPage() {
           <div className="text-center mb-8">
             {tenant?.logo ? (
               <img src={tenant.logo} alt={brandName} className="mx-auto h-20 w-auto object-contain" />
+            ) : tenant ? (
+              <h1 className="text-4xl text-white" style={{ fontFamily: "var(--font-display, Georgia), serif", fontStyle: "italic", fontWeight: 400 }}>
+                {brandName}
+              </h1>
             ) : (
               <Image
                 src="/images/authentifactor-logo.png"
@@ -85,12 +89,15 @@ export default function LoginPage() {
                 className="mx-auto h-20 w-auto"
               />
             )}
-            <h2 className="mt-5 text-3xl font-bold text-white tracking-tight">
-              {tenant ? `Welcome to ${brandName}` : "Welcome Back"}
+            <h2 className="mt-5 text-2xl font-semibold text-white tracking-tight">
+              {tenant ? "Sign in to your account" : "Welcome Back"}
             </h2>
-            <p className="mt-2 text-base text-white/60">
-              {tenant?.tagline || "Sign in to your account"}
-            </p>
+            {tenant?.tagline && (
+              <p className="mt-2 text-base text-white/60">{tenant.tagline}</p>
+            )}
+            {!tenant && (
+              <p className="mt-2 text-base text-white/60">Sign in to your account</p>
+            )}
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-5">
