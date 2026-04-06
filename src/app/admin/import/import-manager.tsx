@@ -5,7 +5,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   Download, Search, Globe, Package, Tag, Image as ImageIcon,
-  Check, AlertTriangle, Plus, X, ExternalLink, Loader2,
+  Check, AlertTriangle, Plus, X, ExternalLink, Loader2, Upload,
 } from "lucide-react";
 import { formatPrice } from "@/lib/utils";
 
@@ -205,6 +205,26 @@ export function ImportManager({ tenantSlug }: { tenantSlug: string }) {
                 })}
               </div>
               <p className="text-xs text-white/40">{selectedImages.length} of {scraped.images.length} selected</p>
+
+              {/* Upload your own images */}
+              <label className="inline-flex items-center gap-1.5 h-9 px-4 rounded-lg bg-white/[0.06] text-white/60 text-xs font-medium hover:bg-white/[0.1] cursor-pointer transition">
+                <Upload className="h-3.5 w-3.5" /> Upload your own images
+                <input type="file" accept="image/*" multiple className="hidden" onChange={async (e) => {
+                  const files = e.target.files;
+                  if (!files?.length) return;
+                  for (const file of Array.from(files)) {
+                    try {
+                      const form = new FormData();
+                      form.append("file", file);
+                      const res = await fetch(apiUrl("/api/admin/upload"), { method: "POST", body: form });
+                      const data = await res.json();
+                      if (res.ok && data.url) { setSelectedImages(prev => [...prev, data.url]); }
+                      else { alert(data.error || "Upload failed"); }
+                    } catch { alert("Upload failed"); }
+                  }
+                  e.target.value = "";
+                }} />
+              </label>
             </div>
           )}
 

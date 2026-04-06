@@ -6,7 +6,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import {
   Search, Edit, Image as ImageIcon, AlertTriangle, Package,
   Eye, EyeOff, ChevronDown, ChevronRight, Save, Trash2,
-  Plus, X, Tag,
+  Plus, X, Tag, Upload, Loader2,
 } from "lucide-react";
 import { formatPrice } from "@/lib/utils";
 
@@ -45,6 +45,7 @@ export function ProductsTable({ products }: { products: Product[] }) {
   const [expanded, setExpanded] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [uploading, setUploading] = useState(false);
 
   // Inline edit state
   const [editData, setEditData] = useState<Record<string, any>>({});
@@ -324,16 +325,54 @@ export function ProductsTable({ products }: { products: Product[] }) {
                             </button>
                           </div>
                         ))}
+
+                        {/* Upload button */}
+                        <label className={`h-20 w-20 rounded-lg border border-dashed flex flex-col items-center justify-center cursor-pointer transition ${uploading ? "border-emerald-500/30 bg-emerald-500/[0.05]" : "border-white/[0.12] hover:border-white/[0.25] hover:bg-white/[0.02]"}`}>
+                          {uploading ? (
+                            <Loader2 className="h-5 w-5 text-emerald-400 animate-spin" />
+                          ) : (
+                            <>
+                              <Upload className="h-4 w-4 text-white/30 mb-0.5" />
+                              <span className="text-[9px] text-white/30">Upload</span>
+                            </>
+                          )}
+                          <input type="file" accept="image/*" multiple className="hidden" onChange={async (e) => {
+                            const files = e.target.files;
+                            if (!files?.length) return;
+                            setUploading(true);
+                            const newImages = [...(editData.images || [])];
+                            for (const file of Array.from(files)) {
+                              try {
+                                const form = new FormData();
+                                form.append("file", file);
+                                const res = await fetch(apiUrl("/api/admin/upload"), { method: "POST", body: form });
+                                const data = await res.json();
+                                if (res.ok && data.url) {
+                                  newImages.push(data.url);
+                                } else {
+                                  alert(data.error || "Upload failed");
+                                }
+                              } catch { alert("Upload failed"); }
+                            }
+                            updateField("images", newImages);
+                            setUploading(false);
+                            e.target.value = "";
+                          }} />
+                        </label>
+
+                        {/* Paste URL button */}
                         <button
                           onClick={() => {
                             const url = prompt("Paste image URL:");
                             if (url?.trim()) updateField("images", [...(editData.images || []), url.trim()]);
                           }}
-                          className="h-20 w-20 rounded-lg border border-dashed border-white/[0.12] flex items-center justify-center text-white/30 hover:text-white/50 hover:border-white/[0.2] transition"
+                          className="h-20 w-20 rounded-lg border border-dashed border-white/[0.08] flex flex-col items-center justify-center text-white/20 hover:text-white/40 hover:border-white/[0.15] transition"
                         >
-                          <Plus className="h-5 w-5" />
+                          <Plus className="h-4 w-4 mb-0.5" />
+                          <span className="text-[9px]">URL</span>
                         </button>
                       </div>
+                      <p className="text-xs text-white/30">Click Upload to select images from your computer, or URL to paste a link.</p>
                     </div>
 
                     {/* ── SEO ── */}
