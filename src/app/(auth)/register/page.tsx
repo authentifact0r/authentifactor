@@ -5,6 +5,7 @@ import Image from "next/image";
 import { Eye, EyeOff } from "lucide-react";
 import { useState, useEffect } from "react";
 import { apiUrl } from "@/lib/api";
+import { getAuthImages } from "../auth-images";
 
 interface TenantBrand {
   name: string;
@@ -12,14 +13,8 @@ interface TenantBrand {
   primaryColor: string;
   accentColor: string;
   tagline: string | null;
+  vertical: string | null;
 }
-
-const collageImages = [
-  { src: "/images/collage/white-dress.png", alt: "White draped evening dress" },
-  { src: "https://images.unsplash.com/photo-1611085583191-a3b181a88401?w=600&q=80&fit=crop", alt: "Gold earrings" },
-  { src: "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=600&q=80&fit=crop", alt: "Luxury handbag" },
-  { src: "/images/collage/yellow-dress.png", alt: "Soleil yellow tulip mini dress" },
-];
 
 export default function RegisterPage() {
   const [error, setError] = useState("");
@@ -82,6 +77,7 @@ export default function RegisterPage() {
   const brandName = tenant?.name || "Authentifactor";
   const accent = tenant?.accentColor || "#C5A059";
   const isTenant = !!tenant;
+  const collageImages = getAuthImages(tenant?.vertical, isTenant);
 
   if (!mounted) return null;
 

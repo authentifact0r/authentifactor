@@ -21,6 +21,7 @@ export async function GET(request: NextRequest) {
         accentColor: true,
         tagline: true,
         customDomain: true,
+        vertical: true,
       },
     });
 

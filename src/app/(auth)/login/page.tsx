@@ -5,6 +5,7 @@ import Image from "next/image";
 import { Eye, EyeOff } from "lucide-react";
 import { useState, useEffect } from "react";
 import { apiUrl } from "@/lib/api";
+import { getAuthImages } from "../auth-images";
 
 interface TenantBrand {
   name: string;
@@ -12,15 +13,8 @@ interface TenantBrand {
   primaryColor: string;
   accentColor: string;
   tagline: string | null;
+  vertical: string | null;
 }
-
-// Fashion imagery for the collage (tenant-aware in future)
-const collageImages = [
-  { src: "/images/collage/white-dress.png", alt: "White draped evening dress" },
-  { src: "https://images.unsplash.com/photo-1611085583191-a3b181a88401?w=600&q=80&fit=crop", alt: "Gold earrings" },
-  { src: "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=600&q=80&fit=crop", alt: "Luxury handbag" },
-  { src: "/images/collage/yellow-dress.png", alt: "Soleil yellow tulip mini dress" },
-];
 
 export default function LoginPage() {
   const [error, setError] = useState("");
@@ -72,6 +66,8 @@ export default function LoginPage() {
   const accent = tenant?.accentColor || "#C5A059";
   const isTenant = !!tenant;
 
+  const collageImages = getAuthImages(tenant?.vertical, isTenant);
+
   if (!mounted) return null;
 
   return (
@@ -101,8 +97,12 @@ export default function LoginPage() {
                     transitionDelay: "0.2s",
                   }}
                 >
-                  <h2 className="text-3xl font-bold mb-0.5" style={{ fontFamily: "var(--font-display, Georgia), serif" }}>13+</h2>
-                  <p className="text-center text-[10px] leading-tight opacity-90">Curated pieces</p>
+                  <h2 className="text-3xl font-bold mb-0.5" style={{ fontFamily: "var(--font-display, Georgia), serif" }}>
+                    {isTenant ? "✦" : "4+"}
+                  </h2>
+                  <p className="text-center text-[10px] leading-tight opacity-90">
+                    {isTenant ? brandName : "Live Brands"}
+                  </p>
                 </div>
 
                 {/* Image 2 — Earrings */}
