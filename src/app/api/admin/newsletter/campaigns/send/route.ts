@@ -29,7 +29,7 @@ export async function POST(request: NextRequest) {
     let sentCount = 0;
     let failedCount = 0;
     const resendKey = process.env.RESEND_API_KEY;
-    const fromEmail = process.env.RESEND_FROM_EMAIL || "Authentifactor <hello@authentifactor.com>";
+    const fromEmail = process.env.RESEND_FROM_EMAIL || "Authentifactor <cs@authentifactor.com>";
 
     if (resendKey && (campaign.channel === "email" || campaign.channel === "both")) {
       const resend = new Resend(resendKey);

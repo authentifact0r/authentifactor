@@ -11,7 +11,7 @@ function getResend(): Resend | null {
   return _resend;
 }
 
-const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || "Authentifactor <hello@authentifactor.com>";
+const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || "Authentifactor <cs@authentifactor.com>";
 const SUPERADMIN_EMAIL = process.env.SUPERADMIN_EMAIL || "admin@authentifactor.com";
 
 // ─── Welcome Email to New Merchant ─────────────────────────
