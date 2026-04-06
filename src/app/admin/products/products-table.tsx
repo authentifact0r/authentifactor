@@ -50,7 +50,11 @@ export function ProductsTable({ products }: { products: Product[] }) {
   // Inline edit state
   const [editData, setEditData] = useState<Record<string, any>>({});
 
-  const categories = [...new Set(products.map((p) => p.category))];
+  const categories = [...new Set(products.map((p) => p.category).filter(Boolean))];
+  const subcategories = [...new Set(products.map((p) => p.subcategory).filter(Boolean))];
+  const collections = [...new Set(products.map((p) => p.collection).filter(Boolean))];
+  const materials = [...new Set(products.map((p) => p.material).filter(Boolean))];
+  const brands = [...new Set(products.map((p) => p.brand).filter(Boolean))];
   const lowStockCount = products.filter((p) => p.totalStock > 0 && p.totalStock <= 5).length;
   const outOfStockCount = products.filter((p) => p.totalStock <= 0).length;
 
@@ -274,11 +278,13 @@ export function ProductsTable({ products }: { products: Product[] }) {
                         </div>
                         <div>
                           <label className="block text-xs font-medium text-white/60 mb-1">Category</label>
-                          <input value={editData.category || ""} onChange={(e) => updateField("category", e.target.value)} placeholder="e.g. Dresses" className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.12] text-sm text-white placeholder:text-white/25 focus:outline-none" />
+                          <input list="dl-cat" value={editData.category || ""} onChange={(e) => updateField("category", e.target.value)} placeholder="e.g. Dresses" className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.12] text-sm text-white placeholder:text-white/25 focus:outline-none" />
+                          <datalist id="dl-cat">{categories.map(c => <option key={c} value={c} />)}</datalist>
                         </div>
                         <div>
                           <label className="block text-xs font-medium text-white/60 mb-1">Brand</label>
-                          <input value={editData.brand || ""} onChange={(e) => updateField("brand", e.target.value)} placeholder="Styled by Maryam" className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.12] text-sm text-white placeholder:text-white/25 focus:outline-none" />
+                          <input list="dl-brand" value={editData.brand || ""} onChange={(e) => updateField("brand", e.target.value)} placeholder="Styled by Maryam" className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.12] text-sm text-white placeholder:text-white/25 focus:outline-none" />
+                          <datalist id="dl-brand">{brands.map(b => <option key={b} value={b} />)}</datalist>
                         </div>
                       </div>
                     </div>
@@ -289,15 +295,18 @@ export function ProductsTable({ products }: { products: Product[] }) {
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                         <div>
                           <label className="block text-xs font-medium text-white/60 mb-1">Subcategory</label>
-                          <input value={editData.subcategory || ""} onChange={(e) => updateField("subcategory", e.target.value)} placeholder="e.g. Mini Dresses" className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.12] text-sm text-white placeholder:text-white/25 focus:outline-none" />
+                          <input list="dl-subcat" value={editData.subcategory || ""} onChange={(e) => updateField("subcategory", e.target.value)} placeholder="e.g. Mini Dresses" className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.12] text-sm text-white placeholder:text-white/25 focus:outline-none" />
+                          <datalist id="dl-subcat">{subcategories.map(s => <option key={s} value={s} />)}</datalist>
                         </div>
                         <div>
                           <label className="block text-xs font-medium text-white/60 mb-1">Collection</label>
-                          <input value={editData.collection || ""} onChange={(e) => updateField("collection", e.target.value)} placeholder="e.g. Summer 2026" className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.12] text-sm text-white placeholder:text-white/25 focus:outline-none" />
+                          <input list="dl-coll" value={editData.collection || ""} onChange={(e) => updateField("collection", e.target.value)} placeholder="e.g. Summer 2026" className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.12] text-sm text-white placeholder:text-white/25 focus:outline-none" />
+                          <datalist id="dl-coll">{collections.map(c => <option key={c} value={c} />)}</datalist>
                         </div>
                         <div>
                           <label className="block text-xs font-medium text-white/60 mb-1">Material</label>
-                          <input value={editData.material || ""} onChange={(e) => updateField("material", e.target.value)} placeholder="e.g. Cotton" className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.12] text-sm text-white placeholder:text-white/25 focus:outline-none" />
+                          <input list="dl-mat" value={editData.material || ""} onChange={(e) => updateField("material", e.target.value)} placeholder="e.g. Cotton" className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.12] text-sm text-white placeholder:text-white/25 focus:outline-none" />
+                          <datalist id="dl-mat">{materials.map(m => <option key={m} value={m} />)}</datalist>
                         </div>
                         <div>
                           <label className="block text-xs font-medium text-white/60 mb-1">Tags <span className="text-white/30">(comma)</span></label>
