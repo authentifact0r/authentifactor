@@ -127,7 +127,7 @@ export function NewsletterManager({ subscribers, campaigns, tenantSlug }: Props)
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-white tracking-tight flex items-center gap-2">
-            <Mail className="h-6 w-6 text-pink-400" /> Newsletter & Notifications
+            <Mail className="h-6 w-6 text-amber-400" /> Newsletter & Notifications
           </h1>
           <p className="text-sm text-white/60 mt-1">{active.length} subscribers · {emailSubs} email · {smsSubs} SMS</p>
         </div>
@@ -136,7 +136,7 @@ export function NewsletterManager({ subscribers, campaigns, tenantSlug }: Props)
       {/* Summary */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {[
-          { label: "Subscribers", value: active.length, icon: Users, color: "text-pink-400" },
+          { label: "Subscribers", value: active.length, icon: Users, color: "text-amber-400" },
           { label: "Email Opt-in", value: emailSubs, icon: Mail, color: "text-blue-400" },
           { label: "SMS Opt-in", value: smsSubs, icon: Phone, color: "text-emerald-400" },
           { label: "Campaigns Sent", value: campaigns.filter(c => c.status === "sent").length, icon: Send, color: "text-violet-400" },
@@ -163,14 +163,14 @@ export function NewsletterManager({ subscribers, campaigns, tenantSlug }: Props)
       {tab === "campaigns" && (
         <div className="space-y-4">
           <div className="flex justify-end">
-            <button onClick={() => setShowCreate(!showCreate)} className="inline-flex items-center gap-1.5 rounded-xl bg-pink-500 px-4 py-2 text-xs font-semibold text-white hover:bg-pink-400 transition">
+            <button onClick={() => setShowCreate(!showCreate)} className="inline-flex items-center gap-1.5 rounded-xl bg-emerald-600 px-4 py-2 text-xs font-semibold text-white hover:bg-emerald-500 transition">
               <Plus className="h-3.5 w-3.5" /> New Campaign
             </button>
           </div>
 
           {/* Create Campaign */}
           {showCreate && (
-            <div className="rounded-2xl border border-pink-500/20 bg-pink-500/[0.03] p-6 space-y-4">
+            <div className="rounded-2xl border border-emerald-500/20 bg-emerald-600/[0.03] p-6 space-y-4">
               <h2 className="text-sm font-semibold text-white uppercase tracking-wider">New Campaign</h2>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -222,7 +222,7 @@ export function NewsletterManager({ subscribers, campaigns, tenantSlug }: Props)
               )}
 
               <div className="flex gap-2">
-                <button onClick={createCampaign} disabled={saving || !title.trim() || !body.trim()} className="inline-flex items-center gap-1.5 h-10 px-5 rounded-lg bg-pink-500 hover:bg-pink-400 disabled:opacity-50 text-white text-sm font-semibold transition">
+                <button onClick={createCampaign} disabled={saving || !title.trim() || !body.trim()} className="inline-flex items-center gap-1.5 h-10 px-5 rounded-lg bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white text-sm font-semibold transition">
                   <FileText className="h-4 w-4" /> {saving ? "Saving..." : "Save as Draft"}
                 </button>
                 <button onClick={() => setShowCreate(false)} className="h-10 px-4 rounded-lg bg-white/[0.06] text-white/50 text-sm hover:text-white transition">Cancel</button>
@@ -236,8 +236,8 @@ export function NewsletterManager({ subscribers, campaigns, tenantSlug }: Props)
             return (
               <div key={camp.id} className="rounded-2xl border border-white/[0.06] bg-white/[0.03] overflow-hidden">
                 <button onClick={() => setExpanded(isOpen ? null : camp.id)} className="w-full flex items-center gap-4 px-5 py-4 hover:bg-white/[0.02] transition-colors text-left">
-                  <div className="h-10 w-10 rounded-xl bg-pink-500/10 flex items-center justify-center">
-                    {camp.channel === "sms" ? <MessageSquare className="h-5 w-5 text-pink-400" /> : <Mail className="h-5 w-5 text-pink-400" />}
+                  <div className="h-10 w-10 rounded-xl bg-amber-500/10 flex items-center justify-center">
+                    {camp.channel === "sms" ? <MessageSquare className="h-5 w-5 text-amber-400" /> : <Mail className="h-5 w-5 text-amber-400" />}
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="font-medium text-white truncate">{camp.title}</p>
@@ -291,14 +291,14 @@ export function NewsletterManager({ subscribers, campaigns, tenantSlug }: Props)
       {tab === "subscribers" && (
         <div className="space-y-4">
           <div className="flex justify-end">
-            <button onClick={() => setShowAddSub(!showAddSub)} className="inline-flex items-center gap-1.5 rounded-xl bg-pink-500 px-4 py-2 text-xs font-semibold text-white hover:bg-pink-400 transition">
+            <button onClick={() => setShowAddSub(!showAddSub)} className="inline-flex items-center gap-1.5 rounded-xl bg-emerald-600 px-4 py-2 text-xs font-semibold text-white hover:bg-emerald-500 transition">
               <Plus className="h-3.5 w-3.5" /> Add Subscriber
             </button>
           </div>
 
           {/* Add Subscriber */}
           {showAddSub && (
-            <div className="rounded-2xl border border-pink-500/20 bg-pink-500/[0.03] p-6 space-y-4">
+            <div className="rounded-2xl border border-emerald-500/20 bg-emerald-600/[0.03] p-6 space-y-4">
               <h2 className="text-sm font-semibold text-white uppercase tracking-wider">Add Subscriber</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
@@ -320,16 +320,16 @@ export function NewsletterManager({ subscribers, campaigns, tenantSlug }: Props)
               </div>
               <div className="flex gap-4">
                 <label className="flex items-center gap-2 cursor-pointer">
-                  <input type="checkbox" checked={subEmailOpt} onChange={e => setSubEmailOpt(e.target.checked)} className="h-4 w-4 rounded border-white/20 bg-white/[0.06] text-pink-500" />
+                  <input type="checkbox" checked={subEmailOpt} onChange={e => setSubEmailOpt(e.target.checked)} className="h-4 w-4 rounded border-white/20 bg-white/[0.06] text-emerald-500" />
                   <span className="text-sm text-white/70">Email opt-in</span>
                 </label>
                 <label className="flex items-center gap-2 cursor-pointer">
-                  <input type="checkbox" checked={subSmsOpt} onChange={e => setSubSmsOpt(e.target.checked)} className="h-4 w-4 rounded border-white/20 bg-white/[0.06] text-pink-500" />
+                  <input type="checkbox" checked={subSmsOpt} onChange={e => setSubSmsOpt(e.target.checked)} className="h-4 w-4 rounded border-white/20 bg-white/[0.06] text-emerald-500" />
                   <span className="text-sm text-white/70">SMS opt-in</span>
                 </label>
               </div>
               <div className="flex gap-2">
-                <button onClick={addSubscriber} disabled={saving || (!subEmail && !subPhone)} className="inline-flex items-center gap-1.5 h-10 px-5 rounded-lg bg-pink-500 hover:bg-pink-400 disabled:opacity-50 text-white text-sm font-semibold transition">
+                <button onClick={addSubscriber} disabled={saving || (!subEmail && !subPhone)} className="inline-flex items-center gap-1.5 h-10 px-5 rounded-lg bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white text-sm font-semibold transition">
                   <Plus className="h-4 w-4" /> {saving ? "Adding..." : "Add Subscriber"}
                 </button>
                 <button onClick={() => setShowAddSub(false)} className="h-10 px-4 rounded-lg bg-white/[0.06] text-white/50 text-sm hover:text-white transition">Cancel</button>
