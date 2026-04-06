@@ -58,6 +58,21 @@ body {
    Applied to .min-h-screen.bg-\[#F9F7F2\] descendants (admin layout). */
 
 .bg-\[\#F9F7F2\] .text-white { color: #1a1a1a !important; }
+/* Keep white text on elements that also have a dark/colored background */
+.bg-\[\#F9F7F2\] .bg-emerald-600.text-white,
+.bg-\[\#F9F7F2\] .bg-emerald-500.text-white,
+.bg-\[\#F9F7F2\] .bg-black.text-white,
+.bg-\[\#F9F7F2\] .bg-gray-900.text-white,
+.bg-\[\#F9F7F2\] .bg-red-600.text-white,
+.bg-\[\#F9F7F2\] .text-white.bg-emerald-600,
+.bg-\[\#F9F7F2\] .text-white.bg-black,
+.bg-\[\#F9F7F2\] .text-white.bg-gray-900,
+.bg-\[\#F9F7F2\] .text-white[style*="background"],
+.bg-\[\#F9F7F2\] button.bg-emerald-600,
+.bg-\[\#F9F7F2\] button.bg-black,
+.bg-\[\#F9F7F2\] button.bg-gray-900,
+.bg-\[\#F9F7F2\] a.bg-emerald-600,
+.bg-\[\#F9F7F2\] a.bg-black { color: #fff !important; }
 .bg-\[\#F9F7F2\] .text-white\/80 { color: #333 !important; }
 .bg-\[\#F9F7F2\] .text-white\/70 { color: #444 !important; }
 .bg-\[\#F9F7F2\] .text-white\/60 { color: #555 !important; }
