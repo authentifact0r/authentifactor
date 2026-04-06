@@ -216,79 +216,98 @@ export function ProductsTable({ products }: { products: Product[] }) {
 
                 {/* Expanded Inline Edit */}
                 {isOpen && (
-                  <div className="border-t border-white/[0.04] bg-white/[0.01] p-5 space-y-4">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-xs font-medium text-white/50 mb-1">Name</label>
-                        <input value={editData.name || ""} onChange={(e) => updateField("name", e.target.value)} className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.12] text-sm text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition" />
+                  <div className="border-t border-white/[0.04] bg-white/[0.01] p-5 space-y-5">
+
+                    {/* ── BASIC INFO ── */}
+                    <div className="space-y-3">
+                      <p className="text-[10px] uppercase tracking-wider text-white/40 font-semibold">Product Info</p>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                        <div className="md:col-span-2">
+                          <label className="block text-xs font-medium text-white/60 mb-1">Name</label>
+                          <input value={editData.name || ""} onChange={(e) => updateField("name", e.target.value)} className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.12] text-sm text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition" />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-medium text-white/60 mb-1">Tagline</label>
+                          <input value={editData.shortDescription || ""} onChange={(e) => updateField("shortDescription", e.target.value)} placeholder="One-liner for cards" className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.12] text-sm text-white placeholder:text-white/25 focus:outline-none" />
+                        </div>
                       </div>
                       <div>
-                        <label className="block text-xs font-medium text-white/50 mb-1">Tagline</label>
-                        <input value={editData.shortDescription || ""} onChange={(e) => updateField("shortDescription", e.target.value)} placeholder="One-liner for cards" className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.12] text-sm text-white placeholder:text-white/25 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition" />
+                        <label className="block text-xs font-medium text-white/60 mb-1">Description</label>
+                        <textarea value={editData.description || ""} onChange={(e) => updateField("description", e.target.value)} rows={3} placeholder="Full product description for the store page..." className="w-full px-3 py-2 rounded-lg bg-white/[0.06] border border-white/[0.12] text-sm text-white placeholder:text-white/25 focus:outline-none resize-none" />
                       </div>
                     </div>
 
-                    <div>
-                      <label className="block text-xs font-medium text-white/50 mb-1">Description</label>
-                      <textarea value={editData.description || ""} onChange={(e) => updateField("description", e.target.value)} rows={3} className="w-full px-3 py-2 rounded-lg bg-white/[0.06] border border-white/[0.12] text-sm text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition resize-none" />
-                    </div>
-
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                      <div>
-                        <label className="block text-xs font-medium text-white/50 mb-1">Price (£)</label>
-                        <input type="number" step="0.01" value={editData.price || ""} onChange={(e) => updateField("price", parseFloat(e.target.value))} className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.12] text-sm text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition" />
-                      </div>
-                      <div>
-                        <label className="block text-xs font-medium text-white/50 mb-1">Compare At</label>
-                        <input type="number" step="0.01" value={editData.compareAtPrice || ""} onChange={(e) => updateField("compareAtPrice", parseFloat(e.target.value) || null)} className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.12] text-sm text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition" />
-                      </div>
-                      <div>
-                        <label className="block text-xs font-medium text-white/50 mb-1">Category</label>
-                        <input value={editData.category || ""} onChange={(e) => updateField("category", e.target.value)} placeholder="e.g. Blazers & Jackets" className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.12] text-sm text-white placeholder:text-white/25 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition" />
-                      </div>
-                      <div>
-                        <label className="block text-xs font-medium text-white/50 mb-1">Material</label>
-                        <input value={editData.material || ""} onChange={(e) => updateField("material", e.target.value)} placeholder="e.g. Cashmere" className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.12] text-sm text-white placeholder:text-white/25 focus:outline-none" />
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                      <div>
-                        <label className="block text-xs font-medium text-white/50 mb-1">Subcategory</label>
-                        <input value={editData.subcategory || ""} onChange={(e) => updateField("subcategory", e.target.value)} placeholder="e.g. Evening Gowns" className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.12] text-sm text-white placeholder:text-white/25 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition" />
-                      </div>
-                      <div>
-                        <label className="block text-xs font-medium text-white/50 mb-1">Collection</label>
-                        <input value={editData.collection || ""} onChange={(e) => updateField("collection", e.target.value)} placeholder="e.g. Spring/Summer 2026" className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.12] text-sm text-white placeholder:text-white/25 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition" />
-                      </div>
-                      <div>
-                        <label className="block text-xs font-medium text-white/50 mb-1">Brand</label>
-                        <input value={editData.brand || ""} onChange={(e) => updateField("brand", e.target.value)} placeholder="Styled by Maryam" className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.12] text-sm text-white placeholder:text-white/25 focus:outline-none" />
+                    {/* ── PRICING ── */}
+                    <div className="space-y-3">
+                      <p className="text-[10px] uppercase tracking-wider text-white/40 font-semibold">Pricing</p>
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                        <div>
+                          <label className="block text-xs font-medium text-white/60 mb-1">Price (£)</label>
+                          <input type="number" step="0.01" value={editData.price || ""} onChange={(e) => updateField("price", parseFloat(e.target.value))} className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.12] text-sm text-white focus:outline-none" />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-medium text-white/60 mb-1">Compare At <span className="text-white/30">(was)</span></label>
+                          <input type="number" step="0.01" value={editData.compareAtPrice || ""} onChange={(e) => updateField("compareAtPrice", parseFloat(e.target.value) || null)} placeholder="—" className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.12] text-sm text-white placeholder:text-white/25 focus:outline-none" />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-medium text-white/60 mb-1">Category</label>
+                          <input value={editData.category || ""} onChange={(e) => updateField("category", e.target.value)} placeholder="e.g. Dresses" className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.12] text-sm text-white placeholder:text-white/25 focus:outline-none" />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-medium text-white/60 mb-1">Brand</label>
+                          <input value={editData.brand || ""} onChange={(e) => updateField("brand", e.target.value)} placeholder="Styled by Maryam" className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.12] text-sm text-white placeholder:text-white/25 focus:outline-none" />
+                        </div>
                       </div>
                     </div>
 
-                    {/* Sizes & Colors */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-xs font-medium text-white/50 mb-1">Sizes <span className="text-white/30">(comma separated)</span></label>
-                        <input value={(editData.sizes || []).join(", ")} onChange={(e) => updateField("sizes", e.target.value.split(",").map((s: string) => s.trim()).filter(Boolean))} placeholder="S, M, L, XL" className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.12] text-sm text-white placeholder:text-white/25 focus:outline-none" />
-                        {(editData.sizes || []).length > 0 && <div className="flex flex-wrap gap-1 mt-1.5">{(editData.sizes || []).map((s: string) => <span key={s} className="rounded bg-emerald-500/15 px-2 py-0.5 text-[10px] text-emerald-400">{s}</span>)}</div>}
-                      </div>
-                      <div>
-                        <label className="block text-xs font-medium text-white/50 mb-1">Colors <span className="text-white/30">(comma separated)</span></label>
-                        <input value={(editData.colors || []).join(", ")} onChange={(e) => updateField("colors", e.target.value.split(",").map((s: string) => s.trim()).filter(Boolean))} placeholder="Black, Ivory, Gold" className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.12] text-sm text-white placeholder:text-white/25 focus:outline-none" />
-                        {(editData.colors || []).length > 0 && <div className="flex flex-wrap gap-1 mt-1.5">{(editData.colors || []).map((c: string) => <span key={c} className="rounded bg-cyan-500/15 px-2 py-0.5 text-[10px] text-cyan-400">{c}</span>)}</div>}
+                    {/* ── CLASSIFICATION ── */}
+                    <div className="space-y-3">
+                      <p className="text-[10px] uppercase tracking-wider text-white/40 font-semibold">Classification</p>
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                        <div>
+                          <label className="block text-xs font-medium text-white/60 mb-1">Subcategory</label>
+                          <input value={editData.subcategory || ""} onChange={(e) => updateField("subcategory", e.target.value)} placeholder="e.g. Mini Dresses" className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.12] text-sm text-white placeholder:text-white/25 focus:outline-none" />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-medium text-white/60 mb-1">Collection</label>
+                          <input value={editData.collection || ""} onChange={(e) => updateField("collection", e.target.value)} placeholder="e.g. Summer 2026" className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.12] text-sm text-white placeholder:text-white/25 focus:outline-none" />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-medium text-white/60 mb-1">Material</label>
+                          <input value={editData.material || ""} onChange={(e) => updateField("material", e.target.value)} placeholder="e.g. Cotton" className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.12] text-sm text-white placeholder:text-white/25 focus:outline-none" />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-medium text-white/60 mb-1">Tags <span className="text-white/30">(comma)</span></label>
+                          <input value={(editData.tags || []).join(", ")} onChange={(e) => updateField("tags", e.target.value.split(",").map((s: string) => s.trim()).filter(Boolean))} placeholder="new, summer" className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.12] text-sm text-white placeholder:text-white/25 focus:outline-none" />
+                        </div>
                       </div>
                     </div>
 
-                    {/* Images inline */}
-                    <div>
-                      <label className="block text-xs font-medium text-white/50 mb-1">Images</label>
+                    {/* ── VARIANTS ── */}
+                    <div className="space-y-3">
+                      <p className="text-[10px] uppercase tracking-wider text-white/40 font-semibold">Variants</p>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <div>
+                          <label className="block text-xs font-medium text-white/60 mb-1">Sizes <span className="text-white/30">(comma separated)</span></label>
+                          <input value={(editData.sizes || []).join(", ")} onChange={(e) => updateField("sizes", e.target.value.split(",").map((s: string) => s.trim()).filter(Boolean))} placeholder="XS, S, M, L, XL, XXL" className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.12] text-sm text-white placeholder:text-white/25 focus:outline-none" />
+                          {(editData.sizes || []).length > 0 && <div className="flex flex-wrap gap-1 mt-1.5">{(editData.sizes || []).map((s: string) => <span key={s} className="rounded bg-emerald-500/15 px-2 py-0.5 text-[10px] text-emerald-400 font-medium">{s}</span>)}</div>}
+                        </div>
+                        <div>
+                          <label className="block text-xs font-medium text-white/60 mb-1">Colors <span className="text-white/30">(comma separated)</span></label>
+                          <input value={(editData.colors || []).join(", ")} onChange={(e) => updateField("colors", e.target.value.split(",").map((s: string) => s.trim()).filter(Boolean))} placeholder="Black, Ivory, Yellow, Red" className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.12] text-sm text-white placeholder:text-white/25 focus:outline-none" />
+                          {(editData.colors || []).length > 0 && <div className="flex flex-wrap gap-1 mt-1.5">{(editData.colors || []).map((c: string) => <span key={c} className="rounded bg-cyan-500/15 px-2 py-0.5 text-[10px] text-cyan-400 font-medium">{c}</span>)}</div>}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* ── IMAGES ── */}
+                    <div className="space-y-3">
+                      <p className="text-[10px] uppercase tracking-wider text-white/40 font-semibold">Images</p>
                       <div className="flex flex-wrap gap-2">
                         {(editData.images || []).map((img: string, i: number) => (
                           <div key={i} className="relative group">
-                            <img src={img} alt="" className="h-16 w-16 rounded-lg object-cover border border-white/[0.08]" />
-                            <button onClick={() => updateField("images", editData.images.filter((_: any, idx: number) => idx !== i))} className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-red-500 flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
+                            <img src={img} alt="" className="h-20 w-20 rounded-lg object-cover border border-white/[0.08]" />
+                            <button onClick={() => updateField("images", editData.images.filter((_: any, idx: number) => idx !== i))} className="absolute -top-1.5 -right-1.5 h-5 w-5 rounded-full bg-red-500 flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
                               <X className="h-3 w-3 text-white" />
                             </button>
                           </div>
@@ -298,28 +317,31 @@ export function ProductsTable({ products }: { products: Product[] }) {
                             const url = prompt("Paste image URL:");
                             if (url?.trim()) updateField("images", [...(editData.images || []), url.trim()]);
                           }}
-                          className="h-16 w-16 rounded-lg border border-dashed border-white/[0.12] flex items-center justify-center text-white/50 hover:text-white/50 hover:border-white/[0.2] transition"
+                          className="h-20 w-20 rounded-lg border border-dashed border-white/[0.12] flex items-center justify-center text-white/30 hover:text-white/50 hover:border-white/[0.2] transition"
                         >
                           <Plus className="h-5 w-5" />
                         </button>
                       </div>
                     </div>
 
-                    {/* SEO quick fields */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-xs font-medium text-white/50 mb-1">SEO Title <span className="text-white/30">(60 chars)</span></label>
-                        <input value={editData.metaTitle || ""} onChange={(e) => updateField("metaTitle", e.target.value)} maxLength={60} placeholder={p.name} className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.12] text-sm text-white placeholder:text-white/25 focus:outline-none" />
-                      </div>
-                      <div>
-                        <label className="block text-xs font-medium text-white/50 mb-1">SEO Description <span className="text-white/30">(160 chars)</span></label>
-                        <input value={editData.metaDescription || ""} onChange={(e) => updateField("metaDescription", e.target.value)} maxLength={160} placeholder={p.description?.substring(0, 100)} className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.12] text-sm text-white placeholder:text-white/25 focus:outline-none" />
+                    {/* ── SEO ── */}
+                    <div className="space-y-3">
+                      <p className="text-[10px] uppercase tracking-wider text-white/40 font-semibold">SEO <span className="text-white/25 normal-case">— leave blank for auto-generated</span></p>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <div>
+                          <label className="block text-xs font-medium text-white/60 mb-1">SEO Title <span className="text-white/30">({(editData.metaTitle || "").length}/60)</span></label>
+                          <input value={editData.metaTitle || ""} onChange={(e) => updateField("metaTitle", e.target.value)} maxLength={60} placeholder={`${p.name} | Styled by Maryam`} className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.12] text-sm text-white placeholder:text-white/25 focus:outline-none" />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-medium text-white/60 mb-1">SEO Description <span className="text-white/30">({(editData.metaDescription || "").length}/160)</span></label>
+                          <input value={editData.metaDescription || ""} onChange={(e) => updateField("metaDescription", e.target.value)} maxLength={160} placeholder={`Shop ${p.name} at our store. Fast delivery.`} className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.12] text-sm text-white placeholder:text-white/25 focus:outline-none" />
+                        </div>
                       </div>
                     </div>
 
-                    {/* Actions */}
-                    <div className="flex items-center gap-2 pt-2 border-t border-white/[0.04]">
-                      <button onClick={() => handleSave(p.id)} disabled={saving} className="inline-flex items-center gap-1.5 h-9 px-4 rounded-lg bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white text-xs font-semibold transition">
+                    {/* ── ACTIONS ── */}
+                    <div className="flex items-center gap-2 pt-3 border-t border-white/[0.06]">
+                      <button onClick={() => handleSave(p.id)} disabled={saving} className="inline-flex items-center gap-1.5 h-9 px-5 rounded-lg bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white text-xs font-semibold transition">
                         <Save className="h-3.5 w-3.5" /> {saving ? "Saving..." : "Save Changes"}
                       </button>
                       <a href={`/admin/products/${p.id}${tenantParam}`} className="inline-flex items-center gap-1.5 h-9 px-4 rounded-lg bg-white/[0.06] text-white/60 text-xs font-medium hover:bg-white/[0.1] hover:text-white transition">
