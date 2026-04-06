@@ -1,71 +1,61 @@
 import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/lib/db";
-import { jwtVerify } from "jose";
+import { getScopedDb } from "@/lib/db";
+import { requireAdmin } from "@/lib/auth";
 
-const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || "fallback-dev-secret");
-
-async function getTenantId(request: NextRequest): Promise<string> {
-  const token = request.cookies.get("access_token")?.value;
-  if (!token) throw new Error("Not authenticated");
-  const { payload } = await jwtVerify(token, JWT_SECRET);
-  return payload.tenantId as string;
-}
-
-// PATCH /api/admin/products/[id]
 export async function PATCH(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const tenantId = await getTenantId(request);
+    await requireAdmin();
+    const tdb = await getScopedDb();
     const { id } = await params;
     const body = await request.json();
 
-    // Verify ownership
-    const existing = await db.product.findFirst({ where: { id, tenantId } });
-    if (!existing) return NextResponse.json({ error: "Product not found" }, { status: 404 });
+    const product = await tdb.product.findFirst({ where: { id } });
+    if (!product) return NextResponse.json({ error: "Product not found" }, { status: 404 });
 
-    const product = await db.product.update({
-      where: { id },
-      data: {
-        name: body.name,
-        description: body.description,
-        shortDescription: body.shortDescription || null,
-        category: body.category,
-        subcategory: body.subcategory || null,
-        collection: body.collection || null,
-        price: body.price,
-        compareAtPrice: body.compareAtPrice || null,
-        material: body.material || null,
-        careInstructions: body.careInstructions || null,
-        brand: body.brand || null,
-        metaTitle: body.metaTitle || null,
-        metaDescription: body.metaDescription || null,
-        seoKeywords: body.seoKeywords || [],
-        sizes: body.sizes || [],
-        colors: body.colors || [],
-        tags: body.tags || [],
-        images: body.images || [],
-        isActive: body.isActive,
-      },
-    });
+    // Build update data — only include fields that were sent
+    const data: Record<string, any> = {};
+    const fields = [
+      "name", "description", "shortDescription", "category", "subcategory",
+      "collection", "material", "brand", "metaTitle", "metaDescription",
+      "isActive",
+    ];
+    for (const f of fields) {
+      if (body[f] !== undefined) data[f] = body[f];
+    }
+    // Numeric fields
+    if (body.price !== undefined) data.price = parseFloat(body.price);
+    if (body.compareAtPrice !== undefined) data.compareAtPrice = body.compareAtPrice ? parseFloat(body.compareAtPrice) : null;
+    // Array fields
+    if (body.images !== undefined) data.images = body.images;
+    if (body.sizes !== undefined) data.sizes = body.sizes;
+    if (body.colors !== undefined) data.colors = body.colors;
+    if (body.tags !== undefined) data.tags = body.tags;
+    if (body.seoKeywords !== undefined) data.seoKeywords = body.seoKeywords;
 
-    return NextResponse.json({ product });
+    // Update slug if name changed
+    if (body.name && body.name !== product.name) {
+      const slug = body.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+      const existing = await tdb.product.findFirst({ where: { slug, id: { not: id } } });
+      data.slug = existing ? `${slug}-${Date.now().toString(36)}` : slug;
+    }
+
+    const updated = await tdb.product.update({ where: { id }, data });
+    return NextResponse.json({ product: { id: updated.id, name: updated.name } });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
 
-// DELETE /api/admin/products/[id]
 export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const tenantId = await getTenantId(request);
+    await requireAdmin();
+    const tdb = await getScopedDb();
     const { id } = await params;
 
-    const existing = await db.product.findFirst({ where: { id, tenantId } });
-    if (!existing) return NextResponse.json({ error: "Product not found" }, { status: 404 });
+    const product = await tdb.product.findFirst({ where: { id } });
+    if (!product) return NextResponse.json({ error: "Product not found" }, { status: 404 });
 
-    // Delete inventory batches first
-    await db.inventoryBatch.deleteMany({ where: { productId: id } });
-    await db.product.delete({ where: { id } });
-
+    await tdb.product.delete({ where: { id } });
     return NextResponse.json({ success: true });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });

@@ -6,7 +6,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import {
   Search, Edit, Image as ImageIcon, AlertTriangle, Package,
   Eye, EyeOff, ChevronDown, ChevronRight, Save, Trash2,
-  Plus, X, Tag, Upload, Loader2,
+  Plus, X, Tag, Upload, Loader2, ArrowLeft, ArrowRight,
 } from "lucide-react";
 import { formatPrice } from "@/lib/utils";
 
@@ -320,9 +320,14 @@ export function ProductsTable({ products }: { products: Product[] }) {
                         {(editData.images || []).map((img: string, i: number) => (
                           <div key={i} className="relative group">
                             <img src={img} alt="" className="h-20 w-20 rounded-lg object-cover border border-white/[0.08]" />
+                            {i === 0 && <span className="absolute top-1 left-1 bg-emerald-500 text-[8px] text-white px-1 rounded font-bold">MAIN</span>}
                             <button onClick={() => updateField("images", editData.images.filter((_: any, idx: number) => idx !== i))} className="absolute -top-1.5 -right-1.5 h-5 w-5 rounded-full bg-red-500 flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
                               <X className="h-3 w-3 text-white" />
                             </button>
+                            <div className="absolute bottom-0 left-0 right-0 flex justify-center gap-0.5 pb-0.5 opacity-0 group-hover:opacity-100 transition">
+                              {i > 0 && <button onClick={() => { const imgs = [...editData.images]; [imgs[i-1], imgs[i]] = [imgs[i], imgs[i-1]]; updateField("images", imgs); }} className="h-5 w-5 rounded bg-black/70 flex items-center justify-center"><ArrowLeft className="h-3 w-3 text-white" /></button>}
+                              {i < (editData.images?.length || 0) - 1 && <button onClick={() => { const imgs = [...editData.images]; [imgs[i], imgs[i+1]] = [imgs[i+1], imgs[i]]; updateField("images", imgs); }} className="h-5 w-5 rounded bg-black/70 flex items-center justify-center"><ArrowRight className="h-3 w-3 text-white" /></button>}
+                            </div>
                           </div>
                         ))}
 
