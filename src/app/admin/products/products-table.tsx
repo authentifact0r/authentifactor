@@ -44,6 +44,7 @@ export function ProductsTable({ products }: { products: Product[] }) {
   const [stockFilter, setStockFilter] = useState("all");
   const [expanded, setExpanded] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [uploading, setUploading] = useState(false);
 
@@ -125,6 +126,8 @@ export function ProductsTable({ products }: { products: Product[] }) {
         return;
       }
       setSaving(false);
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2000);
       router.refresh();
     } catch (err) {
       alert("Network error. Please try again.");
@@ -200,26 +203,32 @@ export function ProductsTable({ products }: { products: Product[] }) {
         ) : (
           filtered.map((p) => {
             const isOpen = expanded === p.id;
+            // Use editData for header when expanded (live preview of changes)
+            const displayName = isOpen ? (editData.name || p.name) : p.name;
+            const displayCategory = isOpen ? (editData.category || p.category) : p.category;
+            const displayCollection = isOpen ? (editData.collection || p.collection) : p.collection;
+            const displayPrice = isOpen ? (editData.price || p.price) : p.price;
+            const displayImages = isOpen ? (editData.images || p.images) : p.images;
             return (
               <div key={p.id} className="rounded-2xl border border-white/[0.06] bg-white/[0.03] backdrop-blur-sm overflow-hidden">
                 {/* Product Row */}
                 <button onClick={() => toggleExpand(p.id)} className="w-full flex items-center gap-4 px-5 py-4 hover:bg-white/[0.02] transition-colors text-left">
-                  {p.images?.[0] ? (
-                    <img src={p.images[0]} alt="" className="h-12 w-12 rounded-xl object-cover" />
+                  {displayImages?.[0] ? (
+                    <img src={displayImages[0]} alt="" className="h-12 w-12 rounded-xl object-cover" />
                   ) : (
                     <div className="h-12 w-12 rounded-xl bg-white/[0.06] flex items-center justify-center">
                       <ImageIcon className="h-5 w-5 text-white/20" />
                     </div>
                   )}
                   <div className="flex-1 min-w-0">
-                    <p className="font-medium text-white truncate">{p.name}</p>
+                    <p className="font-medium text-white truncate">{displayName}</p>
                     <div className="flex items-center gap-2 mt-0.5">
                       <span className="text-xs text-white/50">{p.sku}</span>
-                      <span className="rounded bg-white/[0.06] px-1.5 py-0.5 text-[10px] text-white/50">{p.category}</span>
-                      {p.collection && <span className="rounded bg-violet-500/10 px-1.5 py-0.5 text-[10px] text-violet-400">{p.collection}</span>}
+                      <span className="rounded bg-white/[0.06] px-1.5 py-0.5 text-[10px] text-white/50">{displayCategory}</span>
+                      {displayCollection && <span className="rounded bg-violet-500/10 px-1.5 py-0.5 text-[10px] text-violet-400">{displayCollection}</span>}
                     </div>
                   </div>
-                  <span className="text-white font-medium tabular-nums">{formatPrice(p.price)}</span>
+                  <span className="text-white font-medium tabular-nums">{formatPrice(displayPrice)}</span>
                   {p.compareAtPrice && p.compareAtPrice > p.price && (
                     <span className="text-xs text-white/50 line-through tabular-nums">{formatPrice(p.compareAtPrice)}</span>
                   )}
@@ -417,7 +426,7 @@ export function ProductsTable({ products }: { products: Product[] }) {
                     {/* ── ACTIONS ── */}
                     <div className="flex items-center gap-2 pt-3 border-t border-white/[0.06]">
                       <button onClick={() => handleSave(p.id)} disabled={saving} className="inline-flex items-center gap-1.5 h-9 px-5 rounded-lg bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white text-xs font-semibold transition">
-                        <Save className="h-3.5 w-3.5" /> {saving ? "Saving..." : "Save Changes"}
+                        <Save className="h-3.5 w-3.5" /> {saving ? "Saving..." : saved ? "Saved!" : "Save Changes"}
                       </button>
                       <a href={`/admin/products/${p.id}${tenantParam}`} className="inline-flex items-center gap-1.5 h-9 px-4 rounded-lg bg-white/[0.06] text-white/60 text-xs font-medium hover:bg-white/[0.1] hover:text-white transition">
                         <Edit className="h-3.5 w-3.5" /> Full Editor
