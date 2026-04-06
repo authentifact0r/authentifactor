@@ -72,13 +72,23 @@ export function InventoryManager({ products, warehouses, tenantSlug }: Props) {
     if (!delta) return;
     setSaving(batchId);
     try {
-      await fetch(apiUrl("/api/admin/inventory/adjust"), {
+      const res = await fetch(apiUrl("/api/admin/inventory/adjust"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ batchId, delta }),
       });
+      if (!res.ok) {
+        const e = await res.json();
+        alert("Update failed: " + (e.error || "Unknown error"));
+        setSaving(null);
+        return;
+      }
+      // Clear adjustment and refresh
+      setAdjustments((prev) => { const next = { ...prev }; delete next[batchId]; return next; });
+      setSaving(null);
       router.refresh();
     } catch {
+      alert("Network error. Please try again.");
       setSaving(null);
     }
   };
@@ -87,15 +97,23 @@ export function InventoryManager({ products, warehouses, tenantSlug }: Props) {
     if (restockQty <= 0 || !restockWarehouse) return;
     setSaving(productId);
     try {
-      await fetch(apiUrl("/api/admin/inventory/restock"), {
+      const res = await fetch(apiUrl("/api/admin/inventory/restock"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ productId, quantity: restockQty, warehouseId: restockWarehouse }),
       });
+      if (!res.ok) {
+        const e = await res.json();
+        alert("Restock failed: " + (e.error || "Unknown error"));
+        setSaving(null);
+        return;
+      }
       setRestockProduct(null);
       setRestockQty(0);
+      setSaving(null);
       router.refresh();
     } catch {
+      alert("Network error. Please try again.");
       setSaving(null);
     }
   };
