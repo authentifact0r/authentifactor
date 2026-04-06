@@ -114,9 +114,16 @@ export function ProductsTable({ products }: { products: Product[] }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
-      if (!res.ok) throw new Error("Save failed");
+      if (!res.ok) {
+        const e = await res.json();
+        alert("Save failed: " + (e.error || "Unknown error"));
+        setSaving(false);
+        return;
+      }
+      setSaving(false);
       router.refresh();
-    } catch {
+    } catch (err) {
+      alert("Network error. Please try again.");
       setSaving(false);
     }
   };
@@ -125,9 +132,12 @@ export function ProductsTable({ products }: { products: Product[] }) {
     if (!confirm("Delete this product permanently?")) return;
     setDeleting(true);
     try {
-      await fetch(apiUrl(`/api/admin/products/${id}`), { method: "DELETE" });
+      const res = await fetch(apiUrl(`/api/admin/products/${id}`), { method: "DELETE" });
+      if (!res.ok) { const e = await res.json(); alert("Delete failed: " + (e.error || "Unknown")); }
+      setDeleting(false);
       router.refresh();
     } catch {
+      alert("Network error.");
       setDeleting(false);
     }
   };
