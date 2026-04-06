@@ -6,6 +6,7 @@ import { getScopedDb } from "@/lib/db";
 import { getTenant } from "@/lib/tenant";
 import { homeMetadata } from "@/lib/seo";
 import { formatPrice } from "@/lib/utils";
+import { HomeCarousels } from "./home-carousel";
 
 export async function generateMetadata(): Promise<Metadata> {
   try {
@@ -43,10 +44,50 @@ async function getFeaturedProducts() {
   }));
 }
 
+async function getCategoryCarousels() {
+  try {
+    const tdb = await getScopedDb();
+    const products = await tdb.product.findMany({
+      where: { isActive: true },
+      select: {
+        id: true, name: true, slug: true, price: true, compareAtPrice: true, images: true, category: true,
+      },
+      orderBy: { createdAt: "desc" },
+      take: 50,
+    });
+
+    // Group by category, top 3 categories with most products
+    const catMap = new Map<string, typeof products>();
+    for (const p of products) {
+      if (!catMap.has(p.category)) catMap.set(p.category, []);
+      catMap.get(p.category)!.push(p);
+    }
+
+    return Array.from(catMap.entries())
+      .sort((a, b) => b[1].length - a[1].length)
+      .slice(0, 3)
+      .map(([name, prods]) => ({
+        name,
+        products: prods.slice(0, 12).map((p) => ({
+          id: p.id,
+          name: p.name,
+          slug: p.slug,
+          price: Number(p.price),
+          compareAtPrice: p.compareAtPrice ? Number(p.compareAtPrice) : null,
+          image: p.images[0] || null,
+          category: p.category,
+        })),
+      }));
+  } catch {
+    return [];
+  }
+}
+
 export default async function HomePage() {
-  const [products, tenant] = await Promise.all([
+  const [products, tenant, categoryCarousels] = await Promise.all([
     getFeaturedProducts(),
     getTenant(),
+    getCategoryCarousels(),
   ]);
 
   const heroImage = tenant.heroBannerImage;
@@ -393,6 +434,20 @@ export default async function HomePage() {
           </Link>
         </div>
       </section>
+
+      {/* ── PRODUCT CAROUSELS ─────────────────────────────── */}
+      <HomeCarousels
+        newArrivals={products.slice(0, 12).map((p) => ({
+          id: p.id,
+          name: p.name,
+          slug: p.slug,
+          price: p.price,
+          compareAtPrice: p.compareAtPrice,
+          image: p.images[0] || null,
+          category: p.category,
+        }))}
+        categories={categoryCarousels}
+      />
 
       {/* ── INSTAGRAM SECTION ──────────────────────────────── */}
       <section

@@ -10,9 +10,18 @@ import {
   Store,
   Loader2,
   Sparkles,
+  CircleCheck,
+  ExternalLink,
 } from "lucide-react";
 import { signupTenant, type SignupState } from "@/actions/signup";
 import { BILLING_PLANS, type BillingPlanId } from "@/config/billingPlans";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Separator } from "@/components/ui/separator";
+import { cn } from "@/lib/utils";
 import Link from "next/link";
 
 /* ─── Motion ─── */
@@ -33,6 +42,14 @@ const slideVariants = {
 /* ─── Plans Data ─── */
 const plans = Object.values(BILLING_PLANS);
 
+const highlights = [
+  { id: 1, feature: "Go live in under 5 minutes" },
+  { id: 2, feature: "No credit card required for trial" },
+  { id: 3, feature: "Paystack + Stripe payments built in" },
+  { id: 4, feature: "Custom domain support" },
+  { id: 5, feature: "Full admin dashboard from day one" },
+];
+
 const currencies = [
   { value: "GBP", label: "GBP (£)" },
   { value: "NGN", label: "NGN (₦)" },
@@ -51,6 +68,12 @@ const verticals = [
   { value: "education", label: "Education & Learning" },
   { value: "other", label: "Other" },
 ];
+
+const inputClass =
+  "w-full rounded-lg border border-white/[0.08] bg-white/[0.04] px-4 py-3 text-sm text-white placeholder-gray-600 outline-none transition-colors focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/30";
+const labelClass = "block text-xs font-medium text-gray-400 mb-1.5";
+const selectClass =
+  "w-full rounded-lg border border-white/[0.08] bg-white/[0.04] px-4 py-3 text-sm text-white outline-none transition-colors focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/30";
 
 /* ─── Component ─── */
 export default function GetStartedPage() {
@@ -78,6 +101,7 @@ function GetStartedContent() {
   const [slug, setSlug] = useState("");
   const [currency, setCurrency] = useState("GBP");
   const [vertical, setVertical] = useState("");
+  const [storeDescription, setStoreDescription] = useState("");
   const [agreedToTerms, setAgreedToTerms] = useState(false);
 
   // Slug availability
@@ -143,12 +167,18 @@ function GetStartedContent() {
 
   const canProceedStep1 = selectedPlan !== null;
   const canProceedStep2 =
-    firstName && lastName && email && password.length >= 8 && storeName && slug && slugAvailable === true;
+    firstName &&
+    lastName &&
+    email &&
+    password.length >= 8 &&
+    storeName &&
+    slug &&
+    slugAvailable === true;
   const canSubmit = agreedToTerms && canProceedStep2;
 
   return (
     <div className="min-h-screen bg-gray-950 pt-28 pb-20">
-      <div className="mx-auto max-w-4xl px-6">
+      <div className="mx-auto max-w-7xl px-6">
         {/* Header */}
         <motion.div
           className="text-center mb-12"
@@ -217,112 +247,176 @@ function GetStartedContent() {
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mb-6 rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-400"
+            className="mb-6 mx-auto max-w-4xl rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-400"
           >
             {state.error}
           </motion.div>
         )}
 
         {/* Steps */}
-        <div className="relative overflow-hidden rounded-2xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-sm min-h-[500px]">
-          <AnimatePresence mode="wait" custom={direction}>
-            {/* ─── Step 1: Plan Selection ─── */}
-            {step === 0 && (
-              <motion.div
-                key="step-0"
-                custom={direction}
-                variants={slideVariants}
-                initial="enter"
-                animate="center"
-                exit="exit"
-                transition={{ duration: 0.4, ease }}
-                className="p-8"
-              >
-                <h2 className="text-xl font-semibold text-white mb-2">
-                  Choose your plan
-                </h2>
-                <p className="text-sm text-gray-400 mb-8">
-                  All plans include a 14-day free trial. Upgrade or downgrade
-                  anytime.
-                </p>
+        <AnimatePresence mode="wait" custom={direction}>
+          {/* ─── Step 1: Plan Selection (2-col layout) ─── */}
+          {step === 0 && (
+            <motion.div
+              key="step-0"
+              custom={direction}
+              variants={slideVariants}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              transition={{ duration: 0.4, ease }}
+            >
+              <div className="grid grid-cols-1 gap-10 lg:grid-cols-12 lg:gap-12">
+                <div className="lg:col-span-7">
+                  <h2 className="text-xl font-semibold text-white mb-2">
+                    Choose your plan
+                  </h2>
+                  <p className="text-sm text-gray-400 mb-6">
+                    All plans include a 14-day free trial. Upgrade or downgrade
+                    anytime.
+                  </p>
 
-                <div className="grid gap-4 md:grid-cols-3">
-                  {plans.map((plan) => {
-                    const isSelected = selectedPlan === plan.id;
-                    return (
-                      <button
-                        key={plan.id}
-                        onClick={() => setSelectedPlan(plan.id)}
-                        className={`relative rounded-xl border p-6 text-left transition-all cursor-pointer ${
-                          isSelected
-                            ? "border-emerald-500/50 bg-emerald-500/[0.08] ring-1 ring-emerald-500/30"
-                            : "border-white/[0.06] bg-white/[0.02] hover:border-white/[0.12] hover:bg-white/[0.04]"
-                        }`}
-                      >
-                        {plan.id === "standard" && (
-                          <span className="absolute -top-2.5 right-4 rounded-full bg-emerald-500 px-3 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white">
-                            Popular
-                          </span>
-                        )}
-                        <h3 className="text-lg font-semibold text-white">
-                          {plan.name}
-                        </h3>
-                        <div className="mt-2 flex items-baseline gap-1">
-                          <span className="text-3xl font-bold text-white">
-                            £{plan.priceMonthly}
-                          </span>
-                          <span className="text-sm text-gray-500">/mo</span>
-                        </div>
-                        <p className="mt-3 text-xs text-gray-400 leading-relaxed">
-                          {plan.description}
-                        </p>
-                        <ul className="mt-5 space-y-2">
-                          {plan.features.map((feature) => (
-                            <li
-                              key={feature}
-                              className="flex items-start gap-2 text-xs text-gray-300"
-                            >
-                              <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-emerald-400" />
-                              {feature}
-                            </li>
-                          ))}
-                        </ul>
-                        {isSelected && (
-                          <motion.div
-                            layoutId="plan-selected"
-                            className="absolute inset-0 rounded-xl border-2 border-emerald-500/50 pointer-events-none"
-                          />
-                        )}
-                      </button>
-                    );
-                  })}
-                </div>
-
-                <div className="mt-8 flex justify-end">
-                  <button
-                    onClick={goNext}
-                    disabled={!canProceedStep1}
-                    className="inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-semibold text-gray-950 transition-all hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+                  <RadioGroup
+                    value={selectedPlan}
+                    onValueChange={(v) => setSelectedPlan(v as BillingPlanId)}
+                    className="space-y-4"
                   >
-                    Continue
-                    <ChevronRight className="h-4 w-4" />
-                  </button>
-                </div>
-              </motion.div>
-            )}
+                    {plans.map((plan) => (
+                      <label
+                        key={plan.id}
+                        htmlFor={plan.id}
+                        className={cn(
+                          "relative block cursor-pointer rounded-xl border transition-all",
+                          selectedPlan === plan.id
+                            ? "border-emerald-500/40 ring-2 ring-emerald-500/20 bg-emerald-500/[0.06]"
+                            : "border-white/[0.06] bg-white/[0.02] hover:border-white/[0.12]"
+                        )}
+                      >
+                        <div className="flex items-start gap-4 px-6 py-5">
+                          <div className="mt-1 flex h-4 w-4 shrink-0 items-center justify-center">
+                            <RadioGroupItem value={plan.id} id={plan.id} />
+                          </div>
+                          <div className="w-full">
+                            <p className="leading-6">
+                              <span className="font-semibold text-white">
+                                {plan.name}
+                              </span>
+                              {plan.id === "standard" && (
+                                <Badge
+                                  variant="secondary"
+                                  className="ml-2 bg-emerald-500/20 text-emerald-400 border-emerald-500/30"
+                                >
+                                  recommended
+                                </Badge>
+                              )}
+                            </p>
+                            <p className="mt-1 text-xs text-gray-500 leading-relaxed">
+                              {plan.description}
+                            </p>
+                            <ul className="mt-3 space-y-1.5">
+                              {plan.features.map((feature, idx) => (
+                                <li
+                                  key={idx}
+                                  className="flex items-center gap-2 text-xs text-gray-300"
+                                >
+                                  <Check
+                                    className="h-3.5 w-3.5 text-emerald-400"
+                                    aria-hidden
+                                  />
+                                  {feature}
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        </div>
+                        <div className="flex items-center justify-between rounded-b-xl border-t border-white/[0.06] bg-white/[0.02] px-6 py-3">
+                          <Link
+                            href="/legal/merchant-terms"
+                            className="inline-flex items-center gap-1 text-xs text-emerald-400 hover:underline hover:underline-offset-4"
+                          >
+                            Learn more
+                            <ExternalLink
+                              className="h-3.5 w-3.5"
+                              aria-hidden
+                            />
+                          </Link>
+                          <div>
+                            <span className="text-xl font-bold text-white">
+                              £{plan.priceMonthly}
+                            </span>
+                            <span className="text-sm text-gray-500">/mo</span>
+                          </div>
+                        </div>
+                      </label>
+                    ))}
+                  </RadioGroup>
 
-            {/* ─── Step 2: Account + Store Details ─── */}
-            {step === 1 && (
-              <motion.div
-                key="step-1"
-                custom={direction}
-                variants={slideVariants}
-                initial="enter"
-                animate="center"
-                exit="exit"
-                transition={{ duration: 0.4, ease }}
-                className="p-8"
-              >
+                  <div className="mt-8 flex justify-end">
+                    <button
+                      onClick={goNext}
+                      disabled={!canProceedStep1}
+                      className="inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-semibold text-gray-950 transition-all hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+                    >
+                      Continue
+                      <ChevronRight className="h-4 w-4" />
+                    </button>
+                  </div>
+                </div>
+
+                {/* Sidebar */}
+                <div className="lg:col-span-5">
+                  <Card className="border-white/[0.06] bg-white/[0.03]">
+                    <CardContent className="pt-6">
+                      <h4 className="text-sm font-semibold text-white">
+                        Everything you need to sell online
+                      </h4>
+                      <p className="mt-2 text-sm leading-6 text-gray-400">
+                        Authentifactor powers ambitious brands with
+                        enterprise-grade commerce infrastructure. All plans
+                        include your own storefront, admin dashboard, and
+                        payment processing.
+                      </p>
+                      <ul className="mt-4 space-y-1.5">
+                        {highlights.map((item) => (
+                          <li
+                            key={item.id}
+                            className="flex items-center gap-2.5 py-1 text-gray-300"
+                          >
+                            <CircleCheck className="h-4 w-4 text-emerald-400 shrink-0" />
+                            <span className="text-sm">{item.feature}</span>
+                          </li>
+                        ))}
+                      </ul>
+                      <Separator className="my-5 bg-white/[0.06]" />
+                      <p className="text-xs text-gray-500">
+                        Questions?{" "}
+                        <a
+                          href="mailto:cs@authentifactor.com"
+                          className="text-emerald-400 hover:underline"
+                        >
+                          cs@authentifactor.com
+                        </a>
+                      </p>
+                    </CardContent>
+                  </Card>
+                </div>
+              </div>
+            </motion.div>
+          )}
+
+          {/* ─── Step 2: Account + Store Details ─── */}
+          {step === 1 && (
+            <motion.div
+              key="step-1"
+              custom={direction}
+              variants={slideVariants}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              transition={{ duration: 0.4, ease }}
+              className="mx-auto max-w-3xl"
+            >
+              <div className="rounded-2xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-sm p-8">
                 <h2 className="text-xl font-semibold text-white mb-2">
                   Your details
                 </h2>
@@ -330,97 +424,102 @@ function GetStartedContent() {
                   Set up your account and store.
                 </p>
 
-                <div className="grid gap-6 md:grid-cols-2">
-                  {/* First Name */}
-                  <div>
-                    <label className="block text-xs font-medium text-gray-400 mb-1.5">
-                      First Name
-                    </label>
-                    <input
-                      type="text"
-                      value={firstName}
-                      onChange={(e) => setFirstName(e.target.value)}
-                      className="w-full rounded-lg border border-white/[0.08] bg-white/[0.04] px-4 py-3 text-sm text-white placeholder-gray-600 outline-none transition-colors focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/30"
-                      placeholder="Jane"
-                    />
-                    {state.fieldErrors?.firstName && (
-                      <p className="mt-1 text-xs text-red-400">
-                        {state.fieldErrors.firstName[0]}
-                      </p>
-                    )}
+                <div className="space-y-6">
+                  {/* Name row */}
+                  <div className="grid gap-4 md:grid-cols-2">
+                    <div>
+                      <label className={labelClass}>First Name</label>
+                      <input
+                        type="text"
+                        value={firstName}
+                        onChange={(e) => setFirstName(e.target.value)}
+                        className={inputClass}
+                        placeholder="Jane"
+                      />
+                      {state.fieldErrors?.firstName && (
+                        <p className="mt-1 text-xs text-red-400">
+                          {state.fieldErrors.firstName[0]}
+                        </p>
+                      )}
+                    </div>
+                    <div>
+                      <label className={labelClass}>Last Name</label>
+                      <input
+                        type="text"
+                        value={lastName}
+                        onChange={(e) => setLastName(e.target.value)}
+                        className={inputClass}
+                        placeholder="Doe"
+                      />
+                    </div>
                   </div>
 
-                  {/* Last Name */}
-                  <div>
-                    <label className="block text-xs font-medium text-gray-400 mb-1.5">
-                      Last Name
-                    </label>
-                    <input
-                      type="text"
-                      value={lastName}
-                      onChange={(e) => setLastName(e.target.value)}
-                      className="w-full rounded-lg border border-white/[0.08] bg-white/[0.04] px-4 py-3 text-sm text-white placeholder-gray-600 outline-none transition-colors focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/30"
-                      placeholder="Doe"
-                    />
+                  {/* Email + Password */}
+                  <div className="grid gap-4 md:grid-cols-2">
+                    <div>
+                      <label className={labelClass}>Email</label>
+                      <input
+                        type="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        className={inputClass}
+                        placeholder="jane@mybrand.com"
+                      />
+                      {state.fieldErrors?.email && (
+                        <p className="mt-1 text-xs text-red-400">
+                          {state.fieldErrors.email[0]}
+                        </p>
+                      )}
+                    </div>
+                    <div>
+                      <label className={labelClass}>Password</label>
+                      <input
+                        type="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        className={inputClass}
+                        placeholder="Min. 8 characters"
+                      />
+                      {state.fieldErrors?.password && (
+                        <p className="mt-1 text-xs text-red-400">
+                          {state.fieldErrors.password[0]}
+                        </p>
+                      )}
+                    </div>
                   </div>
 
-                  {/* Email */}
-                  <div>
-                    <label className="block text-xs font-medium text-gray-400 mb-1.5">
-                      Email
-                    </label>
-                    <input
-                      type="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      className="w-full rounded-lg border border-white/[0.08] bg-white/[0.04] px-4 py-3 text-sm text-white placeholder-gray-600 outline-none transition-colors focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/30"
-                      placeholder="jane@mybrand.com"
-                    />
-                    {state.fieldErrors?.email && (
-                      <p className="mt-1 text-xs text-red-400">
-                        {state.fieldErrors.email[0]}
-                      </p>
-                    )}
-                  </div>
+                  <Separator className="bg-white/[0.06]" />
 
-                  {/* Password */}
+                  {/* Store Name */}
                   <div>
-                    <label className="block text-xs font-medium text-gray-400 mb-1.5">
-                      Password
-                    </label>
-                    <input
-                      type="password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      className="w-full rounded-lg border border-white/[0.08] bg-white/[0.04] px-4 py-3 text-sm text-white placeholder-gray-600 outline-none transition-colors focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/30"
-                      placeholder="Min. 8 characters"
-                    />
-                    {state.fieldErrors?.password && (
-                      <p className="mt-1 text-xs text-red-400">
-                        {state.fieldErrors.password[0]}
-                      </p>
-                    )}
-                  </div>
-
-                  {/* Store Name — full width */}
-                  <div className="md:col-span-2">
-                    <label className="block text-xs font-medium text-gray-400 mb-1.5">
-                      Store Name
-                    </label>
+                    <label className={labelClass}>Store Name</label>
                     <input
                       type="text"
                       value={storeName}
                       onChange={(e) => setStoreName(e.target.value)}
-                      className="w-full rounded-lg border border-white/[0.08] bg-white/[0.04] px-4 py-3 text-sm text-white placeholder-gray-600 outline-none transition-colors focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/30"
+                      className={inputClass}
                       placeholder="Taste of Motherland"
                     />
                   </div>
 
-                  {/* Store URL */}
-                  <div className="md:col-span-2">
-                    <label className="block text-xs font-medium text-gray-400 mb-1.5">
-                      Store URL
+                  {/* Store Description (textarea) */}
+                  <div>
+                    <label className={labelClass}>
+                      Store Description{" "}
+                      <span className="text-gray-600">(optional)</span>
                     </label>
+                    <textarea
+                      value={storeDescription}
+                      onChange={(e) => setStoreDescription(e.target.value)}
+                      rows={3}
+                      className={cn(inputClass, "resize-y min-h-[80px]")}
+                      placeholder="Tell customers what your store is about..."
+                    />
+                  </div>
+
+                  {/* Store URL */}
+                  <div>
+                    <label className={labelClass}>Store URL</label>
                     <div className="flex items-center rounded-lg border border-white/[0.08] bg-white/[0.04] overflow-hidden focus-within:border-emerald-500/50 focus-within:ring-1 focus-within:ring-emerald-500/30">
                       <input
                         type="text"
@@ -437,7 +536,6 @@ function GetStartedContent() {
                         .authentifactor.com
                       </span>
                     </div>
-                    {/* Slug status */}
                     <div className="mt-1.5 h-4">
                       {checkingSlug && (
                         <span className="text-xs text-gray-500 flex items-center gap-1">
@@ -456,7 +554,8 @@ function GetStartedContent() {
                           Not available.
                           {slugSuggestion && (
                             <>
-                              {" "}Try{" "}
+                              {" "}
+                              Try{" "}
                               <button
                                 type="button"
                                 onClick={() => {
@@ -476,48 +575,44 @@ function GetStartedContent() {
                     </div>
                   </div>
 
-                  {/* Currency */}
-                  <div>
-                    <label className="block text-xs font-medium text-gray-400 mb-1.5">
-                      Currency
-                    </label>
-                    <select
-                      value={currency}
-                      onChange={(e) => setCurrency(e.target.value)}
-                      className="w-full rounded-lg border border-white/[0.08] bg-white/[0.04] px-4 py-3 text-sm text-white outline-none transition-colors focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/30"
-                    >
-                      {currencies.map((c) => (
-                        <option
-                          key={c.value}
-                          value={c.value}
-                          className="bg-gray-900"
-                        >
-                          {c.label}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  {/* Vertical */}
-                  <div>
-                    <label className="block text-xs font-medium text-gray-400 mb-1.5">
-                      Industry
-                    </label>
-                    <select
-                      value={vertical}
-                      onChange={(e) => setVertical(e.target.value)}
-                      className="w-full rounded-lg border border-white/[0.08] bg-white/[0.04] px-4 py-3 text-sm text-white outline-none transition-colors focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/30"
-                    >
-                      {verticals.map((v) => (
-                        <option
-                          key={v.value}
-                          value={v.value}
-                          className="bg-gray-900"
-                        >
-                          {v.label}
-                        </option>
-                      ))}
-                    </select>
+                  {/* Currency + Industry */}
+                  <div className="grid gap-4 md:grid-cols-2">
+                    <div>
+                      <label className={labelClass}>Currency</label>
+                      <select
+                        value={currency}
+                        onChange={(e) => setCurrency(e.target.value)}
+                        className={selectClass}
+                      >
+                        {currencies.map((c) => (
+                          <option
+                            key={c.value}
+                            value={c.value}
+                            className="bg-gray-900"
+                          >
+                            {c.label}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div>
+                      <label className={labelClass}>Industry</label>
+                      <select
+                        value={vertical}
+                        onChange={(e) => setVertical(e.target.value)}
+                        className={selectClass}
+                      >
+                        {verticals.map((v) => (
+                          <option
+                            key={v.value}
+                            value={v.value}
+                            className="bg-gray-900"
+                          >
+                            {v.label}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
                   </div>
                 </div>
 
@@ -538,21 +633,23 @@ function GetStartedContent() {
                     <ChevronRight className="h-4 w-4" />
                   </button>
                 </div>
-              </motion.div>
-            )}
+              </div>
+            </motion.div>
+          )}
 
-            {/* ─── Step 3: Confirm & Launch ─── */}
-            {step === 2 && (
-              <motion.div
-                key="step-2"
-                custom={direction}
-                variants={slideVariants}
-                initial="enter"
-                animate="center"
-                exit="exit"
-                transition={{ duration: 0.4, ease }}
-                className="p-8"
-              >
+          {/* ─── Step 3: Confirm & Launch ─── */}
+          {step === 2 && (
+            <motion.div
+              key="step-2"
+              custom={direction}
+              variants={slideVariants}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              transition={{ duration: 0.4, ease }}
+              className="mx-auto max-w-3xl"
+            >
+              <div className="rounded-2xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-sm p-8">
                 <h2 className="text-xl font-semibold text-white mb-2">
                   Ready to launch
                 </h2>
@@ -593,6 +690,11 @@ function GetStartedContent() {
                         </p>
                       </div>
                     </div>
+                    {storeDescription && (
+                      <p className="mt-3 text-xs text-gray-500 leading-relaxed line-clamp-2">
+                        {storeDescription}
+                      </p>
+                    )}
                   </div>
                   <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-5">
                     <h3 className="text-xs font-medium uppercase tracking-wider text-gray-500 mb-3">
@@ -668,7 +770,11 @@ function GetStartedContent() {
                       <input type="hidden" name="vertical" value={vertical} />
                     )}
                     {refCode && (
-                      <input type="hidden" name="referredBy" value={refCode} />
+                      <input
+                        type="hidden"
+                        name="referredBy"
+                        value={refCode}
+                      />
                     )}
                     <button
                       type="submit"
@@ -689,10 +795,10 @@ function GetStartedContent() {
                     </button>
                   </form>
                 </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </div>
   );
