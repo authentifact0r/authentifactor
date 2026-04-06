@@ -17,7 +17,7 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
     const data: Record<string, any> = {};
     const fields = [
       "name", "description", "shortDescription", "category", "subcategory",
-      "collection", "material", "brand", "metaTitle", "metaDescription",
+      "collection", "material", "careInstructions", "brand", "metaTitle", "metaDescription",
       "isActive",
     ];
     for (const f of fields) {
