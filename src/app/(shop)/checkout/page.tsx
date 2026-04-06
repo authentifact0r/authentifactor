@@ -9,7 +9,9 @@ import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { formatPrice } from "@/lib/utils";
-import { Truck, AlertTriangle, CreditCard, Lock, CheckCircle } from "lucide-react";
+import { Truck, AlertTriangle, CreditCard, Lock, CheckCircle, ShieldCheck, Wallet } from "lucide-react";
+import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui/separator";
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -111,8 +113,17 @@ export default function CheckoutPage() {
   }
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-8">
-      <h1 className="text-2xl font-bold">Checkout</h1>
+    <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
+      <h1
+        className="text-2xl"
+        style={{
+          fontFamily: "var(--font-heading, Georgia), serif",
+          fontStyle: "italic",
+          fontWeight: 400,
+        }}
+      >
+        Checkout
+      </h1>
 
       {error && (
         <div className="mt-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-800">
@@ -241,40 +252,110 @@ export default function CheckoutPage() {
           <Card>
             <CardHeader>
               <CardTitle className="text-base flex items-center gap-2">
-                <CreditCard className="h-4 w-4" /> 3. Payment
+                <CreditCard className="h-4 w-4" /> 3. Payment Method
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex gap-3">
-                <button onClick={() => setPaymentProvider("PAYSTACK")}>
-                  <Badge
-                    variant={paymentProvider === "PAYSTACK" ? "default" : "outline"}
-                    className="cursor-pointer"
-                  >
-                    Paystack
-                  </Badge>
+            <CardContent className="space-y-5">
+              {/* Payment provider selection — styled as cards */}
+              <div className="grid grid-cols-2 gap-3">
+                <button
+                  type="button"
+                  onClick={() => setPaymentProvider("PAYSTACK")}
+                  className={`flex h-16 cursor-pointer items-center justify-center gap-2.5 rounded-xl border-2 transition-all ${
+                    paymentProvider === "PAYSTACK"
+                      ? "border-emerald-600 bg-emerald-50 shadow-sm"
+                      : "border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50"
+                  }`}
+                >
+                  {/* Paystack icon */}
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                    <path d="M2 4h20v3H2V4zm0 5h20v3H2V9zm0 5h14v3H2v-3zm0 5h14v3H2v-3z" fill="#00C3F7"/>
+                  </svg>
+                  <span className="text-sm font-semibold text-gray-800">Paystack</span>
+                  {paymentProvider === "PAYSTACK" && (
+                    <CheckCircle className="h-4 w-4 text-emerald-600" />
+                  )}
                 </button>
-                <button onClick={() => setPaymentProvider("STRIPE")}>
-                  <Badge
-                    variant={paymentProvider === "STRIPE" ? "default" : "outline"}
-                    className="cursor-pointer"
-                  >
-                    Stripe
-                  </Badge>
+                <button
+                  type="button"
+                  onClick={() => setPaymentProvider("STRIPE")}
+                  className={`flex h-16 cursor-pointer items-center justify-center gap-2.5 rounded-xl border-2 transition-all ${
+                    paymentProvider === "STRIPE"
+                      ? "border-indigo-600 bg-indigo-50 shadow-sm"
+                      : "border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50"
+                  }`}
+                >
+                  {/* Stripe icon */}
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                    <path d="M13.976 9.15c-2.172-.806-3.356-1.426-3.356-2.409 0-.831.683-1.305 1.901-1.305 2.227 0 4.515.858 6.09 1.631l.89-5.494C18.252.975 15.697 0 12.165 0 9.667 0 7.589.654 6.104 1.872 4.56 3.147 3.757 4.918 3.757 7.098c0 4.46 2.72 5.946 5.508 6.98 2.172.787 2.889 1.426 2.889 2.333 0 .974-.772 1.457-2.21 1.457-1.901 0-4.81-.953-6.676-2.21l-.89 5.56C4.151 22.455 7.047 24 10.937 24c2.594 0 4.673-.635 6.158-1.91 1.621-1.38 2.428-3.206 2.428-5.58.057-4.554-2.747-5.994-5.547-7.06z" fill="#635BFF"/>
+                  </svg>
+                  <span className="text-sm font-semibold text-gray-800">Stripe</span>
+                  {paymentProvider === "STRIPE" && (
+                    <CheckCircle className="h-4 w-4 text-indigo-600" />
+                  )}
                 </button>
               </div>
-              <p className="text-sm text-gray-500">
-                You will be redirected to {paymentProvider === "PAYSTACK" ? "Paystack" : "Stripe"} to complete your payment securely.
-              </p>
+
+              {/* Separator */}
+              <div className="flex items-center gap-3">
+                <Separator className="flex-1" />
+                <span className="text-xs font-medium text-gray-400 shrink-0">
+                  secure checkout
+                </span>
+                <Separator className="flex-1" />
+              </div>
+
+              {/* Payment info */}
+              <div className="rounded-xl border border-gray-100 bg-gray-50 p-4 space-y-3">
+                <div className="flex items-start gap-3">
+                  <ShieldCheck className="h-5 w-5 text-emerald-600 mt-0.5 shrink-0" />
+                  <div>
+                    <p className="text-sm font-medium text-gray-800">
+                      {paymentProvider === "PAYSTACK" ? "Paystack Secure Checkout" : "Stripe Secure Checkout"}
+                    </p>
+                    <p className="text-xs text-gray-500 mt-0.5">
+                      You'll be redirected to {paymentProvider === "PAYSTACK" ? "Paystack" : "Stripe"} to enter your card details securely. Your card information never touches our servers.
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-4 pt-1">
+                  {/* Card brand icons */}
+                  {["Visa", "Mastercard", "Amex"].map((brand) => (
+                    <span key={brand} className="rounded border border-gray-200 bg-white px-2 py-1 text-[10px] font-medium text-gray-500">
+                      {brand}
+                    </span>
+                  ))}
+                  {paymentProvider === "PAYSTACK" && (
+                    <span className="rounded border border-gray-200 bg-white px-2 py-1 text-[10px] font-medium text-gray-500">
+                      Bank Transfer
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              {/* Place Order button */}
               <Button
                 size="lg"
-                className="w-full"
+                className="w-full h-14 text-base font-semibold"
                 disabled={loading || !isAddressValid}
                 onClick={handlePlaceOrder}
               >
-                <Lock className="mr-2 h-4 w-4" />
-                {loading ? "Processing..." : `Pay ${formatPrice(total)}`}
+                {loading ? (
+                  <span className="flex items-center gap-2">
+                    <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                    </svg>
+                    Processing...
+                  </span>
+                ) : (
+                  <span className="flex items-center gap-2">
+                    <Lock className="h-4 w-4" />
+                    Pay {formatPrice(total)} securely
+                  </span>
+                )}
               </Button>
+
               {!isAddressValid && (
                 <p className="text-xs text-gray-400 text-center">
                   Please fill in your shipping address to continue
