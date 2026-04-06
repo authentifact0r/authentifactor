@@ -28,18 +28,17 @@ export async function POST(request: NextRequest) {
         shortDescription: description?.slice(0, 120) || null,
         category: category || "Imported",
         price,
-        compareAtPrice: costPrice ? price : null,
+        compareAtPrice: costPrice && costPrice < price ? price : null,
         weightKg: 0.5,
         images: images || [],
         sizes: sizes || [],
         colors: colors || [],
         material: material || null,
-        brand: brand || supplier || null,
-        tags: [supplier || "imported", "dropship"].filter(Boolean),
-        isActive: false, // Draft by default — review before publishing
-        // Store supplier info in metaDescription temporarily
-        metaTitle: sourceUrl ? `Source: ${supplier || "supplier"}` : null,
-        metaDescription: sourceUrl || null,
+        brand: brand || null,
+        tags: [supplier || "imported", "dropship", sourceUrl ? "has-supplier-url" : ""].filter(Boolean),
+        isActive: false,
+        metaTitle: null,
+        metaDescription: description?.slice(0, 160) || null,
       },
     });
 

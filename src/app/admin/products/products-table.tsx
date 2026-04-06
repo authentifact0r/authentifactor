@@ -267,6 +267,20 @@ export function ProductsTable({ products }: { products: Product[] }) {
                       </div>
                     </div>
 
+                    {/* Sizes & Colors */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-xs font-medium text-white/50 mb-1">Sizes <span className="text-white/30">(comma separated)</span></label>
+                        <input value={(editData.sizes || []).join(", ")} onChange={(e) => updateField("sizes", e.target.value.split(",").map((s: string) => s.trim()).filter(Boolean))} placeholder="S, M, L, XL" className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.12] text-sm text-white placeholder:text-white/25 focus:outline-none" />
+                        {(editData.sizes || []).length > 0 && <div className="flex flex-wrap gap-1 mt-1.5">{(editData.sizes || []).map((s: string) => <span key={s} className="rounded bg-emerald-500/15 px-2 py-0.5 text-[10px] text-emerald-400">{s}</span>)}</div>}
+                      </div>
+                      <div>
+                        <label className="block text-xs font-medium text-white/50 mb-1">Colors <span className="text-white/30">(comma separated)</span></label>
+                        <input value={(editData.colors || []).join(", ")} onChange={(e) => updateField("colors", e.target.value.split(",").map((s: string) => s.trim()).filter(Boolean))} placeholder="Black, Ivory, Gold" className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.12] text-sm text-white placeholder:text-white/25 focus:outline-none" />
+                        {(editData.colors || []).length > 0 && <div className="flex flex-wrap gap-1 mt-1.5">{(editData.colors || []).map((c: string) => <span key={c} className="rounded bg-cyan-500/15 px-2 py-0.5 text-[10px] text-cyan-400">{c}</span>)}</div>}
+                      </div>
+                    </div>
+
                     {/* Images inline */}
                     <div>
                       <label className="block text-xs font-medium text-white/50 mb-1">Images</label>
@@ -294,17 +308,13 @@ export function ProductsTable({ products }: { products: Product[] }) {
                     {/* SEO quick fields */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-xs font-medium text-white/50 mb-1">SEO Title <span className="text-white/50">(60 chars)</span></label>
+                        <label className="block text-xs font-medium text-white/50 mb-1">SEO Title <span className="text-white/30">(60 chars)</span></label>
                         <input value={editData.metaTitle || ""} onChange={(e) => updateField("metaTitle", e.target.value)} maxLength={60} placeholder={p.name} className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.12] text-sm text-white placeholder:text-white/25 focus:outline-none" />
                       </div>
                       <div>
-                        <label className="block text-xs font-medium text-white/50 mb-1">Brand</label>
-                        <input value={editData.brand || ""} onChange={(e) => updateField("brand", e.target.value)} placeholder="Styled by Maryam" className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.12] text-sm text-white placeholder:text-white/25 focus:outline-none" />
+                        <label className="block text-xs font-medium text-white/50 mb-1">SEO Description <span className="text-white/30">(160 chars)</span></label>
+                        <input value={editData.metaDescription || ""} onChange={(e) => updateField("metaDescription", e.target.value)} maxLength={160} placeholder={p.description?.substring(0, 100)} className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.12] text-sm text-white placeholder:text-white/25 focus:outline-none" />
                       </div>
-                    </div>
-                    <div>
-                      <label className="block text-xs font-medium text-white/50 mb-1">SEO Description <span className="text-white/50">(160 chars)</span></label>
-                      <textarea value={editData.metaDescription || ""} onChange={(e) => updateField("metaDescription", e.target.value)} maxLength={160} rows={2} placeholder={p.description?.substring(0, 160)} className="w-full px-3 py-2 rounded-lg bg-white/[0.06] border border-white/[0.12] text-sm text-white placeholder:text-white/25 focus:outline-none resize-none" />
                     </div>
 
                     {/* Actions */}
