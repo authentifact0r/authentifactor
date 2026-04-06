@@ -20,16 +20,27 @@ export async function generateMetadata(): Promise<Metadata> {
       description:
         tenant.defaultMetaDescription ||
         `Shop quality products at ${tenant.name}. Fast delivery with subscribe-and-save options.`,
+      icons: {
+        icon: [
+          { url: "/favicon.svg", type: "image/svg+xml" },
+          { url: "/favicon.ico", sizes: "32x32" },
+        ],
+      },
       openGraph: tenant.defaultOgImage
         ? { images: [{ url: tenant.defaultOgImage }] }
         : undefined,
     };
   } catch {
-    // Fallback when tenant context is not available (e.g., API routes)
     return {
       title: "Authentifactor — Multi-Tenant Commerce",
       description:
         "Shop quality products online. Fresh delivery with subscribe-and-save options.",
+      icons: {
+        icon: [
+          { url: "/favicon.svg", type: "image/svg+xml" },
+          { url: "/favicon.ico", sizes: "32x32" },
+        ],
+      },
     };
   }
 }
