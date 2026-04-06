@@ -9,7 +9,7 @@ function cors(response: NextResponse) {
   return response;
 }
 
-// Creates a Stripe PaymentIntent for inline card payment
+// Creates a Stripe Checkout Session — payment only, no shipping collection
 // POST /api/storefront/checkout?tenant=styled-by-maryam
 export async function POST(request: NextRequest) {
   try {
@@ -22,35 +22,69 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { items, customer, shipping, giftWrap, giftNote } = body;
+    const { items, customer, shipping, giftWrap, giftNote, successUrl, cancelUrl } = body;
 
-    if (!items?.length || !customer?.email) {
-      return cors(NextResponse.json({ error: "Missing required fields: items, customer.email" }, { status: 400 }));
+    if (!items?.length || !customer?.email || !successUrl) {
+      return cors(NextResponse.json({ error: "Missing required fields" }, { status: 400 }));
     }
 
-    // Calculate total in pence
-    let totalPence = 0;
-    const description: string[] = [];
+    // Build Stripe line items
+    const lineItems: Array<{
+      price_data: {
+        currency: string;
+        product_data: { name: string; images?: string[]; description?: string };
+        unit_amount: number;
+      };
+      quantity: number;
+    }> = [];
 
     for (const item of items) {
-      const amount = Math.round(item.price * 100) * (item.qty || 1);
-      totalPence += amount;
-      description.push(`${item.name}${item.variant ? ` (${item.variant})` : ''} x${item.qty || 1}`);
+      const unitAmount = Math.round(item.price * 100);
+      lineItems.push({
+        price_data: {
+          currency: (tenant.currency || "GBP").toLowerCase(),
+          product_data: {
+            name: item.name,
+            ...(item.image && item.image.startsWith("http") ? { images: [item.image] } : {}),
+            ...(item.variant ? { description: item.variant } : {}),
+          },
+          unit_amount: unitAmount,
+        },
+        quantity: item.qty || 1,
+      });
     }
 
+    // Shipping as line item
     const shippingCost = shipping?.cost || 0;
     if (shippingCost > 0) {
-      totalPence += Math.round(shippingCost * 100);
+      lineItems.push({
+        price_data: {
+          currency: (tenant.currency || "GBP").toLowerCase(),
+          product_data: { name: `${shipping.method || "Express"} Delivery` },
+          unit_amount: Math.round(shippingCost * 100),
+        },
+        quantity: 1,
+      });
     }
 
+    // Gift wrap
     if (giftWrap) {
-      totalPence += 500; // £5
+      lineItems.push({
+        price_data: {
+          currency: (tenant.currency || "GBP").toLowerCase(),
+          product_data: { name: "Gift Wrap" },
+          unit_amount: 500,
+        },
+        quantity: 1,
+      });
     }
 
-    // Create PaymentIntent
-    const paymentIntent = await stripe.paymentIntents.create({
-      amount: totalPence,
-      currency: (tenant.currency || "GBP").toLowerCase(),
+    // Create Checkout Session — card payment only, no shipping form
+    const session = await stripe.checkout.sessions.create({
+      mode: "payment",
+      payment_method_types: ["card"],
+      customer_email: customer.email,
+      line_items: lineItems,
       metadata: {
         tenantId: tenant.id,
         tenantSlug: slug,
@@ -60,16 +94,14 @@ export async function POST(request: NextRequest) {
         shippingAddress: [customer.address, customer.city, customer.postcode, customer.country].filter(Boolean).join(", "),
         shippingMethod: shipping?.method || "standard",
         giftNote: giftNote || "",
-        items: description.join("; ").slice(0, 500),
       },
-      receipt_email: customer.email,
-      description: `Order from ${tenant.name}: ${description.join(", ")}`.slice(0, 1000),
+      success_url: `${successUrl}?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: cancelUrl || successUrl.replace("/success", ""),
     });
 
     return cors(NextResponse.json({
-      clientSecret: paymentIntent.client_secret,
-      amount: totalPence,
-      currency: (tenant.currency || "GBP").toLowerCase(),
+      url: session.url,
+      sessionId: session.id,
     }));
   } catch (error: any) {
     console.error("Storefront checkout error:", error);
