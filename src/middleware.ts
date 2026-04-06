@@ -16,20 +16,30 @@ function isPlatformHost(host: string): boolean {
   return PLATFORM_HOSTS.some((ph) => host.includes(ph));
 }
 
+// Map admin subdomains to tenant slugs
+// admin.styledbymaryam.com → styled-by-maryam
+const ADMIN_DOMAIN_MAP: Record<string, string> = {
+  "admin.styledbymaryam.com": "styled-by-maryam",
+  // Add more tenant admin subdomains here
+};
+
 function resolveTenantSlug(request: NextRequest): string | null {
   // Dev/preview override via query param
   const paramSlug = request.nextUrl.searchParams.get("tenant");
   if (paramSlug) return paramSlug;
 
-  const host = request.headers.get("host") ?? "";
+  const host = (request.headers.get("host") ?? "").replace(/:\d+$/, "");
+
+  // Check admin subdomain map first
+  if (ADMIN_DOMAIN_MAP[host]) return ADMIN_DOMAIN_MAP[host];
 
   // Platform hosts don't have tenants (unless using ?tenant= override)
   if (isPlatformHost(host)) return null;
 
-  // Custom domain mapping (e.g., tmfoods.co.uk → resolved via DB in tenant.ts)
   // Subdomain extraction (e.g., tom.authentifactor.com → tom)
+  // Skip "admin" subdomain — handled by ADMIN_DOMAIN_MAP above
   const parts = host.split(".");
-  if (parts.length >= 3) return parts[0];
+  if (parts.length >= 3 && parts[0] !== "admin") return parts[0];
 
   // Custom domain — pass full host, tenant.ts will resolve from DB
   return host;
@@ -61,8 +71,14 @@ export function middleware(request: NextRequest) {
   const host = request.headers.get("host") ?? "";
 
   // ── Platform host hitting root "/" → redirect to /platform ──
-  if (isPlatformHost(host) && pathname === "/") {
+  // But not for admin subdomains (admin.styledbymaryam.com should go to /admin)
+  const isAdminSubdomain = !!ADMIN_DOMAIN_MAP[host.replace(/:\d+$/, "")];
+  if (isPlatformHost(host) && pathname === "/" && !isAdminSubdomain) {
     return NextResponse.redirect(new URL("/platform", request.url));
+  }
+  // Admin subdomain root → redirect to /admin
+  if (isAdminSubdomain && pathname === "/") {
+    return NextResponse.redirect(new URL("/admin", request.url));
   }
 
   // ── Resolve tenant ──

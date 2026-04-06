@@ -5,6 +5,7 @@ import Image from "next/image";
 import { GradientBackground } from "@/components/ui/gradient-background";
 import { ArrowRight } from "lucide-react";
 import { useRef, useState, useEffect } from "react";
+import { apiUrl } from "@/lib/api";
 
 interface TenantBrand {
   name: string;
@@ -22,7 +23,7 @@ export default function LoginPage() {
 
   // Fetch tenant branding if on a custom domain
   useEffect(() => {
-    fetch("/api/tenant/brand")
+    fetch(apiUrl("/api/tenant/brand"))
       .then((r) => r.ok ? r.json() : null)
       .then((data) => { if (data?.tenant) setTenant(data.tenant); })
       .catch(() => {});
@@ -43,7 +44,7 @@ export default function LoginPage() {
     }
 
     try {
-      const res = await fetch("/api/auth/login", {
+      const res = await fetch(apiUrl("/api/auth/login"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
