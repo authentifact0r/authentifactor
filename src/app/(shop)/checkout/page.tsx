@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { formatPrice } from "@/lib/utils";
+import { useCurrency } from "@/components/shop/currency-provider";
 import { Truck, AlertTriangle, CreditCard, Lock, CheckCircle, ShieldCheck, Wallet } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
@@ -21,6 +21,7 @@ export default function CheckoutPage() {
   const [error, setError] = useState<string | null>(null);
   const [shippingMethod, setShippingMethod] = useState("STANDARD");
   const [paymentProvider, setPaymentProvider] = useState<"PAYSTACK" | "STRIPE">("PAYSTACK");
+  const { formatPrice } = useCurrency();
 
   // Address form state
   const [address, setAddress] = useState({

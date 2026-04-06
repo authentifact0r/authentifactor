@@ -4,7 +4,7 @@ import { useState } from "react";
 import { RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
-import { formatPrice } from "@/lib/utils";
+import { useCurrency } from "@/components/shop/currency-provider";
 
 interface Props {
   productId: string;
@@ -15,6 +15,7 @@ interface Props {
 export function SubscribeToggle({ productId, productName, price }: Props) {
   const [enabled, setEnabled] = useState(false);
   const [interval, setInterval] = useState("MONTHLY");
+  const { formatPrice } = useCurrency();
   const discountedPrice = price * 0.95;
 
   if (!enabled) {

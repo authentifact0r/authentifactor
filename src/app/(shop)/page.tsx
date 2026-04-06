@@ -5,7 +5,7 @@ import Link from "next/link";
 import { getScopedDb } from "@/lib/db";
 import { getTenant } from "@/lib/tenant";
 import { homeMetadata } from "@/lib/seo";
-import { formatPrice } from "@/lib/utils";
+import { ConvertedPrice } from "@/components/shop/price-display";
 import { HomeCarousels } from "./home-carousel";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -333,12 +333,12 @@ export default async function HomePage() {
                             color: "#aaa",
                           }}
                         >
-                          {formatPrice(product.compareAtPrice, tenant.currency)}
+                          <ConvertedPrice amount={product.compareAtPrice} />
                         </span>
-                        {formatPrice(product.price, tenant.currency)}
+                        <ConvertedPrice amount={product.price} />
                       </>
                     ) : (
-                      formatPrice(product.price, tenant.currency)
+                      <ConvertedPrice amount={product.price} />
                     )}
                   </p>
                 </div>

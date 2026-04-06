@@ -5,9 +5,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { Clock, Users, ShoppingBasket } from "lucide-react";
 import { getScopedDb } from "@/lib/db";
-import { formatPrice, getStockStatus } from "@/lib/utils";
+import { getStockStatus } from "@/lib/utils";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { ConvertedPrice } from "@/components/shop/price-display";
 import { BuyAllIngredientsButton } from "./buy-all-button";
 
 interface Props {
@@ -170,7 +171,7 @@ export default async function RecipeDetailPage({ params }: Props) {
           <p className="text-sm text-gray-500">
             Estimated total:{" "}
             <span className="font-semibold text-gray-900">
-              {formatPrice(totalCost)}
+              <ConvertedPrice amount={totalCost} />
             </span>
           </p>
         </div>
@@ -213,9 +214,7 @@ export default async function RecipeDetailPage({ params }: Props) {
 
                   <div className="flex flex-col items-end gap-1">
                     <span className="text-sm font-semibold text-gray-900">
-                      {formatPrice(
-                        parseFloat(item.product.price) * item.quantity
-                      )}
+                      <ConvertedPrice amount={parseFloat(item.product.price) * item.quantity} />
                     </span>
                     <Badge variant={stock.variant} className="text-xs">
                       {stock.label}

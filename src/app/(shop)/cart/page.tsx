@@ -8,11 +8,12 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useCart } from "@/hooks/use-cart";
-import { formatPrice } from "@/lib/utils";
+import { useCurrency } from "@/components/shop/currency-provider";
 
 export default function CartPage() {
   const router = useRouter();
   const { items, removeItem, updateQuantity, totalItems, totalWeight, subtotal } = useCart();
+  const { formatPrice } = useCurrency();
 
   const hasPerishables = items.some((i) => i.product?.isPerishable);
 

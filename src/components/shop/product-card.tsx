@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { formatPrice } from "@/lib/utils";
+import { useCurrency } from "@/components/shop/currency-provider";
 
 interface ProductCardProps {
   product: {
@@ -25,6 +25,7 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ product }: ProductCardProps) {
+  const { formatPrice } = useCurrency();
   const hasFlashSale = product.flashSale != null;
   const price = parseFloat(product.price);
   const salePrice = hasFlashSale

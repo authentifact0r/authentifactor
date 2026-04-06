@@ -3,8 +3,9 @@ import Image from "next/image";
 import type { Metadata } from "next";
 import { getScopedDb } from "@/lib/db";
 import { getTenant } from "@/lib/tenant";
-import { formatPrice, getStockStatus } from "@/lib/utils";
+import { getStockStatus } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
+import { PriceDisplay } from "@/components/shop/price-display";
 import { AddToCartButton } from "./add-to-cart-button";
 import { SubscribeToggle } from "./subscribe-toggle";
 import { productMetadata, productJsonLd, breadcrumbJsonLd } from "@/lib/seo";
@@ -150,14 +151,15 @@ export default async function ProductPage({ params }: Props) {
           </div>
 
           <div className="mt-6 flex items-baseline gap-3">
-            <span className="text-3xl font-bold text-gray-900">
-              {formatPrice(salePrice)}
-            </span>
-            {(hasFlashSale || product.compareAtPrice) && (
-              <span className="text-lg text-gray-400 line-through">
-                {formatPrice(product.compareAtPrice || product.price)}
-              </span>
-            )}
+            <PriceDisplay
+              amount={Number(salePrice)}
+              className="text-3xl font-bold text-gray-900"
+              compareAtPrice={
+                (hasFlashSale || product.compareAtPrice)
+                  ? Number(product.compareAtPrice || product.price)
+                  : null
+              }
+            />
           </div>
 
           <dl className="mt-6 space-y-2 text-sm text-gray-600">

@@ -5,11 +5,12 @@ import Link from "next/link";
 import { ShoppingCart, Plus, Minus, Trash2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/hooks/use-cart";
-import { formatPrice } from "@/lib/utils";
+import { useCurrency } from "@/components/shop/currency-provider";
 
 export function CartSheet() {
   const [open, setOpen] = useState(false);
   const { items, removeItem, updateQuantity, totalItems, subtotal } = useCart();
+  const { formatPrice } = useCurrency();
 
   return (
     <>

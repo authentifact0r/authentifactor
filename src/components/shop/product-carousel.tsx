@@ -5,9 +5,9 @@ import { motion } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTenant } from "@/components/tenant-provider";
+import { useCurrency } from "@/components/shop/currency-provider";
 import Link from "next/link";
 import Image from "next/image";
-import { formatPrice } from "@/lib/utils";
 
 export interface CarouselProduct {
   id: string;
@@ -26,7 +26,8 @@ interface ProductCarouselProps {
   className?: string;
 }
 
-function ProductCard({ product, currency }: { product: CarouselProduct; currency: string }) {
+function ProductCard({ product }: { product: CarouselProduct }) {
+  const { formatPrice } = useCurrency();
   const discount = product.compareAtPrice
     ? Math.round(((product.compareAtPrice - product.price) / product.compareAtPrice) * 100)
     : null;
@@ -75,11 +76,11 @@ function ProductCard({ product, currency }: { product: CarouselProduct; currency
           </h3>
           <div className="flex items-center gap-2">
             <span className="text-base font-semibold text-gray-900">
-              {formatPrice(product.price, currency)}
+              {formatPrice(product.price)}
             </span>
             {product.compareAtPrice && (
               <span className="text-xs text-gray-400 line-through">
-                {formatPrice(product.compareAtPrice, currency)}
+                {formatPrice(product.compareAtPrice)}
               </span>
             )}
           </div>
@@ -167,7 +168,7 @@ export const ProductCarousel = React.forwardRef<HTMLDivElement, ProductCarouselP
             animate="visible"
           >
             {products.map((p) => (
-              <ProductCard key={p.id} product={p} currency={tenant.currency} />
+              <ProductCard key={p.id} product={p} />
             ))}
           </motion.div>
 
