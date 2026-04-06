@@ -55,12 +55,12 @@ export function ImportManager({ tenantSlug }: { tenantSlug: string }) {
       if (!res.ok) { setError(data.error || "Failed to fetch"); setFetching(false); return; }
 
       setScraped(data);
-      setName(data.title);
-      setDescription(data.description);
-      setCostPrice(data.price);
-      setRetailPrice(Math.ceil(data.price * 2.5)); // Default 2.5x markup
-      setSelectedImages(data.images);
-      setBrand(data.supplier === "aliexpress" ? "AliExpress" : data.supplier || "");
+      setName(data.title || "");
+      setDescription(data.description || "");
+      setCostPrice(data.price || 0);
+      setRetailPrice(data.price ? Math.ceil(data.price * 2.5) : 0);
+      setSelectedImages(data.images || []);
+      setBrand(data.supplier !== "unknown" ? data.supplier.charAt(0).toUpperCase() + data.supplier.slice(1) : "");
 
       // Map variants to sizes/colors
       for (const v of data.variants || []) {
@@ -69,8 +69,13 @@ export function ImportManager({ tenantSlug }: { tenantSlug: string }) {
         else if (lower.includes("color") || lower.includes("colour")) setColors(v.values);
       }
 
+      // Show warning if scraping was limited
+      if (data.manual && data.message) {
+        setError(data.message);
+      }
+
       setFetching(false);
-    } catch { setError("Network error"); setFetching(false); }
+    } catch { setError("Network error. Try again or enter product details manually."); setFetching(false); setScraped({ title: "", description: "", images: [], price: 0, currency: "USD", supplier: "manual", sourceUrl: url, variants: [] }); }
   };
 
   const importProduct = async () => {
@@ -143,7 +148,7 @@ export function ImportManager({ tenantSlug }: { tenantSlug: string }) {
       </div>
 
       {error && (
-        <div className="rounded-xl border border-red-500/20 bg-red-500/[0.06] p-4 text-sm text-red-400 flex items-center gap-2">
+        <div className={`rounded-xl border p-4 text-sm flex items-center gap-2 ${scraped ? "border-amber-500/20 bg-amber-500/[0.06] text-amber-400" : "border-red-500/20 bg-red-500/[0.06] text-red-400"}`}>
           <AlertTriangle className="h-4 w-4 shrink-0" /> {error}
         </div>
       )}
