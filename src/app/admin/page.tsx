@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { formatPrice } from "@/lib/utils";
 import { Package, ShoppingCart, AlertTriangle, TrendingUp, Clock, Box, Banknote } from "lucide-react";
 import { SalesDashboardWrapper } from "./sales-dashboard-wrapper";
+import { DashboardOrders } from "./dashboard-orders";
 import Link from "next/link";
 import { headers } from "next/headers";
 
@@ -19,7 +20,7 @@ export default async function AdminDashboard() {
   let totalProducts = 0;
   let totalOrders = 0;
   let pendingOrders = 0;
-  let lowStockBatches = 0;
+  let lowStockProducts: any[] = [];
   let expiringBatches = 0;
   let recentOrders: any[] = [];
   let totalRevenue = 0;
@@ -36,12 +37,20 @@ export default async function AdminDashboard() {
       tdb.product.count({ where: { isActive: true } }),
       tdb.order.count(),
       tdb.order.count({ where: { status: "PENDING" } }),
-      tdb.inventoryBatch.count({ where: { quantity: { lte: 10, gt: 0 } } }),
+      tdb.inventoryBatch.findMany({
+        where: { quantity: { lte: 10, gt: 0 } },
+        include: { product: { select: { name: true, sku: true } }, warehouse: { select: { name: true } } },
+      }),
       tdb.inventoryBatch.count({ where: { expiryDate: { lte: thirtyDaysFromNow, gte: now } } }),
       tdb.order.findMany({
         orderBy: { createdAt: "desc" },
         take: 5,
-        select: { id: true, orderNumber: true, total: true, status: true, createdAt: true },
+        select: {
+          id: true, orderNumber: true, total: true, status: true, createdAt: true,
+          customerName: true, customerEmail: true, customerPhone: true,
+          shippingAddress: true, notes: true, trackingNumber: true,
+          items: { select: { productName: true, quantity: true, price: true } },
+        },
       }),
       tdb.order.aggregate({ where: { paymentStatus: "PAID" }, _sum: { total: true } }),
       tdb.product.findMany({
@@ -54,9 +63,29 @@ export default async function AdminDashboard() {
     totalProducts = results[0];
     totalOrders = results[1];
     pendingOrders = results[2];
-    lowStockBatches = results[3];
+    const lowBatches = results[3] as any[];
+    lowStockProducts = lowBatches.map((b: any) => ({
+      productName: b.product?.name || "Unknown",
+      sku: b.product?.sku || "",
+      warehouse: b.warehouse?.name || "—",
+      quantity: b.quantity,
+      batchNumber: b.batchNumber,
+    }));
     expiringBatches = results[4];
-    recentOrders = results[5];
+    recentOrders = (results[5] as any[]).map((o: any) => ({
+      id: o.id,
+      orderNumber: o.orderNumber,
+      total: Number(o.total),
+      status: o.status,
+      createdAt: o.createdAt.toISOString(),
+      customerName: o.customerName || "—",
+      customerEmail: o.customerEmail || "",
+      customerPhone: o.customerPhone || "",
+      shippingAddress: o.shippingAddress || "",
+      notes: o.notes || "",
+      trackingNumber: o.trackingNumber || "",
+      items: o.items.map((i: any) => ({ name: i.productName, qty: i.quantity, price: Number(i.price) })),
+    }));
     totalRevenue = Number(results[6]._sum.total ?? 0);
 
     const products = results[7] as any[];
@@ -113,20 +142,30 @@ export default async function AdminDashboard() {
       </div>
 
       {/* Alerts */}
-      {(lowStockBatches > 0 || expiringBatches > 0) && (
-        <div className="grid gap-3 sm:grid-cols-2">
-          {lowStockBatches > 0 && (
-            <Link href={`/admin/inventory${tp}`}>
-              <Card className="border-amber-500/20 bg-amber-500/[0.06] hover:bg-amber-500/[0.1] transition cursor-pointer">
-                <CardContent className="flex items-center gap-4 p-5">
-                  <AlertTriangle className="h-7 w-7 text-amber-400" />
-                  <div>
-                    <p className="font-semibold text-amber-300">{lowStockBatches} low stock batches</p>
-                    <p className="text-sm text-amber-400/60">Items with 10 or fewer units</p>
-                  </div>
-                </CardContent>
-              </Card>
-            </Link>
+      {(lowStockProducts.length > 0 || expiringBatches > 0) && (
+        <div className="space-y-3">
+          {lowStockProducts.length > 0 && (
+            <Card className="border-amber-500/20 bg-amber-500/[0.06]">
+              <CardContent className="p-5 space-y-3">
+                <div className="flex items-center gap-3">
+                  <AlertTriangle className="h-6 w-6 text-amber-400" />
+                  <p className="font-semibold text-amber-300">{lowStockProducts.length} low stock batches</p>
+                </div>
+                <div className="space-y-1.5">
+                  {lowStockProducts.map((p: any, i: number) => (
+                    <Link key={i} href={`/admin/inventory${tp}`}>
+                      <div className="flex items-center justify-between rounded-lg bg-amber-500/[0.06] border border-amber-500/10 px-3 py-2 text-sm hover:bg-amber-500/[0.1] transition cursor-pointer">
+                        <div>
+                          <p className="text-white font-medium">{p.productName}</p>
+                          <p className="text-xs text-amber-400/60">{p.sku} · {p.warehouse}{p.batchNumber ? ` · Batch ${p.batchNumber}` : ""}</p>
+                        </div>
+                        <span className="text-amber-400 font-bold">{p.quantity} left</span>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
           )}
           {expiringBatches > 0 && (
             <Link href={`/admin/inventory${tp}`}>
@@ -176,44 +215,9 @@ export default async function AdminDashboard() {
         </Card>
       )}
 
-      {/* Recent Orders */}
+      {/* Recent Orders — quick view */}
       {recentOrders.length > 0 && (
-        <Card className="border-white/[0.08] bg-white/[0.04] backdrop-blur-sm">
-          <CardHeader>
-            <CardTitle className="flex items-center justify-between text-white">
-              <span className="flex items-center gap-2">
-                Recent Orders
-                {pendingOrders > 0 && <Badge className="bg-amber-500/20 text-amber-300 border-amber-500/30">{pendingOrders} pending</Badge>}
-              </span>
-              <Link href={`/admin/orders${tp}`} className="text-xs font-medium text-white/40 hover:text-white/60 transition">View All →</Link>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-2">
-              {recentOrders.map((order: any) => (
-                <Link key={order.id} href={`/admin/orders${tp}`}>
-                  <div className="flex items-center justify-between rounded-lg border border-white/[0.06] bg-white/[0.02] p-3 text-sm hover:bg-white/[0.04] hover:border-white/[0.1] transition-all cursor-pointer">
-                    <div>
-                      <p className="font-medium text-white">{order.orderNumber}</p>
-                      <p className="text-xs text-white/40">{order.createdAt.toLocaleDateString("en-GB")}</p>
-                    </div>
-                    <div className="text-right">
-                      <p className="font-medium text-white">{formatPrice(Number(order.total))}</p>
-                      <span className={`inline-flex rounded-full px-2 py-0.5 text-[10px] font-semibold mt-1 ${
-                        order.status === "PENDING" ? "bg-amber-500/20 text-amber-300" :
-                        order.status === "DELIVERED" ? "bg-emerald-500/20 text-emerald-300" :
-                        order.status === "SHIPPED" ? "bg-cyan-500/20 text-cyan-300" :
-                        "bg-white/10 text-white/50"
-                      }`}>
-                        {order.status}
-                      </span>
-                    </div>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+        <DashboardOrders orders={recentOrders} pendingOrders={pendingOrders} tenantParam={tp} />
       )}
 
       {/* Real-time Sales Dashboard */}

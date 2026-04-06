@@ -1,31 +1,26 @@
 import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/lib/db";
-import { jwtVerify } from "jose";
-
-const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || "fallback-dev-secret");
+import { getScopedDb } from "@/lib/db";
+import { requireAdmin } from "@/lib/auth";
 
 export async function POST(request: NextRequest) {
   try {
-    const token = request.cookies.get("access_token")?.value;
-    if (!token) return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
-    const { payload } = await jwtVerify(token, JWT_SECRET);
-    const tenantId = payload.tenantId as string;
+    await requireAdmin();
+    const tdb = await getScopedDb();
 
     const { productId, discountPercent, reason, durationHours } = await request.json();
     if (!productId || !discountPercent) return NextResponse.json({ error: "productId and discountPercent required" }, { status: 400 });
 
-    // Verify product belongs to tenant
-    const product = await db.product.findFirst({ where: { id: productId, tenantId } });
+    // Verify product belongs to tenant (getScopedDb auto-scopes)
+    const product = await tdb.product.findFirst({ where: { id: productId } });
     if (!product) return NextResponse.json({ error: "Product not found" }, { status: 404 });
 
     // Check no existing flash sale
-    const existing = await db.flashSale.findUnique({ where: { productId } });
+    const existing = await tdb.flashSale.findFirst({ where: { productId } });
     if (existing) return NextResponse.json({ error: "This product already has a flash sale. Remove it first." }, { status: 400 });
 
     const now = new Date();
-    const sale = await db.flashSale.create({
+    const sale = await tdb.flashSale.create({
       data: {
-        tenantId,
         productId,
         discountPercent,
         reason: reason || null,

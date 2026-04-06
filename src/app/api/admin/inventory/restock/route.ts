@@ -1,15 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/lib/db";
-import { jwtVerify } from "jose";
-
-const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || "fallback-dev-secret");
+import { getScopedDb } from "@/lib/db";
+import { requireAdmin } from "@/lib/auth";
 
 export async function POST(request: NextRequest) {
   try {
-    const token = request.cookies.get("access_token")?.value;
-    if (!token) return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
-    const { payload } = await jwtVerify(token, JWT_SECRET);
-    const tenantId = payload.tenantId as string;
+    await requireAdmin();
+    const tdb = await getScopedDb();
 
     const { productId, quantity, warehouseId } = await request.json();
     if (!productId || !quantity || quantity <= 0) {
@@ -17,25 +13,26 @@ export async function POST(request: NextRequest) {
     }
 
     // Verify product belongs to tenant
-    const product = await db.product.findFirst({ where: { id: productId, tenantId } });
+    const product = await tdb.product.findFirst({ where: { id: productId } });
     if (!product) return NextResponse.json({ error: "Product not found" }, { status: 404 });
 
     // Verify warehouse if provided
     if (warehouseId) {
-      const wh = await db.warehouse.findFirst({ where: { id: warehouseId, tenantId } });
-      if (!wh) return NextResponse.json({ error: "Warehouse not found" }, { status: 404 });
+      const warehouse = await tdb.warehouse.findFirst({ where: { id: warehouseId } });
+      if (!warehouse) return NextResponse.json({ error: "Warehouse not found" }, { status: 404 });
     }
 
-    const batchNumber = `RST-${product.sku}-${Date.now().toString(36).toUpperCase()}`;
+    // Generate batch number
+    const count = await tdb.inventoryBatch.count({ where: { productId } });
+    const batchNumber = `${product.sku || "BATCH"}-${String(count + 1).padStart(3, "0")}`;
 
-    const batch = await db.inventoryBatch.create({
+    const batch = await tdb.inventoryBatch.create({
       data: {
-        tenantId,
         productId,
         warehouseId: warehouseId || null,
-        quantity,
-        costPrice: Number(product.price) * 0.4,
         batchNumber,
+        quantity,
+        costPrice: product.price,
       },
     });
 

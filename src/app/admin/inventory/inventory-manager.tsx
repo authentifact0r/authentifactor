@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   Box, Package, AlertTriangle, TrendingDown, Plus, Minus,
   ChevronDown, ChevronRight, Save, Warehouse, Image as ImageIcon,
@@ -35,6 +36,7 @@ interface Props {
 }
 
 export function InventoryManager({ products, warehouses, tenantSlug }: Props) {
+  const router = useRouter();
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
   const [adjustments, setAdjustments] = useState<Record<string, number>>({});
   const [saving, setSaving] = useState<string | null>(null);
@@ -70,7 +72,7 @@ export function InventoryManager({ products, warehouses, tenantSlug }: Props) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ batchId, delta }),
       });
-      window.location.reload();
+      router.refresh();
     } catch {
       setSaving(null);
     }
@@ -87,7 +89,7 @@ export function InventoryManager({ products, warehouses, tenantSlug }: Props) {
       });
       setRestockProduct(null);
       setRestockQty(0);
-      window.location.reload();
+      router.refresh();
     } catch {
       setSaving(null);
     }

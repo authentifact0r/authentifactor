@@ -1,28 +1,24 @@
 import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/lib/db";
-import { jwtVerify } from "jose";
-
-const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || "fallback-dev-secret");
+import { getScopedDb } from "@/lib/db";
+import { requireAdmin } from "@/lib/auth";
 
 export async function POST(request: NextRequest) {
   try {
-    const token = request.cookies.get("access_token")?.value;
-    if (!token) return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
-    const { payload } = await jwtVerify(token, JWT_SECRET);
-    const tenantId = payload.tenantId as string;
+    await requireAdmin();
+    const tdb = await getScopedDb();
 
     const { batchId, delta } = await request.json();
-    if (!batchId || delta === undefined) {
+    if (!batchId || typeof delta !== "number") {
       return NextResponse.json({ error: "batchId and delta required" }, { status: 400 });
     }
 
-    // Verify batch belongs to tenant
-    const batch = await db.inventoryBatch.findFirst({ where: { id: batchId, tenantId } });
+    const batch = await tdb.inventoryBatch.findFirst({ where: { id: batchId } });
     if (!batch) return NextResponse.json({ error: "Batch not found" }, { status: 404 });
 
-    const newQty = Math.max(0, batch.quantity + delta);
+    const newQty = batch.quantity + delta;
+    if (newQty < 0) return NextResponse.json({ error: "Cannot reduce below 0" }, { status: 400 });
 
-    const updated = await db.inventoryBatch.update({
+    const updated = await tdb.inventoryBatch.update({
       where: { id: batchId },
       data: { quantity: newQty },
     });
