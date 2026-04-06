@@ -2,215 +2,460 @@ export const dynamic = "force-dynamic";
 
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRight, Truck, RefreshCw, Shield, Leaf } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { getScopedDb } from "@/lib/db";
 import { getTenant } from "@/lib/tenant";
-import { ProductCard } from "@/components/shop/product-card";
 import { homeMetadata } from "@/lib/seo";
+import { formatPrice } from "@/lib/utils";
 
 export async function generateMetadata(): Promise<Metadata> {
-  try { return await homeMetadata(); } catch { return { title: "Shop" }; }
+  try {
+    return await homeMetadata();
+  } catch {
+    return { title: "Shop" };
+  }
 }
 
 async function getFeaturedProducts() {
   const tdb = await getScopedDb();
   const products = await tdb.product.findMany({
     where: { isActive: true },
-    include: {
-      inventoryBatches: { select: { quantity: true } },
-      flashSale: true,
+    select: {
+      id: true,
+      name: true,
+      slug: true,
+      price: true,
+      compareAtPrice: true,
+      images: true,
+      category: true,
     },
     take: 8,
     orderBy: { createdAt: "desc" },
   });
 
-  const now = new Date();
-  return products.map((p) => {
-    const activeSale =
-      p.flashSale && p.flashSale.isActive && p.flashSale.endsAt >= now
-        ? p.flashSale
-        : null;
-    return {
-      ...p,
-      price: p.price.toString(),
-      compareAtPrice: p.compareAtPrice?.toString() ?? null,
-      weightKg: p.weightKg.toString(),
-      totalStock: p.inventoryBatches.reduce((sum, b) => sum + b.quantity, 0),
-      flashSale: activeSale
-        ? {
-            discountPercent: activeSale.discountPercent.toString(),
-            endsAt: activeSale.endsAt.toISOString(),
-          }
-        : null,
-    };
-  });
-}
-
-async function getFlashSales() {
-  const tdb = await getScopedDb();
-  const sales = await tdb.flashSale.findMany({
-    where: { isActive: true, endsAt: { gte: new Date() } },
-    include: {
-      product: {
-        include: {
-          inventoryBatches: { select: { quantity: true } },
-        },
-      },
-    },
-    take: 4,
-  });
-
-  return sales.map((s) => ({
-    ...s.product,
-    price: s.product.price.toString(),
-    compareAtPrice: s.product.compareAtPrice?.toString() ?? null,
-    weightKg: s.product.weightKg.toString(),
-    totalStock: s.product.inventoryBatches.reduce((sum, b) => sum + b.quantity, 0),
-    flashSale: {
-      discountPercent: s.discountPercent.toString(),
-      endsAt: s.endsAt.toISOString(),
-    },
+  return products.map((p) => ({
+    id: p.id,
+    name: p.name,
+    slug: p.slug,
+    price: Number(p.price),
+    compareAtPrice: p.compareAtPrice ? Number(p.compareAtPrice) : null,
+    images: p.images,
+    category: p.category,
   }));
 }
 
 export default async function HomePage() {
-  const [featured, flashSales, tenant] = await Promise.all([
+  const [products, tenant] = await Promise.all([
     getFeaturedProducts(),
-    getFlashSales(),
     getTenant(),
   ]);
 
-  const heroTitle = tenant.heroBannerTitle || "The taste of home,";
-  const heroSubtitle = tenant.heroBannerSubtitle ||
-    `From Garri to Egusi, Palm Oil to Suya Spice — shop over 500+ authentic products with same-day local delivery.`;
-  const tagline = tenant.tagline || "Authentic Products";
+  const heroImage = tenant.heroBannerImage;
+  const heroTitle = tenant.heroBannerTitle || tenant.name;
+  const heroSubtitle =
+    tenant.heroBannerSubtitle ||
+    "Timeless pieces, thoughtfully curated for the modern woman.";
+
+  const fontSerif = `"Cormorant Garamond", Georgia, serif`;
+  const fontBody = `"Inter", sans-serif`;
+  const gold = "#C5A059";
+  const bone = "#F9F7F2";
+  const textPrimary = "#1a1a1a";
+  const textMuted = "#777";
 
   return (
-    <div>
-      {/* Hero */}
-      <section className="bg-gradient-to-br from-emerald-900 via-emerald-800 to-emerald-900 px-4 py-20 text-white md:py-28">
-        <div className="mx-auto max-w-7xl">
-          <Badge variant="secondary" className="mb-4 bg-amber-500 text-white">
-            {tagline}
-          </Badge>
-          <h1 className="max-w-3xl text-4xl font-bold leading-tight md:text-6xl">
+    <div style={{ fontFamily: fontBody, color: textPrimary }}>
+      {/* Hover styles for product images (server component safe) */}
+      <style
+        dangerouslySetInnerHTML={{
+          __html: `.product-img:hover { transform: scale(1.04) !important; }`,
+        }}
+      />
+
+      {/* ── HERO ───────────────────────────────────────────── */}
+      <section
+        style={{
+          position: "relative",
+          width: "100%",
+          minHeight: "85vh",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          backgroundImage: heroImage
+            ? `url(${heroImage})`
+            : `linear-gradient(135deg, #D4C5A9 0%, #E8DFD0 50%, #C5A059 100%)`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      >
+        {/* Dark overlay */}
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            backgroundColor: heroImage
+              ? "rgba(0, 0, 0, 0.40)"
+              : "rgba(0, 0, 0, 0.15)",
+          }}
+        />
+
+        <div
+          style={{
+            position: "relative",
+            zIndex: 1,
+            textAlign: "center",
+            maxWidth: "700px",
+            padding: "2rem 1.5rem",
+          }}
+        >
+          <p
+            style={{
+              fontFamily: fontBody,
+              fontSize: "0.7rem",
+              letterSpacing: "0.35em",
+              textTransform: "uppercase",
+              color: gold,
+              marginBottom: "1.5rem",
+              fontWeight: 500,
+            }}
+          >
+            Curated Luxury
+          </p>
+
+          <h1
+            style={{
+              fontFamily: fontSerif,
+              fontStyle: "italic",
+              fontWeight: 400,
+              fontSize: "clamp(2.2rem, 5vw, 3.8rem)",
+              lineHeight: 1.15,
+              color: "#fff",
+              margin: "0 0 1.25rem",
+            }}
+          >
             {heroTitle}
-            <br />
-            <span className="text-amber-400">delivered fresh.</span>
           </h1>
-          <p className="mt-4 max-w-xl text-lg text-emerald-100">
+
+          <p
+            style={{
+              fontFamily: fontBody,
+              fontSize: "0.95rem",
+              lineHeight: 1.7,
+              color: "rgba(255,255,255,0.82)",
+              maxWidth: "480px",
+              margin: "0 auto 2.5rem",
+            }}
+          >
             {heroSubtitle}
           </p>
-          <div className="mt-8 flex flex-wrap gap-3">
-            <Link href="/products">
-              <Button size="lg" variant="secondary" className="text-base">
-                Shop Now <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-            </Link>
-            <Link href="/recipes">
-              <Button
-                size="lg"
-                variant="outline"
-                className="border-white/30 bg-transparent text-white hover:bg-white/10"
-              >
-                Explore Recipes
-              </Button>
-            </Link>
-          </div>
+
+          <Link
+            href="/products"
+            style={{
+              display: "inline-block",
+              padding: "0.85rem 2.8rem",
+              border: `1.5px solid ${gold}`,
+              color: "#fff",
+              fontFamily: fontBody,
+              fontSize: "0.75rem",
+              letterSpacing: "0.25em",
+              textTransform: "uppercase",
+              textDecoration: "none",
+              transition: "all 0.3s ease",
+              backgroundColor: "transparent",
+            }}
+          >
+            Explore the Collection
+          </Link>
         </div>
       </section>
 
-      {/* Value props */}
-      <section className="border-b bg-white px-4 py-8">
-        <div className="mx-auto grid max-w-7xl gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {[
-            { icon: Truck, label: "Same-day local delivery", desc: "Within your metro area" },
-            { icon: RefreshCw, label: "Subscribe & Save 5%", desc: "Auto-ship your staples" },
-            { icon: Leaf, label: "Fresh & authentic", desc: "Direct from trusted suppliers" },
-            { icon: Shield, label: "Secure payments", desc: "Paystack & card payments" },
-          ].map(({ icon: Icon, label, desc }) => (
-            <div key={label} className="flex items-center gap-3">
-              <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-emerald-50 text-emerald-800">
-                <Icon className="h-5 w-5" />
-              </div>
-              <div>
-                <p className="text-sm font-semibold text-gray-900">{label}</p>
-                <p className="text-xs text-gray-500">{desc}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Flash Sales */}
-      {flashSales.length > 0 && (
-        <section className="bg-red-50 px-4 py-12">
-          <div className="mx-auto max-w-7xl">
-            <div className="flex items-center gap-2">
-              <h2 className="text-2xl font-bold text-gray-900">Flash Sales</h2>
-              <Badge variant="destructive">Limited Time</Badge>
-            </div>
-            <p className="mt-1 text-sm text-gray-500">
-              Near-expiry items at unbeatable prices — grab them before they&apos;re gone!
+      {/* ── FEATURED PRODUCTS ──────────────────────────────── */}
+      <section
+        style={{
+          backgroundColor: bone,
+          padding: "5rem 1.5rem",
+        }}
+      >
+        <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
+          <div style={{ textAlign: "center", marginBottom: "3.5rem" }}>
+            <p
+              style={{
+                fontSize: "0.7rem",
+                letterSpacing: "0.35em",
+                textTransform: "uppercase",
+                color: gold,
+                marginBottom: "0.75rem",
+                fontWeight: 500,
+              }}
+            >
+              New Arrivals
             </p>
-            <div className="mt-6 grid gap-4 grid-cols-2 lg:grid-cols-4">
-              {flashSales.map((product) => (
-                <ProductCard key={product.id} product={product} />
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* Featured products */}
-      <section className="px-4 py-12">
-        <div className="mx-auto max-w-7xl">
-          <div className="flex items-center justify-between">
-            <h2 className="text-2xl font-bold text-gray-900">
-              Featured Products
+            <h2
+              style={{
+                fontFamily: fontSerif,
+                fontStyle: "italic",
+                fontWeight: 400,
+                fontSize: "clamp(1.6rem, 3vw, 2.4rem)",
+                color: textPrimary,
+                margin: 0,
+              }}
+            >
+              The Latest Edit
             </h2>
-            <Link href="/products">
-              <Button variant="link">
-                View All <ArrowRight className="ml-1 h-4 w-4" />
-              </Button>
-            </Link>
           </div>
-          <div className="mt-6 grid gap-4 grid-cols-2 lg:grid-cols-4">
-            {featured.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
-        </div>
-      </section>
 
-      {/* Categories */}
-      <section className="bg-gray-50 px-4 py-12">
-        <div className="mx-auto max-w-7xl">
-          <h2 className="text-2xl font-bold text-gray-900">Shop by Category</h2>
-          <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {[
-              { name: "Groceries", href: "/products?category=GROCERIES", color: "bg-green-100 text-green-800", desc: "Rice, Garri, Beans, Yam Flour & more" },
-              { name: "Spices", href: "/products?category=SPICES", color: "bg-orange-100 text-orange-800", desc: "Suya Spice, Cameroon Pepper, Ogiri" },
-              { name: "Drinks", href: "/products?category=DRINKS", color: "bg-blue-100 text-blue-800", desc: "Zobo, Chapman, Palm Wine, Malt" },
-              { name: "Beauty", href: "/products?category=BEAUTY", color: "bg-pink-100 text-pink-800", desc: "Shea Butter, Black Soap, Hair products" },
-            ].map((cat) => (
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))",
+              gap: "2rem",
+            }}
+          >
+            {products.map((product) => (
               <Link
-                key={cat.name}
-                href={cat.href}
-                className="group rounded-xl border bg-white p-6 shadow-sm transition-shadow hover:shadow-md"
+                key={product.id}
+                href={`/products/${product.slug}`}
+                style={{ textDecoration: "none", color: "inherit" }}
               >
-                <div className={`inline-block rounded-full px-3 py-1 text-xs font-semibold ${cat.color}`}>
-                  {cat.name}
+                <div style={{ position: "relative" }}>
+                  {/* Product image */}
+                  <div
+                    style={{
+                      aspectRatio: "4/5",
+                      overflow: "hidden",
+                      backgroundColor: "#eee",
+                      marginBottom: "1rem",
+                    }}
+                  >
+                    {product.images[0] ? (
+                      <img
+                        src={product.images[0]}
+                        alt={product.name}
+                        loading="lazy"
+                        className="product-img"
+                        style={{
+                          width: "100%",
+                          height: "100%",
+                          objectFit: "cover",
+                          transition: "transform 0.5s ease",
+                        }}
+                      />
+                    ) : (
+                      <div
+                        style={{
+                          width: "100%",
+                          height: "100%",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          color: textMuted,
+                          fontSize: "0.85rem",
+                        }}
+                      >
+                        No image
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Product info */}
+                  <p
+                    style={{
+                      fontFamily: fontBody,
+                      fontSize: "0.85rem",
+                      letterSpacing: "0.12em",
+                      textTransform: "uppercase",
+                      color: textPrimary,
+                      margin: "0 0 0.35rem",
+                      fontWeight: 400,
+                    }}
+                  >
+                    {product.name}
+                  </p>
+
+                  <p
+                    style={{
+                      fontFamily: fontSerif,
+                      fontStyle: "italic",
+                      fontSize: "1rem",
+                      color: textMuted,
+                      margin: 0,
+                    }}
+                  >
+                    {product.compareAtPrice &&
+                    product.compareAtPrice > product.price ? (
+                      <>
+                        <span
+                          style={{
+                            textDecoration: "line-through",
+                            marginRight: "0.5rem",
+                            color: "#aaa",
+                          }}
+                        >
+                          {formatPrice(product.compareAtPrice, tenant.currency)}
+                        </span>
+                        {formatPrice(product.price, tenant.currency)}
+                      </>
+                    ) : (
+                      formatPrice(product.price, tenant.currency)
+                    )}
+                  </p>
                 </div>
-                <p className="mt-3 text-sm text-gray-600">{cat.desc}</p>
-                <span className="mt-2 inline-flex items-center text-sm font-medium text-emerald-800 group-hover:underline">
-                  Shop now <ArrowRight className="ml-1 h-3 w-3" />
-                </span>
               </Link>
             ))}
           </div>
+
+          {/* View all link */}
+          <div style={{ textAlign: "center", marginTop: "3.5rem" }}>
+            <Link
+              href="/products"
+              style={{
+                display: "inline-block",
+                padding: "0.8rem 2.5rem",
+                border: `1.5px solid ${textPrimary}`,
+                color: textPrimary,
+                fontFamily: fontBody,
+                fontSize: "0.7rem",
+                letterSpacing: "0.25em",
+                textTransform: "uppercase",
+                textDecoration: "none",
+                transition: "all 0.3s ease",
+              }}
+            >
+              View All Products
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* ── COLLECTION BANNER ──────────────────────────────── */}
+      <section
+        style={{
+          backgroundColor: "#fff",
+          padding: "5rem 1.5rem",
+          textAlign: "center",
+        }}
+      >
+        <div style={{ maxWidth: "650px", margin: "0 auto" }}>
+          <p
+            style={{
+              fontSize: "0.7rem",
+              letterSpacing: "0.35em",
+              textTransform: "uppercase",
+              color: gold,
+              marginBottom: "0.75rem",
+              fontWeight: 500,
+            }}
+          >
+            Styled by Maryam
+          </p>
+          <h2
+            style={{
+              fontFamily: fontSerif,
+              fontStyle: "italic",
+              fontWeight: 400,
+              fontSize: "clamp(1.8rem, 3.5vw, 2.6rem)",
+              color: textPrimary,
+              margin: "0 0 1rem",
+            }}
+          >
+            The Collection
+          </h2>
+          <p
+            style={{
+              fontFamily: fontBody,
+              fontSize: "0.95rem",
+              lineHeight: 1.7,
+              color: textMuted,
+              maxWidth: "460px",
+              margin: "0 auto 2.5rem",
+            }}
+          >
+            Thoughtfully designed pieces that transition effortlessly from day to
+            evening. Luxury you can feel, quality you can trust.
+          </p>
+          <Link
+            href="/products"
+            style={{
+              display: "inline-block",
+              padding: "0.85rem 2.8rem",
+              border: `1.5px solid ${gold}`,
+              color: gold,
+              fontFamily: fontBody,
+              fontSize: "0.75rem",
+              letterSpacing: "0.25em",
+              textTransform: "uppercase",
+              textDecoration: "none",
+              transition: "all 0.3s ease",
+            }}
+          >
+            Shop the Collection
+          </Link>
+        </div>
+      </section>
+
+      {/* ── INSTAGRAM SECTION ──────────────────────────────── */}
+      <section
+        style={{
+          backgroundColor: bone,
+          padding: "5rem 1.5rem",
+          textAlign: "center",
+        }}
+      >
+        <div style={{ maxWidth: "550px", margin: "0 auto" }}>
+          <p
+            style={{
+              fontSize: "0.7rem",
+              letterSpacing: "0.35em",
+              textTransform: "uppercase",
+              color: gold,
+              marginBottom: "0.75rem",
+              fontWeight: 500,
+            }}
+          >
+            Follow the Journey
+          </p>
+          <h2
+            style={{
+              fontFamily: fontSerif,
+              fontStyle: "italic",
+              fontWeight: 400,
+              fontSize: "clamp(1.6rem, 3vw, 2.2rem)",
+              color: textPrimary,
+              margin: "0 0 0.75rem",
+            }}
+          >
+            @styledbymaryam
+          </h2>
+          <p
+            style={{
+              fontFamily: fontBody,
+              fontSize: "0.9rem",
+              lineHeight: 1.7,
+              color: textMuted,
+              margin: "0 0 2rem",
+            }}
+          >
+            Behind the scenes, styling tips, and new arrivals.
+          </p>
+          <a
+            href="https://instagram.com/styledbymaryam"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              display: "inline-block",
+              padding: "0.8rem 2.5rem",
+              border: `1.5px solid ${textPrimary}`,
+              color: textPrimary,
+              fontFamily: fontBody,
+              fontSize: "0.7rem",
+              letterSpacing: "0.25em",
+              textTransform: "uppercase",
+              textDecoration: "none",
+              transition: "all 0.3s ease",
+            }}
+          >
+            Follow on Instagram
+          </a>
         </div>
       </section>
     </div>
