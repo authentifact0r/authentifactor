@@ -13,6 +13,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { DollarSign, TrendingUp, Building2, Percent } from "lucide-react";
+import { RevenueChart } from "./revenue-chart";
 
 function formatGBP(amount: number) {
   return new Intl.NumberFormat("en-GB", {
@@ -139,6 +140,41 @@ export default async function RevenuePage() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Revenue trend chart */}
+      <RevenueChart
+        data={(() => {
+          const now = new Date();
+          const months: { month: string; gmv: number; fees: number; subscriptions: number }[] = [];
+          const planPrices: Record<string, number> = { basic: 49, standard: 99, premium: 199 };
+
+          for (let i = 5; i >= 0; i--) {
+            const monthStart = new Date(now.getFullYear(), now.getMonth() - i, 1);
+            const monthEnd = new Date(now.getFullYear(), now.getMonth() - i + 1, 0, 23, 59, 59);
+            const label = monthStart.toLocaleDateString("en-GB", { month: "short" });
+
+            let monthGmv = 0;
+            let monthFees = 0;
+
+            for (const t of tenants) {
+              const monthOrders = t.orders.filter(
+                (o) => o.createdAt >= monthStart && o.createdAt <= monthEnd
+              );
+              monthGmv += monthOrders.reduce((s, o) => s + Number(o.total), 0);
+              monthFees += monthOrders.reduce((s, o) => s + Number(o.platformFee), 0);
+            }
+
+            months.push({
+              month: label,
+              gmv: Math.round(monthGmv * 100) / 100,
+              fees: Math.round(monthFees * 100) / 100,
+              subscriptions: subscriptionMRR,
+            });
+          }
+
+          return months;
+        })()}
+      />
 
       {/* Per-tenant breakdown */}
       <Card>
