@@ -1,6 +1,7 @@
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { TenantProvider, type TenantConfig } from "@/components/tenant-provider";
+import { CurrencyProvider } from "@/components/shop/currency-provider";
 import { getTenant } from "@/lib/tenant";
 import { getScopedDb } from "@/lib/db";
 
@@ -50,9 +51,11 @@ export default async function ShopLayout({
 
   return (
     <TenantProvider tenant={tenantConfig}>
-      <Header />
-      <main className="min-h-[calc(100vh-4rem)]">{children}</main>
-      <Footer />
+      <CurrencyProvider baseCurrency={tenant.currency}>
+        <Header />
+        <main className="min-h-[calc(100vh-4rem)]">{children}</main>
+        <Footer />
+      </CurrencyProvider>
     </TenantProvider>
   );
 }

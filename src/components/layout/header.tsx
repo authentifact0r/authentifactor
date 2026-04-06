@@ -6,6 +6,7 @@ import { Menu, X, ShoppingBag, User, Search } from "lucide-react";
 import { useTenant } from "@/components/tenant-provider";
 import { CartSheet } from "@/components/shop/cart-sheet";
 import { MegaMenu } from "@/components/shop/mega-menu";
+import { CurrencySwitcher } from "@/components/shop/currency-switcher";
 
 export function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -141,6 +142,9 @@ export function Header() {
 
           {/* Right: Actions */}
           <div className="flex items-center justify-end gap-4 lg:w-1/3">
+            <div className="hidden lg:block">
+              <CurrencySwitcher />
+            </div>
             <button
               type="button"
               className="hidden transition-colors hover:opacity-60 lg:block"
