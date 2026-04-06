@@ -124,29 +124,27 @@ export default async function AdminDashboard() {
 
   return (
     <div className="space-y-6 p-6 md:p-8">
-      <h1 className="text-2xl font-bold text-white">Dashboard</h1>
+      <h1 className="text-2xl text-[#1a1a1a]" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontStyle: "italic", fontWeight: 400 }}>Dashboard</h1>
 
-      {/* Stats — each card links to its page */}
+      {/* Stats */}
       <div className="grid gap-3 grid-cols-2 lg:grid-cols-5">
         {[
-          { label: "Products", value: totalProducts, icon: Package, color: "text-emerald-400 bg-emerald-500/10", href: `/admin/products${tp}` },
-          { label: "Total Orders", value: totalOrders, icon: ShoppingCart, color: "text-blue-400 bg-blue-500/10", href: `/admin/orders${tp}` },
-          { label: "Revenue", value: formatPrice(totalRevenue), icon: TrendingUp, color: "text-green-400 bg-green-500/10", href: `/admin/orders${tp}` },
-          { label: "Stock Units", value: totalStock.toLocaleString(), icon: Box, color: "text-cyan-400 bg-cyan-500/10", href: `/admin/inventory${tp}` },
-          { label: "Inventory Value", value: formatPrice(inventoryValue), icon: Banknote, color: "text-violet-400 bg-violet-500/10", href: `/admin/inventory${tp}` },
-        ].map(({ label, value, icon: Icon, color, href }) => (
+          { label: "Products", value: totalProducts, icon: Package, href: `/admin/products${tp}` },
+          { label: "Total Orders", value: totalOrders, icon: ShoppingCart, href: `/admin/orders${tp}` },
+          { label: "Revenue", value: formatPrice(totalRevenue), icon: TrendingUp, href: `/admin/orders${tp}` },
+          { label: "Stock Units", value: totalStock.toLocaleString(), icon: Box, href: `/admin/inventory${tp}` },
+          { label: "Inventory Value", value: formatPrice(inventoryValue), icon: Banknote, href: `/admin/inventory${tp}` },
+        ].map(({ label, value, icon: Icon, href }) => (
           <Link key={label} href={href}>
-            <Card className="border-white/[0.08] bg-white/[0.04] backdrop-blur-sm hover:bg-white/[0.06] hover:border-white/[0.12] transition-all cursor-pointer">
-              <CardContent className="flex items-center gap-3 p-4">
-                <div className={`flex h-9 w-9 items-center justify-center rounded-lg ${color}`}>
-                  <Icon className="h-4 w-4" />
-                </div>
-                <div>
-                  <p className="text-xl font-bold text-white">{value}</p>
-                  <p className="text-xs text-white/50">{label}</p>
-                </div>
-              </CardContent>
-            </Card>
+            <div className="flex items-center gap-3 p-4 bg-white border border-[#E5E5E5] hover:border-[#C5A059] transition-all cursor-pointer">
+              <div className="flex h-9 w-9 items-center justify-center bg-[#F5F0E8]">
+                <Icon className="h-4 w-4 text-[#C5A059]" />
+              </div>
+              <div>
+                <p className="text-xl font-light text-[#1a1a1a]" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>{value}</p>
+                <p className="text-[0.65rem] font-medium uppercase tracking-widest text-[#999]" style={{ fontFamily: "'Inter', sans-serif" }}>{label}</p>
+              </div>
+            </div>
           </Link>
         ))}
       </div>

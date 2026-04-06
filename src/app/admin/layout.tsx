@@ -1,6 +1,5 @@
 import { redirect } from "next/navigation";
 import { requireAdmin } from "@/lib/auth";
-import { DarkGradientBg } from "@/components/ui/dark-gradient-bg";
 import { AdminSidebar } from "./admin-sidebar";
 
 export default async function AdminLayout({
@@ -16,7 +15,7 @@ export default async function AdminLayout({
 
   let tenantName = "Dashboard";
   let tenantInitial = "A";
-  let tenantColor = "#059669";
+  let tenantColor = "#C5A059";
   let tenantSlug = "";
 
   try {
@@ -24,20 +23,20 @@ export default async function AdminLayout({
     const tenant = await getTenant();
     tenantName = tenant.name;
     tenantInitial = tenant.name.charAt(0).toUpperCase();
-    tenantColor = tenant.primaryColor;
+    tenantColor = tenant.accentColor || tenant.primaryColor || "#C5A059";
     tenantSlug = tenant.slug;
   } catch {
     // No tenant context
   }
 
   return (
-    <DarkGradientBg>
+    <div className="min-h-screen bg-[#F9F7F2]">
       <div className="flex min-h-screen">
         <AdminSidebar tenantName={tenantName} tenantInitial={tenantInitial} tenantColor={tenantColor} tenantSlug={tenantSlug} />
         <main className="flex-1 overflow-auto">
           {children}
         </main>
       </div>
-    </DarkGradientBg>
+    </div>
   );
 }

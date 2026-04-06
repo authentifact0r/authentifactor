@@ -34,25 +34,29 @@ export function AdminSidebar({ tenantName, tenantInitial, tenantColor, tenantSlu
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  // Preserve tenant param from URL or from server prop
   const tenant = searchParams.get("tenant") || tenantSlug;
   const tenantParam = tenant ? `?tenant=${tenant}` : "";
 
   return (
     <>
       {/* Desktop Sidebar */}
-      <aside className="hidden w-60 flex-shrink-0 border-r border-white/[0.06] bg-black/40 backdrop-blur-xl lg:block">
-        <div className="flex h-16 items-center gap-2 border-b border-white/[0.06] px-6">
+      <aside className="hidden w-56 flex-shrink-0 border-r border-[#E5E5E5] bg-white lg:block">
+        <div className="flex h-16 items-center gap-2.5 border-b border-[#E5E5E5] px-5">
           <div
-            className="flex h-8 w-8 items-center justify-center rounded-lg text-sm font-bold text-white"
+            className="flex h-8 w-8 items-center justify-center text-sm font-bold text-white"
             style={{ backgroundColor: tenantColor }}
           >
             {tenantInitial}
           </div>
-          <span className="font-semibold text-white truncate">{tenantName}</span>
+          <span
+            className="text-[#1a1a1a] truncate text-sm"
+            style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontStyle: "italic", fontWeight: 400 }}
+          >
+            {tenantName}
+          </span>
         </div>
 
-        <nav className="space-y-0.5 p-3">
+        <nav className="p-3 space-y-0.5">
           {navItems.map(({ href, label, icon: Icon }) => {
             const isActive = pathname === href || (href !== "/admin" && pathname.startsWith(href));
             return (
@@ -60,34 +64,36 @@ export function AdminSidebar({ tenantName, tenantInitial, tenantColor, tenantSlu
                 key={href}
                 href={`${href}${tenantParam}`}
                 className={cn(
-                  "flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-medium transition-all",
+                  "flex items-center gap-2.5 px-3 py-2 text-[0.8rem] font-medium transition-all",
                   isActive
-                    ? "bg-white/[0.08] text-white"
-                    : "text-white/50 hover:bg-white/[0.04] hover:text-white/80"
+                    ? "text-[#1a1a1a] bg-[#F5F0E8]"
+                    : "text-[#999] hover:text-[#1a1a1a] hover:bg-[#F9F7F2]"
                 )}
+                style={{ fontFamily: "'Inter', sans-serif" }}
               >
                 <div className={cn(
-                  "flex h-7 w-7 items-center justify-center rounded-lg transition-all",
+                  "flex h-7 w-7 items-center justify-center transition-all",
                   isActive
-                    ? "bg-emerald-500/15 text-emerald-400"
-                    : "bg-white/[0.04] text-white/40"
+                    ? "text-[#C5A059]"
+                    : "text-[#bbb]"
                 )}>
-                  <Icon className="h-3.5 w-3.5" />
+                  <Icon className="h-4 w-4" />
                 </div>
                 {label}
-                {isActive && <ChevronRight className="ml-auto h-3 w-3 text-white/30" />}
+                {isActive && <ChevronRight className="ml-auto h-3 w-3 text-[#C5A059]" />}
               </Link>
             );
           })}
         </nav>
 
-        <div className="mt-auto border-t border-white/[0.06] p-3">
+        <div className="mt-auto border-t border-[#E5E5E5] p-3">
           <a
             href="/api/auth/logout"
-            className="flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-medium text-white/30 hover:bg-red-500/[0.06] hover:text-red-400 transition-all"
+            className="flex items-center gap-2.5 px-3 py-2 text-[0.8rem] font-medium text-[#bbb] hover:text-[#e25950] transition-all"
+            style={{ fontFamily: "'Inter', sans-serif" }}
           >
-            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-white/[0.04]">
-              <LogOut className="h-3.5 w-3.5" />
+            <div className="flex h-7 w-7 items-center justify-center">
+              <LogOut className="h-4 w-4" />
             </div>
             Sign Out
           </a>
@@ -95,28 +101,32 @@ export function AdminSidebar({ tenantName, tenantInitial, tenantColor, tenantSlu
       </aside>
 
       {/* Mobile Nav */}
-      <div className="flex items-center gap-2 overflow-x-auto border-b border-white/[0.06] p-3 lg:hidden">
+      <div className="flex items-center gap-2 overflow-x-auto border-b border-[#E5E5E5] bg-white p-3 lg:hidden">
         <div
-          className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-xs font-bold text-white mr-1"
+          className="flex h-7 w-7 shrink-0 items-center justify-center text-xs font-bold text-white mr-1"
           style={{ backgroundColor: tenantColor }}
         >
           {tenantInitial}
         </div>
-        {navItems.map(({ href, label, icon: Icon }) => (
-          <Link
-            key={href}
-            href={`${href}${tenantParam}`}
-            className={cn(
-              "flex items-center gap-1 whitespace-nowrap rounded-full px-3 py-1.5 text-xs font-medium transition",
-              pathname === href || (href !== "/admin" && pathname.startsWith(href))
-                ? "bg-white/[0.1] text-white"
-                : "bg-white/[0.04] text-white/50"
-            )}
-          >
-            <Icon className="h-3 w-3" />
-            {label}
-          </Link>
-        ))}
+        {navItems.map(({ href, label, icon: Icon }) => {
+          const isActive = pathname === href || (href !== "/admin" && pathname.startsWith(href));
+          return (
+            <Link
+              key={href}
+              href={`${href}${tenantParam}`}
+              className={cn(
+                "flex items-center gap-1 whitespace-nowrap px-3 py-1.5 text-xs font-medium transition",
+                isActive
+                  ? "bg-[#F5F0E8] text-[#1a1a1a] border border-[#C5A059]/30"
+                  : "bg-white text-[#999] border border-[#E5E5E5]"
+              )}
+              style={{ fontFamily: "'Inter', sans-serif" }}
+            >
+              <Icon className="h-3 w-3" />
+              {label}
+            </Link>
+          );
+        })}
       </div>
     </>
   );
