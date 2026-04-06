@@ -16,10 +16,10 @@ interface TenantBrand {
 
 // Fashion imagery for the collage (tenant-aware in future)
 const collageImages = [
-  { src: "https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=600&q=80&fit=crop", alt: "Evening dress" },
+  { src: "/images/collage/white-dress.png", alt: "White draped evening dress" },
   { src: "https://images.unsplash.com/photo-1611085583191-a3b181a88401?w=600&q=80&fit=crop", alt: "Gold earrings" },
   { src: "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=600&q=80&fit=crop", alt: "Luxury handbag" },
-  { src: "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=600&q=80&fit=crop", alt: "Fashion outfit" },
+  { src: "/images/collage/yellow-dress.png", alt: "Soleil yellow tulip mini dress" },
 ];
 
 export default function LoginPage() {
