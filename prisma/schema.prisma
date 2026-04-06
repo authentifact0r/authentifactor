@@ -357,6 +357,8 @@ model OrderItem {
   unitPrice   Decimal @db.Decimal(10, 2)
   totalPrice  Decimal @db.Decimal(10, 2)
   weightKg    Decimal @db.Decimal(6, 3)
+  size        String?
+  color       String?
 
   @@map("order_items")
 }

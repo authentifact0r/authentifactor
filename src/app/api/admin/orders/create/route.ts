@@ -49,7 +49,7 @@ export async function POST(request: NextRequest) {
     // Fetch products and calculate totals
     let subtotal = 0;
     let totalWeight = 0;
-    const orderItems: { productId: string; quantity: number; unitPrice: number; totalPrice: number; weightKg: number }[] = [];
+    const orderItems: { productId: string; quantity: number; unitPrice: number; totalPrice: number; weightKg: number; size: string | null; color: string | null }[] = [];
 
     for (const item of items) {
       const product = await tdb.product.findFirst({ where: { id: item.productId } });
@@ -59,7 +59,10 @@ export async function POST(request: NextRequest) {
       const weight = Number(product.weightKg || 0);
       subtotal += price * qty;
       totalWeight += weight * qty;
-      orderItems.push({ productId: item.productId, quantity: qty, unitPrice: price, totalPrice: price * qty, weightKg: weight });
+      orderItems.push({
+        productId: item.productId, quantity: qty, unitPrice: price, totalPrice: price * qty, weightKg: weight,
+        size: item.size || null, color: item.color || null,
+      });
     }
 
     if (orderItems.length === 0) {

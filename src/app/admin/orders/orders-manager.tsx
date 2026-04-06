@@ -33,7 +33,10 @@ export function OrdersManager({ orders, products, tenantSlug }: Props) {
   const [statusFilter, setStatusFilter] = useState("all");
   const [showCreate, setShowCreate] = useState(false);
   const [creating, setCreating] = useState(false);
-  const [cart, setCart] = useState<{ productId: string; qty: number }[]>([]);
+  const [cart, setCart] = useState<{ productId: string; qty: number; size: string; color: string }[]>([]);
+  const [pickingVariant, setPickingVariant] = useState<string | null>(null);
+  const [pickSize, setPickSize] = useState("");
+  const [pickColor, setPickColor] = useState("");
   const [customerName, setCustomerName] = useState("");
   const [customerEmail, setCustomerEmail] = useState("");
   const [customerPhone, setCustomerPhone] = useState("");
@@ -80,20 +83,43 @@ export function OrdersManager({ orders, products, tenantSlug }: Props) {
   };
 
   const addToCart = (productId: string) => {
+    const product = products.find(p => p.id === productId);
+    const hasSizes = product?.sizes?.length > 0;
+    const hasColors = product?.colors?.length > 0;
+
+    if (hasSizes || hasColors) {
+      // Open variant picker
+      setPickingVariant(productId);
+      setPickSize(product?.sizes?.[0] || "");
+      setPickColor(product?.colors?.[0] || "");
+      return;
+    }
+
+    // No variants — add directly
+    addToCartDirect(productId, "", "");
+  };
+
+  const addToCartDirect = (productId: string, size: string, color: string) => {
     setCart(prev => {
-      const existing = prev.find(c => c.productId === productId);
-      if (existing) return prev.map(c => c.productId === productId ? { ...c, qty: c.qty + 1 } : c);
-      return [...prev, { productId, qty: 1 }];
+      const key = `${productId}-${size}-${color}`;
+      const existing = prev.find(c => c.productId === productId && c.size === size && c.color === color);
+      if (existing) return prev.map(c => (c.productId === productId && c.size === size && c.color === color) ? { ...c, qty: c.qty + 1 } : c);
+      return [...prev, { productId, qty: 1, size, color }];
     });
+    setPickingVariant(null);
+    setPickSize("");
+    setPickColor("");
   };
 
-  const removeFromCart = (productId: string) => {
-    setCart(prev => prev.filter(c => c.productId !== productId));
+  const cartKey = (c: { productId: string; size: string; color: string }) => `${c.productId}-${c.size}-${c.color}`;
+
+  const removeFromCart = (productId: string, size: string, color: string) => {
+    setCart(prev => prev.filter(c => cartKey(c) !== `${productId}-${size}-${color}`));
   };
 
-  const updateCartQty = (productId: string, qty: number) => {
-    if (qty <= 0) return removeFromCart(productId);
-    setCart(prev => prev.map(c => c.productId === productId ? { ...c, qty } : c));
+  const updateCartQty = (productId: string, size: string, color: string, qty: number) => {
+    if (qty <= 0) return removeFromCart(productId, size, color);
+    setCart(prev => prev.map(c => (c.productId === productId && c.size === size && c.color === color) ? { ...c, qty } : c));
   };
 
   const cartTotal = cart.reduce((sum, c) => {
@@ -110,7 +136,7 @@ export function OrdersManager({ orders, products, tenantSlug }: Props) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          items: cart, customerName, customerEmail, customerPhone,
+          items: cart.map(c => ({ productId: c.productId, qty: c.qty, size: c.size, color: c.color })), customerName, customerEmail, customerPhone,
           address: { line1: addressLine1, line2: addressLine2, city: addressCity, postcode: addressPostcode },
           shippingMethod, notes: orderNotes,
         }),
@@ -170,25 +196,82 @@ export function OrdersManager({ orders, products, tenantSlug }: Props) {
                 <button key={pr.id} onClick={() => addToCart(pr.id)} className="inline-flex items-center gap-1.5 rounded-lg bg-white/[0.06] border border-white/[0.08] px-3 py-1.5 text-xs text-white/60 hover:bg-white/[0.1] hover:text-white transition">
                   {pr.images?.[0] && <img src={pr.images[0]} alt="" className="h-5 w-5 rounded object-cover" />}
                   {pr.name} — {formatPrice(pr.price)}
+                  {(pr.sizes?.length > 0 || pr.colors?.length > 0) && <span className="text-white/30 ml-1">({[pr.sizes?.length && `${pr.sizes.length} sizes`, pr.colors?.length && `${pr.colors.length} colors`].filter(Boolean).join(", ")})</span>}
                 </button>
               ))}
             </div>
+
+            {/* Variant Picker Modal */}
+            {pickingVariant && (() => {
+              const pr = products.find(p => p.id === pickingVariant);
+              if (!pr) return null;
+              return (
+                <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/[0.03] p-4 mb-3 space-y-3">
+                  <div className="flex items-center gap-3">
+                    {pr.images?.[0] && <img src={pr.images[0]} alt="" className="h-10 w-10 rounded-lg object-cover" />}
+                    <div className="flex-1">
+                      <p className="text-sm font-medium text-white">{pr.name}</p>
+                      <p className="text-xs text-white/50">{formatPrice(pr.price)}</p>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {pr.sizes?.length > 0 && (
+                      <div>
+                        <label className="block text-xs font-medium text-white/70 mb-1.5">Size</label>
+                        <div className="flex flex-wrap gap-1.5">
+                          {pr.sizes.map((s: string) => (
+                            <button key={s} onClick={() => setPickSize(s)} className={`h-8 min-w-[2.5rem] px-3 rounded-lg text-xs font-medium transition ${pickSize === s ? "bg-emerald-500 text-black" : "bg-white/[0.06] text-white/60 hover:bg-white/[0.1]"}`}>
+                              {s}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    {pr.colors?.length > 0 && (
+                      <div>
+                        <label className="block text-xs font-medium text-white/70 mb-1.5">Color</label>
+                        <div className="flex flex-wrap gap-1.5">
+                          {pr.colors.map((c: string) => (
+                            <button key={c} onClick={() => setPickColor(c)} className={`h-8 px-3 rounded-lg text-xs font-medium transition ${pickColor === c ? "bg-emerald-500 text-black" : "bg-white/[0.06] text-white/60 hover:bg-white/[0.1]"}`}>
+                              {c}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="flex gap-2">
+                    <button onClick={() => addToCartDirect(pr.id, pickSize, pickColor)} className="inline-flex items-center gap-1.5 h-9 px-4 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-black text-xs font-semibold transition">
+                      <Plus className="h-3.5 w-3.5" /> Add {pickSize && `${pickSize}`}{pickSize && pickColor && " / "}{pickColor && `${pickColor}`} to Cart
+                    </button>
+                    <button onClick={() => setPickingVariant(null)} className="h-9 px-3 rounded-lg bg-white/[0.06] text-white/50 text-xs hover:text-white transition">Cancel</button>
+                  </div>
+                </div>
+              );
+            })()}
+
             {cart.length > 0 && (
               <div className="rounded-xl bg-white/[0.02] border border-white/[0.04] p-3 space-y-2">
                 {cart.map(c => {
                   const pr = products.find(p => p.id === c.productId);
                   if (!pr) return null;
+                  const variantLabel = [c.size, c.color].filter(Boolean).join(" / ");
                   return (
-                    <div key={c.productId} className="flex items-center gap-3">
+                    <div key={cartKey(c)} className="flex items-center gap-3">
                       {pr.images?.[0] && <img src={pr.images[0]} alt="" className="h-8 w-8 rounded-lg object-cover" />}
-                      <span className="text-sm text-white flex-1">{pr.name}</span>
+                      <div className="flex-1 min-w-0">
+                        <span className="text-sm text-white truncate block">{pr.name}</span>
+                        {variantLabel && <span className="text-xs text-emerald-400">{variantLabel}</span>}
+                      </div>
                       <div className="flex items-center gap-1">
-                        <button onClick={() => updateCartQty(c.productId, c.qty - 1)} className="h-7 w-7 rounded bg-white/[0.06] text-white/50 hover:text-white text-xs flex items-center justify-center">-</button>
+                        <button onClick={() => updateCartQty(c.productId, c.size, c.color, c.qty - 1)} className="h-7 w-7 rounded bg-white/[0.06] text-white/50 hover:text-white text-xs flex items-center justify-center">-</button>
                         <span className="w-8 text-center text-sm text-white tabular-nums">{c.qty}</span>
-                        <button onClick={() => updateCartQty(c.productId, c.qty + 1)} className="h-7 w-7 rounded bg-white/[0.06] text-white/50 hover:text-white text-xs flex items-center justify-center">+</button>
+                        <button onClick={() => updateCartQty(c.productId, c.size, c.color, c.qty + 1)} className="h-7 w-7 rounded bg-white/[0.06] text-white/50 hover:text-white text-xs flex items-center justify-center">+</button>
                       </div>
                       <span className="text-sm text-white tabular-nums w-20 text-right">{formatPrice(pr.price * c.qty)}</span>
-                      <button onClick={() => removeFromCart(c.productId)} className="text-red-400/50 hover:text-red-400"><XCircle className="h-4 w-4" /></button>
+                      <button onClick={() => removeFromCart(c.productId, c.size, c.color)} className="text-red-400/50 hover:text-red-400"><XCircle className="h-4 w-4" /></button>
                     </div>
                   );
                 })}
@@ -291,7 +374,11 @@ export function OrdersManager({ orders, products, tenantSlug }: Props) {
                           )}
                           <div className="flex-1 min-w-0">
                             <p className="text-sm text-white truncate">{item.product?.name}</p>
-                            <p className="text-xs text-white/50">{item.product?.sku} · Qty: {item.quantity}</p>
+                            <p className="text-xs text-white/50">
+                              {item.product?.sku} · Qty: {item.quantity}
+                              {item.size && <span className="ml-1 text-emerald-400/70">· {item.size}</span>}
+                              {item.color && <span className="ml-1 text-cyan-400/70">· {item.color}</span>}
+                            </p>
                           </div>
                           <span className="text-sm font-medium text-white tabular-nums">{formatPrice(item.totalPrice)}</span>
                         </div>

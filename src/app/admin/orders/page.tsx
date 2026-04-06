@@ -28,7 +28,7 @@ export default async function AdminOrdersPage() {
       const user = await rawDb.user.findUnique({ where: { id: o.userId }, select: { firstName: true, lastName: true, email: true, phone: true } });
       (o as any).user = user;
     }
-    products = await tdb.product.findMany({ where: { isActive: true }, select: { id: true, name: true, sku: true, price: true, images: true }, orderBy: { name: "asc" } });
+    products = await tdb.product.findMany({ where: { isActive: true }, select: { id: true, name: true, sku: true, price: true, images: true, sizes: true, colors: true }, orderBy: { name: "asc" } });
 
     orders = orders.map((o: any) => ({
       ...o,
@@ -37,7 +37,7 @@ export default async function AdminOrdersPage() {
       total: Number(o.total), totalWeightKg: Number(o.totalWeightKg),
       createdAt: o.createdAt.toISOString(), updatedAt: o.updatedAt.toISOString(),
       shippedAt: o.shippedAt?.toISOString() || null, deliveredAt: o.deliveredAt?.toISOString() || null,
-      items: o.items.map((i: any) => ({ ...i, unitPrice: Number(i.unitPrice), totalPrice: Number(i.totalPrice), weightKg: Number(i.weightKg), product: { ...i.product, price: Number(i.product.price) } })),
+      items: o.items.map((i: any) => ({ ...i, unitPrice: Number(i.unitPrice), totalPrice: Number(i.totalPrice), weightKg: Number(i.weightKg), size: i.size || null, color: i.color || null, product: { ...i.product, price: Number(i.product.price) } })),
     }));
     products = products.map((pr: any) => ({ ...pr, price: Number(pr.price) }));
   } catch (err: any) {
