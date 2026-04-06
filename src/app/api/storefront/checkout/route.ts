@@ -9,7 +9,7 @@ function cors(response: NextResponse) {
   return response;
 }
 
-// Creates a Stripe Checkout Session — payment only, no shipping collection
+// Creates a Stripe PaymentIntent for inline card payment
 // POST /api/storefront/checkout?tenant=styled-by-maryam
 export async function POST(request: NextRequest) {
   try {
@@ -22,69 +22,26 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { items, customer, shipping, giftWrap, giftNote, successUrl, cancelUrl } = body;
+    const { items, customer, shipping, giftWrap, giftNote } = body;
 
-    if (!items?.length || !customer?.email || !successUrl) {
+    if (!items?.length || !customer?.email) {
       return cors(NextResponse.json({ error: "Missing required fields" }, { status: 400 }));
     }
 
-    // Build Stripe line items
-    const lineItems: Array<{
-      price_data: {
-        currency: string;
-        product_data: { name: string; images?: string[]; description?: string };
-        unit_amount: number;
-      };
-      quantity: number;
-    }> = [];
+    let totalPence = 0;
+    const description: string[] = [];
 
     for (const item of items) {
-      const unitAmount = Math.round(item.price * 100);
-      lineItems.push({
-        price_data: {
-          currency: (tenant.currency || "GBP").toLowerCase(),
-          product_data: {
-            name: item.name,
-            ...(item.image && item.image.startsWith("http") ? { images: [item.image] } : {}),
-            ...(item.variant ? { description: item.variant } : {}),
-          },
-          unit_amount: unitAmount,
-        },
-        quantity: item.qty || 1,
-      });
+      totalPence += Math.round(item.price * 100) * (item.qty || 1);
+      description.push(`${item.name}${item.variant ? ` (${item.variant})` : ''} x${item.qty || 1}`);
     }
 
-    // Shipping as line item
-    const shippingCost = shipping?.cost || 0;
-    if (shippingCost > 0) {
-      lineItems.push({
-        price_data: {
-          currency: (tenant.currency || "GBP").toLowerCase(),
-          product_data: { name: `${shipping.method || "Express"} Delivery` },
-          unit_amount: Math.round(shippingCost * 100),
-        },
-        quantity: 1,
-      });
-    }
+    if (shipping?.cost > 0) totalPence += Math.round(shipping.cost * 100);
+    if (giftWrap) totalPence += 500;
 
-    // Gift wrap
-    if (giftWrap) {
-      lineItems.push({
-        price_data: {
-          currency: (tenant.currency || "GBP").toLowerCase(),
-          product_data: { name: "Gift Wrap" },
-          unit_amount: 500,
-        },
-        quantity: 1,
-      });
-    }
-
-    // Create Checkout Session — card payment only, no shipping form
-    const session = await stripe.checkout.sessions.create({
-      mode: "payment",
-      payment_method_types: ["card"],
-      customer_email: customer.email,
-      line_items: lineItems,
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: totalPence,
+      currency: (tenant.currency || "GBP").toLowerCase(),
       metadata: {
         tenantId: tenant.id,
         tenantSlug: slug,
@@ -94,14 +51,15 @@ export async function POST(request: NextRequest) {
         shippingAddress: [customer.address, customer.city, customer.postcode, customer.country].filter(Boolean).join(", "),
         shippingMethod: shipping?.method || "standard",
         giftNote: giftNote || "",
+        items: description.join("; ").slice(0, 500),
       },
-      success_url: `${successUrl}?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: cancelUrl || successUrl.replace("/success", ""),
+      receipt_email: customer.email,
+      description: `Order from ${tenant.name}: ${description.join(", ")}`.slice(0, 1000),
     });
 
     return cors(NextResponse.json({
-      url: session.url,
-      sessionId: session.id,
+      clientSecret: paymentIntent.client_secret,
+      amount: totalPence,
     }));
   } catch (error: any) {
     console.error("Storefront checkout error:", error);
@@ -109,7 +67,6 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// CORS preflight
 export async function OPTIONS() {
   const response = new NextResponse(null, { status: 204 });
   response.headers.set("Access-Control-Allow-Origin", "*");
