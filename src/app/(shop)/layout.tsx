@@ -2,6 +2,7 @@ import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { TenantProvider, type TenantConfig } from "@/components/tenant-provider";
 import { getTenant } from "@/lib/tenant";
+import { getScopedDb } from "@/lib/db";
 
 export default async function ShopLayout({
   children,
@@ -9,6 +10,18 @@ export default async function ShopLayout({
   children: React.ReactNode;
 }) {
   const tenant = await getTenant();
+
+  // Get unique categories from this tenant's products
+  let categories: string[] = [];
+  try {
+    const tdb = await getScopedDb();
+    const products = await tdb.product.findMany({
+      where: { isActive: true },
+      select: { category: true },
+      distinct: ["category"],
+    });
+    categories = products.map((p) => p.category).filter(Boolean);
+  } catch {}
 
   const tenantConfig: TenantConfig = {
     id: tenant.id,
@@ -22,6 +35,8 @@ export default async function ShopLayout({
     freeShippingMinimum: tenant.freeShippingMinimum,
     heroBannerTitle: tenant.heroBannerTitle,
     heroBannerSubtitle: tenant.heroBannerSubtitle,
+    heroBannerImage: tenant.heroBannerImage,
+    categories,
   };
 
   return (

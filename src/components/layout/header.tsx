@@ -6,27 +6,28 @@ import { Menu, X, ShoppingBag, User, Search } from "lucide-react";
 import { useTenant } from "@/components/tenant-provider";
 import { CartSheet } from "@/components/shop/cart-sheet";
 
-const navCategories = [
-  { name: "New In", href: "/products?category=NEW_IN" },
-  { name: "Ready-to-Wear", href: "/products?category=READY_TO_WEAR" },
-  { name: "Handbags", href: "/products?category=HANDBAGS" },
-  { name: "Accessories", href: "/products?category=ACCESSORIES" },
-  { name: "Beauty", href: "/products?category=BEAUTY" },
-  { name: "Gifts", href: "/products?category=GIFTS" },
-];
-
-const COLORS = {
-  bg: "#FFFFFF",
-  text: "#1a1a1a",
-  gold: "#C5A059",
-  muted: "#777777",
-  border: "#E5E5E5",
-} as const;
-
 export function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const tenant = useTenant();
+
+  // Dynamic nav from tenant's actual product categories
+  const navCategories = [
+    { name: "Shop All", href: "/products" },
+    ...tenant.categories.slice(0, 6).map((cat) => ({
+      name: cat,
+      href: `/products?category=${encodeURIComponent(cat)}`,
+    })),
+  ];
+
+  // Use tenant colors instead of hardcoded values
+  const COLORS = {
+    bg: "#FFFFFF",
+    text: "#1a1a1a",
+    accent: tenant.accentColor || "#C5A059",
+    muted: "#777777",
+    border: "#E5E5E5",
+  };
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 10);
@@ -64,7 +65,7 @@ export function Header() {
         {/* Promo bar */}
         <div
           className="px-4 py-2 text-center"
-          style={{ backgroundColor: COLORS.gold }}
+          style={{ backgroundColor: COLORS.accent }}
         >
           <p
             className="text-white"
@@ -124,7 +125,7 @@ export function Header() {
                   {cat.name}
                   <span
                     className="absolute -bottom-0.5 left-0 h-px w-0 transition-all duration-300 group-hover:w-full"
-                    style={{ backgroundColor: COLORS.gold }}
+                    style={{ backgroundColor: COLORS.accent }}
                   />
                 </span>
               </Link>

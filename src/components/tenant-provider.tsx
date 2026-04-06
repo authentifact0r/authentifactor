@@ -13,6 +13,8 @@ export interface TenantConfig {
   freeShippingMinimum: number | null;
   heroBannerTitle: string | null;
   heroBannerSubtitle: string | null;
+  heroBannerImage: string | null;
+  categories: string[];
 }
 
 const TenantContext = createContext<TenantConfig | null>(null);

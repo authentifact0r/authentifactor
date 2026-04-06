@@ -55,9 +55,10 @@ export default async function HomePage() {
     tenant.heroBannerSubtitle ||
     "Timeless pieces, thoughtfully curated for the modern woman.";
 
-  const fontSerif = `"Cormorant Garamond", Georgia, serif`;
-  const fontBody = `"Inter", sans-serif`;
-  const gold = "#C5A059";
+  const fontSerif = `var(--font-display, Georgia), serif`;
+  const fontBody = `var(--font-body, Inter), sans-serif`;
+  const accent = tenant.accentColor || "#C5A059";
+  const primary = tenant.primaryColor || "#F9F7F2";
   const bone = "#F9F7F2";
   const textPrimary = "#1a1a1a";
   const textMuted = "#777";
@@ -113,12 +114,12 @@ export default async function HomePage() {
               fontSize: "0.7rem",
               letterSpacing: "0.35em",
               textTransform: "uppercase",
-              color: gold,
+              color: accent,
               marginBottom: "1.5rem",
               fontWeight: 500,
             }}
           >
-            Curated Luxury
+            {tenant.tagline || tenant.name}
           </p>
 
           <h1
@@ -153,7 +154,7 @@ export default async function HomePage() {
             style={{
               display: "inline-block",
               padding: "0.85rem 2.8rem",
-              border: `1.5px solid ${gold}`,
+              border: `1.5px solid ${accent}`,
               color: "#fff",
               fontFamily: fontBody,
               fontSize: "0.75rem",
@@ -183,7 +184,7 @@ export default async function HomePage() {
                 fontSize: "0.7rem",
                 letterSpacing: "0.35em",
                 textTransform: "uppercase",
-                color: gold,
+                color: accent,
                 marginBottom: "0.75rem",
                 fontWeight: 500,
               }}
@@ -341,12 +342,12 @@ export default async function HomePage() {
               fontSize: "0.7rem",
               letterSpacing: "0.35em",
               textTransform: "uppercase",
-              color: gold,
+              color: accent,
               marginBottom: "0.75rem",
               fontWeight: 500,
             }}
           >
-            Styled by Maryam
+            {tenant.name}
           </p>
           <h2
             style={{
@@ -378,8 +379,8 @@ export default async function HomePage() {
             style={{
               display: "inline-block",
               padding: "0.85rem 2.8rem",
-              border: `1.5px solid ${gold}`,
-              color: gold,
+              border: `1.5px solid ${accent}`,
+              color: accent,
               fontFamily: fontBody,
               fontSize: "0.75rem",
               letterSpacing: "0.25em",
@@ -407,7 +408,7 @@ export default async function HomePage() {
               fontSize: "0.7rem",
               letterSpacing: "0.35em",
               textTransform: "uppercase",
-              color: gold,
+              color: accent,
               marginBottom: "0.75rem",
               fontWeight: 500,
             }}
@@ -424,7 +425,7 @@ export default async function HomePage() {
               margin: "0 0 0.75rem",
             }}
           >
-            @styledbymaryam
+            @{tenant.slug.replace(/-/g, "")}
           </h2>
           <p
             style={{
@@ -438,7 +439,7 @@ export default async function HomePage() {
             Behind the scenes, styling tips, and new arrivals.
           </p>
           <a
-            href="https://instagram.com/styledbymaryam"
+            href={`https://instagram.com/${tenant.slug.replace(/-/g, "")}`}
             target="_blank"
             rel="noopener noreferrer"
             style={{
