@@ -47,6 +47,19 @@ model Tenant {
   heroBannerTitle     String?
   heroBannerSubtitle  String?
 
+  // Theme & branding
+  fontFamily          String   @default("inter")       // body font: inter | plus-jakarta | dm-sans
+  headingFontFamily   String   @default("cormorant")   // heading font: cormorant | playfair | inter
+  backgroundColor     String   @default("#FFFFFF")     // storefront bg
+  textColor           String   @default("#1a1a1a")     // storefront text
+  enableMegaMenu      Boolean  @default(false)         // mega-menu with subcategories
+  enableScrollAnimations Boolean @default(true)        // scroll reveal effects
+
+  // Brand & social
+  instagramHandle     String?                          // e.g. "styleddbymaryam"
+  brandStory          String?                          // markdown brand story
+  brandStoryImage     String?                          // hero image for about page
+
   // ── Billing ──
   billingPlan            String   @default("standard") // basic | standard | premium
   billingStatus          String   @default("active")   // active | delinquent | paused

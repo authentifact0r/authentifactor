@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Menu, X, ShoppingBag, User, Search } from "lucide-react";
 import { useTenant } from "@/components/tenant-provider";
 import { CartSheet } from "@/components/shop/cart-sheet";
+import { MegaMenu } from "@/components/shop/mega-menu";
 
 export function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -70,7 +71,7 @@ export function Header() {
           <p
             className="text-white"
             style={{
-              fontFamily: "Inter, sans-serif",
+              fontFamily: "var(--font-body)",
               fontSize: "0.65rem",
               fontWeight: 400,
               letterSpacing: "0.14em",
@@ -91,7 +92,7 @@ export function Header() {
             <Link href="/" className="group">
               <span
                 style={{
-                  fontFamily: "'Cormorant Garamond', Georgia, serif",
+                  fontFamily: "var(--font-heading)",
                   fontStyle: "italic",
                   fontWeight: 500,
                   fontSize: "1.45rem",
@@ -106,31 +107,37 @@ export function Header() {
           </div>
 
           {/* Center: Desktop navigation */}
-          <nav className="hidden items-center justify-center gap-1 lg:flex lg:w-1/3">
-            {navCategories.map((cat) => (
-              <Link
-                key={cat.name}
-                href={cat.href}
-                className="group relative px-3 py-2 transition-colors"
-                style={{
-                  fontFamily: "Inter, sans-serif",
-                  fontSize: "0.7rem",
-                  fontWeight: 500,
-                  letterSpacing: "0.12em",
-                  textTransform: "uppercase",
-                  color: COLORS.text,
-                }}
-              >
-                <span className="relative">
-                  {cat.name}
-                  <span
-                    className="absolute -bottom-0.5 left-0 h-px w-0 transition-all duration-300 group-hover:w-full"
-                    style={{ backgroundColor: COLORS.accent }}
-                  />
-                </span>
-              </Link>
-            ))}
-          </nav>
+          {tenant.enableMegaMenu ? (
+            <div className="lg:w-1/3">
+              <MegaMenu />
+            </div>
+          ) : (
+            <nav className="hidden items-center justify-center gap-1 lg:flex lg:w-1/3">
+              {navCategories.map((cat) => (
+                <Link
+                  key={cat.name}
+                  href={cat.href}
+                  className="group relative px-3 py-2 transition-colors"
+                  style={{
+                    fontFamily: "var(--font-body)",
+                    fontSize: "0.7rem",
+                    fontWeight: 500,
+                    letterSpacing: "0.12em",
+                    textTransform: "uppercase",
+                    color: COLORS.text,
+                  }}
+                >
+                  <span className="relative">
+                    {cat.name}
+                    <span
+                      className="absolute -bottom-0.5 left-0 h-px w-0 transition-all duration-300 group-hover:w-full"
+                      style={{ backgroundColor: COLORS.accent }}
+                    />
+                  </span>
+                </Link>
+              ))}
+            </nav>
+          )}
 
           {/* Right: Actions */}
           <div className="flex items-center justify-end gap-4 lg:w-1/3">
@@ -198,7 +205,7 @@ export function Header() {
             >
               <span
                 style={{
-                  fontFamily: "'Cormorant Garamond', Georgia, serif",
+                  fontFamily: "var(--font-heading)",
                   fontStyle: "italic",
                   fontWeight: 500,
                   fontSize: "1.3rem",
@@ -231,7 +238,7 @@ export function Header() {
                       onClick={closeMobile}
                       className="block py-3 transition-colors"
                       style={{
-                        fontFamily: "Inter, sans-serif",
+                        fontFamily: "var(--font-body)",
                         fontSize: "0.75rem",
                         fontWeight: 500,
                         letterSpacing: "0.12em",
@@ -253,7 +260,7 @@ export function Header() {
                   onClick={closeMobile}
                   className="flex items-center gap-3 transition-colors hover:opacity-60"
                   style={{
-                    fontFamily: "Inter, sans-serif",
+                    fontFamily: "var(--font-body)",
                     fontSize: "0.7rem",
                     fontWeight: 400,
                     letterSpacing: "0.08em",
@@ -269,7 +276,7 @@ export function Header() {
                   onClick={closeMobile}
                   className="flex items-center gap-3 transition-colors hover:opacity-60"
                   style={{
-                    fontFamily: "Inter, sans-serif",
+                    fontFamily: "var(--font-body)",
                     fontSize: "0.7rem",
                     fontWeight: 400,
                     letterSpacing: "0.08em",
@@ -292,7 +299,7 @@ export function Header() {
             >
               <p
                 style={{
-                  fontFamily: "Inter, sans-serif",
+                  fontFamily: "var(--font-body)",
                   fontSize: "0.6rem",
                   fontWeight: 400,
                   letterSpacing: "0.1em",

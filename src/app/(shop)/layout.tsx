@@ -37,6 +37,15 @@ export default async function ShopLayout({
     heroBannerSubtitle: tenant.heroBannerSubtitle,
     heroBannerImage: tenant.heroBannerImage,
     categories,
+    fontFamily: tenant.fontFamily,
+    headingFontFamily: tenant.headingFontFamily,
+    backgroundColor: tenant.backgroundColor,
+    textColor: tenant.textColor,
+    enableMegaMenu: tenant.enableMegaMenu,
+    enableScrollAnimations: tenant.enableScrollAnimations,
+    instagramHandle: tenant.instagramHandle,
+    brandStory: tenant.brandStory,
+    brandStoryImage: tenant.brandStoryImage,
   };
 
   return (

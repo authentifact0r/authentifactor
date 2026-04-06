@@ -1,15 +1,18 @@
 import type { Metadata } from "next";
-import { Inter, Cormorant_Garamond } from "next/font/google";
+import { Inter, Cormorant_Garamond, Playfair_Display, Plus_Jakarta_Sans, DM_Sans } from "next/font/google";
 import "./globals.css";
 import { CookieConsent } from "@/components/ui/cookie-consent";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-body" });
 const cormorant = Cormorant_Garamond({
   subsets: ["latin"],
-  weight: ["300", "400"],
+  weight: ["300", "400", "500", "600"],
   style: ["normal", "italic"],
   variable: "--font-display",
 });
+const playfair = Playfair_Display({ subsets: ["latin"], variable: "--font-playfair" });
+const plusJakarta = Plus_Jakarta_Sans({ subsets: ["latin"], variable: "--font-plus-jakarta" });
+const dmSans = DM_Sans({ subsets: ["latin"], variable: "--font-dm-sans" });
 
 export async function generateMetadata(): Promise<Metadata> {
   try {
@@ -52,7 +55,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body suppressHydrationWarning className={`${inter.variable} ${cormorant.variable} ${inter.className} min-h-screen bg-white text-gray-900 antialiased`}>
+      <body suppressHydrationWarning className={`${inter.variable} ${cormorant.variable} ${playfair.variable} ${plusJakarta.variable} ${dmSans.variable} ${inter.className} min-h-screen bg-white text-gray-900 antialiased`}>
         {children}
         <CookieConsent />
       </body>

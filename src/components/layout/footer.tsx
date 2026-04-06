@@ -5,6 +5,7 @@ import Link from "next/link";
 import { FormEvent, useState } from "react";
 
 const helpLinks = [
+  { label: "About Us", href: "/about" },
   { label: "Contact Us", href: "/contact" },
   { label: "Shipping & Delivery", href: "/shipping-info" },
   { label: "Returns & Exchanges", href: "/returns" },
