@@ -148,56 +148,65 @@ export function BrandingManager({ branding, tenantSlug }: Props) {
 
         {/* Storefront Preview */}
         <div className="p-4">
-          <div className="rounded-xl overflow-hidden border border-white/[0.1]" style={{ backgroundColor: "#F9F7F2" }}>
-            {/* Nav bar */}
-            <div className="flex items-center gap-3 px-5 py-3" style={{ backgroundColor: primaryColor, borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
+          <div className="rounded-xl overflow-hidden border border-white/[0.1]" style={{ backgroundColor: primaryColor }}>
+            {/* Nav bar — white/cream with dark text, matching styledbymaryam.com */}
+            <div className="flex items-center px-5 py-4" style={{ backgroundColor: primaryColor, borderBottom: "1px solid #E5E5E5" }}>
               {logo ? (
-                <img src={logo} alt="" className="h-8 w-8 rounded object-contain" />
+                <img src={logo} alt="" className="h-7 object-contain" />
               ) : (
-                <div className="h-8 w-8 rounded flex items-center justify-center text-xs font-bold" style={{ backgroundColor: accentColor, color: "#fff" }}>{name[0]}</div>
+                <span className="text-sm tracking-wide" style={{ color: "#1a1a1a", fontFamily: "Georgia, serif", fontStyle: "italic" }}>{name}</span>
               )}
-              <span className="font-semibold text-white text-sm tracking-wide">{name}</span>
-              <div className="ml-auto flex gap-5 text-xs text-white/60 tracking-wide uppercase">
-                <span>Shop</span><span>Collections</span><span>About</span>
+              <div className="ml-auto flex gap-5 text-[10px] tracking-[0.12em] uppercase" style={{ color: "#1a1a1a" }}>
+                <span>New In</span><span>Ready-to-Wear</span><span>Accessories</span><span>Beauty</span>
               </div>
             </div>
 
-            {/* Hero */}
-            <div className="relative px-8 py-14" style={{
+            {/* "Shop" heading */}
+            <div className="text-center py-8" style={{ backgroundColor: primaryColor }}>
+              <h3 className="text-3xl" style={{ color: "#1a1a1a", fontFamily: "Georgia, serif", fontStyle: "italic" }}>Shop</h3>
+              <div className="w-8 h-0.5 mx-auto mt-3" style={{ backgroundColor: accentColor }} />
+            </div>
+
+            {/* Hero image section */}
+            <div className="relative" style={{
+              height: "200px",
               background: heroBannerImage
-                ? `linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.35)), url(${heroBannerImage}) center/cover`
-                : `linear-gradient(135deg, #ece7df 0%, #ddd6ca 100%)`,
+                ? `url(${heroBannerImage}) center/cover`
+                : `linear-gradient(135deg, #c4bfb6 0%, #b5b0a7 100%)`,
             }}>
-              <div className="relative z-10">
-                <p className="text-xs uppercase tracking-[0.2em] mb-2" style={{ color: heroBannerImage ? "rgba(255,255,255,0.7)" : accentColor }}>{tagline || "Contemporary Fashion"}</p>
-                <h3 className="text-2xl font-bold" style={{ color: heroBannerImage ? "#fff" : "#1a1a1a", fontFamily: "Georgia, serif" }}>{heroBannerTitle || name}</h3>
-                <p className="text-sm mt-1" style={{ color: heroBannerImage ? "rgba(255,255,255,0.8)" : "#555" }}>{heroBannerSubtitle || "Discover the latest collection"}</p>
-                <button className="mt-5 rounded px-6 py-2.5 text-xs font-semibold uppercase tracking-wider transition hover:opacity-90" style={{ backgroundColor: accentColor, color: "#fff" }}>
-                  Shop Now
-                </button>
+              <div className="absolute inset-0 flex flex-col items-center justify-center text-center" style={{ backgroundColor: heroBannerImage ? "rgba(0,0,0,0.2)" : "transparent" }}>
+                <p className="text-[10px] uppercase tracking-[0.2em] text-white/70 mb-2">The Collection</p>
+                <h3 className="text-xl text-white" style={{ fontFamily: "Georgia, serif", fontStyle: "italic" }}>{heroBannerTitle || "Elegance in Motion"}</h3>
               </div>
             </div>
 
-            {/* Product cards mock */}
-            <div className="px-5 py-5" style={{ backgroundColor: "#F9F7F2" }}>
-              <p className="text-[10px] uppercase tracking-[0.15em] mb-3" style={{ color: "#777" }}>New Arrivals</p>
+            {/* Product cards */}
+            <div className="px-5 py-6" style={{ backgroundColor: primaryColor }}>
               <div className="grid grid-cols-3 gap-3">
                 {["Silk Evening Gown", "Cashmere Coat", "Tailored Blazer"].map(label => (
-                  <div key={label} className="rounded-lg overflow-hidden" style={{ backgroundColor: "#fff", border: "1px solid #E5E5E5" }}>
-                    <div className="aspect-square" style={{ backgroundColor: "#f0ebe3" }} />
-                    <div className="p-2.5">
-                      <p className="text-[11px] font-medium" style={{ color: "#1a1a1a" }}>{label}</p>
-                      <p className="text-[11px] font-semibold mt-0.5" style={{ color: accentColor }}>£299.00</p>
+                  <div key={label}>
+                    <div className="aspect-[3/4] rounded" style={{ backgroundColor: "#ece7df" }} />
+                    <div className="pt-2">
+                      <p className="text-[11px]" style={{ color: "#1a1a1a" }}>{label}</p>
+                      <p className="text-[11px] mt-0.5" style={{ color: "#777" }}>£299.00</p>
                     </div>
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* Footer strip */}
-            <div className="px-5 py-3 flex items-center justify-between" style={{ backgroundColor: primaryColor }}>
-              <span className="text-[10px] text-white/50 tracking-wide uppercase">{name}</span>
-              <span className="text-[10px] tracking-wide" style={{ color: accentColor }}>Free Shipping Over £150</span>
+            {/* Instagram / Social section */}
+            <div className="text-center py-6" style={{ backgroundColor: primaryColor, borderTop: "1px solid #E5E5E5" }}>
+              <p className="text-[10px] uppercase tracking-[0.15em]" style={{ color: "#777" }}>Follow the Journey</p>
+              <div className="w-6 h-0.5 mx-auto my-2" style={{ backgroundColor: accentColor }} />
+              <p className="text-sm" style={{ color: "#1a1a1a", fontFamily: "Georgia, serif", fontStyle: "italic" }}>@styledbymaryam</p>
+            </div>
+
+            {/* CTA button */}
+            <div className="text-center pb-6" style={{ backgroundColor: primaryColor }}>
+              <button className="px-8 py-3 text-[10px] uppercase tracking-[0.15em] font-medium text-white" style={{ backgroundColor: accentColor }}>
+                Explore the Collection
+              </button>
             </div>
           </div>
         </div>
