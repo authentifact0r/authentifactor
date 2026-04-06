@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { Package, MapPin, RefreshCw } from "lucide-react";
+import { SpendingChart } from "./spending-chart";
 
 export default async function AccountPage() {
   const user = await getCurrentUser();
@@ -31,6 +32,28 @@ export default async function AccountPage() {
         },
       }),
     ]);
+
+  // Spending data for last 6 months
+  const allOrders = await tdb.order.findMany({
+    where: { userId: user.id, paymentStatus: "PAID" },
+    select: { total: true, createdAt: true },
+    orderBy: { createdAt: "asc" },
+  });
+
+  const now = new Date();
+  const monthlySpend: { month: string; amount: number; orders: number }[] = [];
+  for (let i = 5; i >= 0; i--) {
+    const monthStart = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    const monthEnd = new Date(now.getFullYear(), now.getMonth() - i + 1, 0, 23, 59, 59);
+    const monthOrders = allOrders.filter(
+      (o) => o.createdAt >= monthStart && o.createdAt <= monthEnd
+    );
+    monthlySpend.push({
+      month: monthStart.toLocaleDateString("en-GB", { month: "short" }),
+      amount: Math.round(monthOrders.reduce((s, o) => s + Number(o.total), 0) * 100) / 100,
+      orders: monthOrders.length,
+    });
+  }
 
   const stats = [
     { label: "Total Orders", value: orderCount, icon: Package, href: "/account/orders" },
@@ -68,6 +91,9 @@ export default async function AccountPage() {
           </Link>
         ))}
       </div>
+
+      {/* Spending Chart */}
+      <SpendingChart data={monthlySpend} />
 
       {/* Recent Orders */}
       <div>
