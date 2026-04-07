@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { execSync } from "node:child_process";
+import * as tls from "node:tls";
 
 const DOMAINS = [
   { name: "Authentifactor", url: "https://authentifactor.com", domain: "authentifactor.com" },
@@ -22,25 +22,49 @@ const REQUIRED_HEADERS: Record<string, { label: string; severity: string }> = {
   "x-xss-protection": { label: "X-XSS-Protection", severity: "low" },
 };
 
-async function checkSSL(domain: string) {
-  try {
-    const output = execSync(
-      `echo | openssl s_client -servername ${domain} -connect ${domain}:443 2>/dev/null | openssl x509 -noout -dates 2>/dev/null`,
-      { encoding: "utf-8", timeout: 8000 }
-    );
-    const notAfter = output.match(/notAfter=(.*)/)?.[1];
-    if (!notAfter) return { domain, status: "error", daysLeft: null };
-    const expiry = new Date(notAfter);
-    const daysLeft = Math.floor((expiry.getTime() - Date.now()) / 86400000);
-    return {
-      domain,
-      status: daysLeft < 7 ? "critical" : daysLeft < 30 ? "warning" : "ok",
-      daysLeft,
-      expiryDate: expiry.toISOString(),
-    };
-  } catch {
-    return { domain, status: "error", daysLeft: null };
-  }
+async function checkSSL(domain: string): Promise<{
+  domain: string;
+  status: string;
+  daysLeft: number | null;
+  expiryDate: string | null;
+}> {
+  return new Promise((resolve) => {
+    try {
+      const socket = tls.connect(
+        { host: domain, port: 443, servername: domain, timeout: 8000 },
+        () => {
+          const cert = socket.getPeerCertificate();
+          socket.destroy();
+
+          if (!cert || !cert.valid_to) {
+            resolve({ domain, status: "error", daysLeft: null, expiryDate: null });
+            return;
+          }
+
+          const expiry = new Date(cert.valid_to);
+          const daysLeft = Math.floor((expiry.getTime() - Date.now()) / 86400000);
+          resolve({
+            domain,
+            status: daysLeft < 7 ? "critical" : daysLeft < 30 ? "warning" : "ok",
+            daysLeft,
+            expiryDate: expiry.toISOString(),
+          });
+        }
+      );
+
+      socket.on("error", () => {
+        socket.destroy();
+        resolve({ domain, status: "error", daysLeft: null, expiryDate: null });
+      });
+
+      socket.on("timeout", () => {
+        socket.destroy();
+        resolve({ domain, status: "error", daysLeft: null, expiryDate: null });
+      });
+    } catch {
+      resolve({ domain, status: "error", daysLeft: null, expiryDate: null });
+    }
+  });
 }
 
 async function checkHeaders(url: string) {
@@ -77,6 +101,8 @@ async function checkUptime(url: string) {
     return { url, status: "down", httpStatus: 0, latencyMs: Date.now() - start };
   }
 }
+
+export const maxDuration = 60; // Allow up to 60s for scanning all domains
 
 export async function GET() {
   try {
