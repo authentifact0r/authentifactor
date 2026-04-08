@@ -7,6 +7,7 @@ import { getTenant } from "@/lib/tenant";
 import { homeMetadata } from "@/lib/seo";
 import { ConvertedPrice } from "@/components/shop/price-display";
 import { HomeCarousels } from "./home-carousel";
+import { StorefrontTestimonials } from "./home-testimonials";
 
 export async function generateMetadata(): Promise<Metadata> {
   try {
@@ -448,6 +449,9 @@ export default async function HomePage() {
         }))}
         categories={categoryCarousels}
       />
+
+      {/* ── TESTIMONIALS ─────────────────────────────────── */}
+      <StorefrontTestimonials />
 
       {/* ── INSTAGRAM SECTION ──────────────────────────────── */}
       <section

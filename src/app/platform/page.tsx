@@ -16,6 +16,7 @@ import {
   Search,
   Zap,
 } from "lucide-react";
+import { TestimonialsSection } from "@/components/ui/testimonials-column";
 
 /* ─── Motion ─── */
 const ease = [0.16, 1, 0.3, 1];
@@ -199,6 +200,38 @@ export default function PlatformLandingPage() {
 
       {/* ═══ TECH STACK ═══ */}
       <TechStackSection />
+
+      {/* ═══ TESTIMONIALS ═══ */}
+      <TestimonialsSection
+        title="Trusted by ambitious brands"
+        subtitle="Hear from merchants and businesses growing on Authentifactor."
+        columns={[
+          {
+            duration: 12,
+            testimonials: [
+              { text: "Authentifactor transformed our online presence. We went from zero to a fully functioning e-commerce store in under a week.", name: "Adetola O.", role: "Founder, Taste of Motherland", image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&q=80&fit=crop&crop=face" },
+              { text: "The multi-tenant architecture means I can manage all my brands from one dashboard. Billing, inventory, analytics — everything in one place.", name: "Maryam K.", role: "CEO, Styled by Maryam", image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&q=80&fit=crop&crop=face" },
+              { text: "The self-service signup blew my mind. I picked a plan, set up my store, and was selling within 20 minutes. No developer needed.", name: "Chioma N.", role: "Merchant, Beauty by Chi", image: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=100&q=80&fit=crop&crop=face" },
+            ],
+          },
+          {
+            duration: 15,
+            testimonials: [
+              { text: "Having Paystack and Stripe built in was a game-changer. My Nigerian customers pay with bank transfer, my UK customers pay with card. Seamless.", name: "Tunde A.", role: "Founder, Toks Mimi Foods", image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&q=80&fit=crop&crop=face" },
+              { text: "The marketplace feature drives organic traffic to my store. I got my first customer through the Authentifactor marketplace within days of listing.", name: "Folake D.", role: "Merchant, Spice Haven", image: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=100&q=80&fit=crop&crop=face" },
+              { text: "Apple Pay and Google Pay on checkout increased my conversion rate by 23%. Customers love the one-tap experience.", name: "James O.", role: "Store Owner", image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&q=80&fit=crop&crop=face" },
+            ],
+          },
+          {
+            duration: 11,
+            testimonials: [
+              { text: "The analytics dashboard gives me real-time insight into what's selling. I can see revenue trends, top products, and order status at a glance.", name: "Ngozi E.", role: "Fashion Merchant", image: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&q=80&fit=crop&crop=face" },
+              { text: "GDPR compliance, security headers, cookie consent — all built in. I didn't have to worry about any of it.", name: "David M.", role: "Tech Consultant", image: "https://images.unsplash.com/photo-1519345182560-3f2917c472ef?w=100&q=80&fit=crop&crop=face" },
+              { text: "The referral program is genius. I shared my code with 3 other business owners and they all signed up. Authentic word-of-mouth growth.", name: "Amina B.", role: "Grocery Merchant", image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&q=80&fit=crop&crop=face" },
+            ],
+          },
+        ]}
+      />
 
       {/* ═══ Floating CTA Banner ═══ */}
       <FloatingCTABanner />
