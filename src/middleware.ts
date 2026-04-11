@@ -70,11 +70,14 @@ export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const host = request.headers.get("host") ?? "";
 
-  // ── Platform host hitting root "/" → redirect to /platform ──
+  // ── Platform host hitting root "/" → rewrite (not redirect) to /platform ──
+  // This keeps the URL as authentifactor.com while serving platform content.
   // But not for admin subdomains (admin.styledbymaryam.com should go to /admin)
   const isAdminSubdomain = !!ADMIN_DOMAIN_MAP[host.replace(/:\d+$/, "")];
   if (isPlatformHost(host) && pathname === "/" && !isAdminSubdomain) {
-    return NextResponse.redirect(new URL("/platform", request.url));
+    const url = request.nextUrl.clone();
+    url.pathname = "/platform";
+    return NextResponse.rewrite(url);
   }
   // Admin subdomain root → redirect to /admin
   if (isAdminSubdomain && pathname === "/") {

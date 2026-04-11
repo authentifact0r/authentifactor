@@ -1,0 +1,80 @@
+2026-04-10T11:43:26: 
+2026-04-10T11:43:26: node:internal/modules/run_main:123
+2026-04-10T11:43:26:     triggerUncaughtException(
+2026-04-10T11:43:26:     ^
+2026-04-10T11:43:26: Error: Transform failed with 1 error:
+2026-04-10T11:43:26: /Users/olu/authentifactor/server/local-ai-server.ts:55:0: ERROR: Top-level await is currently not supported with the "cjs" output format
+2026-04-10T11:43:26:     at failureErrorWithLog (/Users/olu/authentifactor/node_modules/esbuild/lib/main.js:1748:15)
+2026-04-10T11:43:26:     at /Users/olu/authentifactor/node_modules/esbuild/lib/main.js:1017:50
+2026-04-10T11:43:26:     at responseCallbacks.<computed> (/Users/olu/authentifactor/node_modules/esbuild/lib/main.js:884:9)
+2026-04-10T11:43:26:     at handleIncomingPacket (/Users/olu/authentifactor/node_modules/esbuild/lib/main.js:939:12)
+2026-04-10T11:43:26:     at Socket.readFromStdout (/Users/olu/authentifactor/node_modules/esbuild/lib/main.js:862:7)
+2026-04-10T11:43:26:     at Socket.emit (node:events:519:28)
+2026-04-10T11:43:26:     at addChunk (node:internal/streams/readable:561:12)
+2026-04-10T11:43:26:     at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+2026-04-10T11:43:26:     at Readable.push (node:internal/streams/readable:392:5)
+2026-04-10T11:43:26:     at Pipe.onStreamRead (node:internal/stream_base_commons:189:23) {
+2026-04-10T11:43:26:   name: 'TransformError'
+2026-04-10T11:43:26: }
+2026-04-10T11:43:26: 
+2026-04-10T11:43:26: Node.js v22.19.0
+2026-04-10T11:43:31: 
+2026-04-10T11:43:31: node:internal/modules/run_main:123
+2026-04-10T11:43:31:     triggerUncaughtException(
+2026-04-10T11:43:31:     ^
+2026-04-10T11:43:31: Error: Transform failed with 1 error:
+2026-04-10T11:43:31: /Users/olu/authentifactor/server/local-ai-server.ts:55:0: ERROR: Top-level await is currently not supported with the "cjs" output format
+2026-04-10T11:43:31:     at failureErrorWithLog (/Users/olu/authentifactor/node_modules/esbuild/lib/main.js:1748:15)
+2026-04-10T11:43:31:     at /Users/olu/authentifactor/node_modules/esbuild/lib/main.js:1017:50
+2026-04-10T11:43:31:     at responseCallbacks.<computed> (/Users/olu/authentifactor/node_modules/esbuild/lib/main.js:884:9)
+2026-04-10T11:43:31:     at handleIncomingPacket (/Users/olu/authentifactor/node_modules/esbuild/lib/main.js:939:12)
+2026-04-10T11:43:31:     at Socket.readFromStdout (/Users/olu/authentifactor/node_modules/esbuild/lib/main.js:862:7)
+2026-04-10T11:43:31:     at Socket.emit (node:events:519:28)
+2026-04-10T11:43:31:     at addChunk (node:internal/streams/readable:561:12)
+2026-04-10T11:43:31:     at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+2026-04-10T11:43:31:     at Readable.push (node:internal/streams/readable:392:5)
+2026-04-10T11:43:31:     at Pipe.onStreamRead (node:internal/stream_base_commons:189:23) {
+2026-04-10T11:43:31:   name: 'TransformError'
+2026-04-10T11:43:31: }
+2026-04-10T11:43:31: 
+2026-04-10T11:43:31: Node.js v22.19.0
+2026-04-10T11:43:35: 
+2026-04-10T11:43:35: node:internal/modules/run_main:123
+2026-04-10T11:43:35:     triggerUncaughtException(
+2026-04-10T11:43:35:     ^
+2026-04-10T11:43:35: Error: Transform failed with 1 error:
+2026-04-10T11:43:35: /Users/olu/authentifactor/server/local-ai-server.ts:55:0: ERROR: Top-level await is currently not supported with the "cjs" output format
+2026-04-10T11:43:35:     at failureErrorWithLog (/Users/olu/authentifactor/node_modules/esbuild/lib/main.js:1748:15)
+2026-04-10T11:43:35:     at /Users/olu/authentifactor/node_modules/esbuild/lib/main.js:1017:50
+2026-04-10T11:43:35:     at responseCallbacks.<computed> (/Users/olu/authentifactor/node_modules/esbuild/lib/main.js:884:9)
+2026-04-10T11:43:35:     at handleIncomingPacket (/Users/olu/authentifactor/node_modules/esbuild/lib/main.js:939:12)
+2026-04-10T11:43:35:     at Socket.readFromStdout (/Users/olu/authentifactor/node_modules/esbuild/lib/main.js:862:7)
+2026-04-10T11:43:35:     at Socket.emit (node:events:519:28)
+2026-04-10T11:43:35:     at addChunk (node:internal/streams/readable:561:12)
+2026-04-10T11:43:35:     at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+2026-04-10T11:43:35:     at Readable.push (node:internal/streams/readable:392:5)
+2026-04-10T11:43:35:     at Pipe.onStreamRead (node:internal/stream_base_commons:189:23) {
+2026-04-10T11:43:35:   name: 'TransformError'
+2026-04-10T11:43:35: }
+2026-04-10T11:43:35: 
+2026-04-10T11:43:35: Node.js v22.19.0
+2026-04-10T11:43:40: 
+2026-04-10T11:43:40: node:internal/modules/run_main:123
+2026-04-10T11:43:40:     triggerUncaughtException(
+2026-04-10T11:43:40:     ^
+2026-04-10T11:43:40: Error: Transform failed with 1 error:
+2026-04-10T11:43:40: /Users/olu/authentifactor/server/local-ai-server.ts:55:0: ERROR: Top-level await is currently not supported with the "cjs" output format
+2026-04-10T11:43:40:     at failureErrorWithLog (/Users/olu/authentifactor/node_modules/esbuild/lib/main.js:1748:15)
+2026-04-10T11:43:40:     at /Users/olu/authentifactor/node_modules/esbuild/lib/main.js:1017:50
+2026-04-10T11:43:40:     at responseCallbacks.<computed> (/Users/olu/authentifactor/node_modules/esbuild/lib/main.js:884:9)
+2026-04-10T11:43:40:     at handleIncomingPacket (/Users/olu/authentifactor/node_modules/esbuild/lib/main.js:939:12)
+2026-04-10T11:43:40:     at Socket.readFromStdout (/Users/olu/authentifactor/node_modules/esbuild/lib/main.js:862:7)
+2026-04-10T11:43:40:     at Socket.emit (node:events:519:28)
+2026-04-10T11:43:40:     at addChunk (node:internal/streams/readable:561:12)
+2026-04-10T11:43:40:     at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+2026-04-10T11:43:40:     at Readable.push (node:internal/streams/readable:392:5)
+2026-04-10T11:43:40:     at Pipe.onStreamRead (node:internal/stream_base_commons:189:23) {
+2026-04-10T11:43:40:   name: 'TransformError'
+2026-04-10T11:43:40: }
+2026-04-10T11:43:40: 
+2026-04-10T11:43:40: Node.js v22.19.0

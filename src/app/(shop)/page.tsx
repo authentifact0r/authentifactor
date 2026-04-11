@@ -8,6 +8,7 @@ import { homeMetadata } from "@/lib/seo";
 import { ConvertedPrice } from "@/components/shop/price-display";
 import { HomeCarousels } from "./home-carousel";
 import { StorefrontTestimonials } from "./home-testimonials";
+import { StorefrontHero } from "./storefront-hero";
 
 export async function generateMetadata(): Promise<Metadata> {
   try {
@@ -115,102 +116,11 @@ export default async function HomePage() {
       />
 
       {/* ── HERO ───────────────────────────────────────────── */}
-      <section
-        style={{
-          position: "relative",
-          width: "100%",
-          minHeight: "85vh",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          backgroundImage: heroImage
-            ? `url(${heroImage})`
-            : `linear-gradient(135deg, #D4C5A9 0%, #E8DFD0 50%, #C5A059 100%)`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
-      >
-        {/* Dark overlay */}
-        <div
-          style={{
-            position: "absolute",
-            inset: 0,
-            backgroundColor: heroImage
-              ? "rgba(0, 0, 0, 0.40)"
-              : "rgba(0, 0, 0, 0.15)",
-          }}
-        />
-
-        <div
-          style={{
-            position: "relative",
-            zIndex: 1,
-            textAlign: "center",
-            maxWidth: "700px",
-            padding: "2rem 1.5rem",
-          }}
-        >
-          <p
-            style={{
-              fontFamily: fontBody,
-              fontSize: "0.7rem",
-              letterSpacing: "0.35em",
-              textTransform: "uppercase",
-              color: accent,
-              marginBottom: "1.5rem",
-              fontWeight: 500,
-            }}
-          >
-            {tenant.tagline || tenant.name}
-          </p>
-
-          <h1
-            style={{
-              fontFamily: fontSerif,
-              fontStyle: "italic",
-              fontWeight: 400,
-              fontSize: "clamp(2.2rem, 5vw, 3.8rem)",
-              lineHeight: 1.15,
-              color: "#fff",
-              margin: "0 0 1.25rem",
-            }}
-          >
-            {heroTitle}
-          </h1>
-
-          <p
-            style={{
-              fontFamily: fontBody,
-              fontSize: "0.95rem",
-              lineHeight: 1.7,
-              color: "rgba(255,255,255,0.82)",
-              maxWidth: "480px",
-              margin: "0 auto 2.5rem",
-            }}
-          >
-            {heroSubtitle}
-          </p>
-
-          <Link
-            href="/products"
-            style={{
-              display: "inline-block",
-              padding: "0.85rem 2.8rem",
-              border: `1.5px solid ${accent}`,
-              color: "#fff",
-              fontFamily: fontBody,
-              fontSize: "0.75rem",
-              letterSpacing: "0.25em",
-              textTransform: "uppercase",
-              textDecoration: "none",
-              transition: "all 0.3s ease",
-              backgroundColor: "transparent",
-            }}
-          >
-            Explore the Collection
-          </Link>
-        </div>
-      </section>
+      <StorefrontHero
+        title={heroTitle}
+        subtitle={heroSubtitle}
+        tagline={tenant.tagline || tenant.name}
+      />
 
       {/* ── FEATURED PRODUCTS ──────────────────────────────── */}
       <section

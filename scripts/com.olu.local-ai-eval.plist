@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  launchd job for the nightly local-ai eval.
+
+  Install:
+    cp scripts/com.olu.local-ai-eval.plist ~/Library/LaunchAgents/
+    launchctl load ~/Library/LaunchAgents/com.olu.local-ai-eval.plist
+
+  Runs at 03:15 local time every day. Writes a markdown note to
+  ~/Documents/ObsidianVault/00_System/local-ai-eval/<date>.md so the
+  result is visible in Obsidian the next morning.
+
+  Uninstall:
+    launchctl unload ~/Library/LaunchAgents/com.olu.local-ai-eval.plist
+    rm ~/Library/LaunchAgents/com.olu.local-ai-eval.plist
+-->
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.olu.local-ai-eval</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>/bin/bash</string>
+        <string>/Users/olu/Authentifactor/scripts/nightly-eval.sh</string>
+    </array>
+
+    <key>StartCalendarInterval</key>
+    <dict>
+        <key>Hour</key>
+        <integer>3</integer>
+        <key>Minute</key>
+        <integer>15</integer>
+    </dict>
+
+    <key>StandardOutPath</key>
+    <string>/Users/olu/Authentifactor/.pm2/nightly-eval.out.log</string>
+    <key>StandardErrorPath</key>
+    <string>/Users/olu/Authentifactor/.pm2/nightly-eval.err.log</string>
+
+    <key>RunAtLoad</key>
+    <false/>
+
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>PATH</key>
+        <string>/Users/olu/.npm-global/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin</string>
+    </dict>
+</dict>
+</plist>

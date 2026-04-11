@@ -1,0 +1,73 @@
+[
+  {
+    "id": "auth-tenants",
+    "question": "Which tenants does Authentifactor currently serve? List all of them.",
+    "mustContain": ["Taste of Motherland", "Style by Maryam", "Vibrant Minds", "Toks Mimi"],
+    "expectedCitations": ["Dashboard", "MOC – Authentifactor"],
+    "category": "facts"
+  },
+  {
+    "id": "auth-stack",
+    "question": "What is the tech stack of Authentifactor?",
+    "mustContain": ["Next.js", "Prisma", "PostgreSQL"],
+    "expectedCitations": ["Dashboard", "MOC – Authentifactor"],
+    "category": "facts"
+  },
+  {
+    "id": "active-projects",
+    "question": "What are my currently active projects? Give just the project names.",
+    "mustContain": ["Authentifactor", "BowSea", "CitiesTroves", "Careceutical"],
+    "expectedCitations": ["MOC – Second Brain", "Dashboard"],
+    "category": "list"
+  },
+  {
+    "id": "bowsea-rename",
+    "question": "What was BowSea previously called and why was it renamed?",
+    "mustContain": ["PlacementsPortal", "trademark"],
+    "expectedCitations": ["MOC – BowSea"],
+    "category": "facts"
+  },
+  {
+    "id": "infra-doctrine",
+    "question": "What is my infrastructure doctrine regarding where frontends and backends should live?",
+    "mustContain": ["Vercel", "Google Cloud"],
+    "expectedCitations": ["Doctrine"],
+    "category": "principles"
+  },
+  {
+    "id": "citiestroves-domain",
+    "question": "What market does CitiesTroves target and what kind of platform is it?",
+    "mustContain": ["African", "apartment"],
+    "expectedCitations": ["MOC – CitiesTroves", "CitiesTroves"],
+    "category": "facts"
+  },
+  {
+    "id": "careceutical-domain",
+    "question": "What is Careceutical and what does its UI take inspiration from?",
+    "mustContain": ["medical", "Medlink"],
+    "expectedCitations": ["MOC – Careceutical", "Careceutical"],
+    "category": "facts"
+  },
+  {
+    "id": "varsity-stack",
+    "question": "What is the VARSITY platform built with?",
+    "mustContain": ["Express", "Next.js", "H5P"],
+    "expectedCitations": ["MOC – VARSITY", "VARSITY"],
+    "category": "facts"
+  },
+  {
+    "id": "clarity-model",
+    "question": "What is the service model of Clarity Conduct — are they niche-specific?",
+    "mustContain": ["any company"],
+    "mustNotContain": ["niche-specific"],
+    "expectedCitations": ["MOC – Clarity Conduct", "Clarity Conduct"],
+    "category": "nuance"
+  },
+  {
+    "id": "style-by-maryam",
+    "question": "What kind of business is Style by Maryam?",
+    "mustContain": ["fashion"],
+    "expectedCitations": ["Style by Maryam"],
+    "category": "facts"
+  }
+]

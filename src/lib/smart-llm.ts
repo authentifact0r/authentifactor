@@ -16,6 +16,17 @@
  */
 
 import Anthropic from "@anthropic-ai/sdk";
+import { Agent, setGlobalDispatcher } from "undici";
+
+// Ollama first-token on cold model load can take minutes. Raise undici's
+// per-request header/body timeouts so long local calls don't die early.
+setGlobalDispatcher(
+  new Agent({
+    headersTimeout: 15 * 60 * 1000,
+    bodyTimeout: 15 * 60 * 1000,
+    connectTimeout: 30 * 1000,
+  })
+);
 
 export type TaskComplexity = "simple" | "medium" | "high" | "auto";
 
@@ -30,6 +41,8 @@ export interface SmartLLMOptions {
   provider?: "local" | "claude";
   /** Maximum tokens to generate. Default 1024 */
   maxTokens?: number;
+  /** Force JSON output (Ollama format:json). Used by the agent loop. */
+  jsonMode?: boolean;
 }
 
 export interface SmartLLMResponse {
@@ -47,10 +60,25 @@ export interface SmartLLMResponse {
 
 const OLLAMA_URL = process.env.OLLAMA_URL || "http://localhost:11434";
 
+// Ollama keep_alive: number = seconds, -1 = forever, string with unit ("30m")
+// also accepted. Parse env so a bare "-1" becomes the number -1.
+function parseKeepAlive(): number | string {
+  const raw = process.env.OLLAMA_KEEP_ALIVE;
+  if (raw === undefined) return -1;
+  const n = Number(raw);
+  return Number.isFinite(n) ? n : raw;
+}
+const KEEP_ALIVE = parseKeepAlive();
+
 const LOCAL_MODELS = {
   fast: process.env.OLLAMA_FAST_MODEL || "llama3.1:8b",      // Daily driver
   smart: process.env.OLLAMA_SMART_MODEL || "qwen2.5:14b",    // Heavier reasoning
 };
+
+// Sovereign mode: when true, we never reach out to Claude. Complex tasks
+// fall back to the smart local model instead.
+const OFFLINE_MODE =
+  (process.env.OFFLINE_MODE ?? "true").toLowerCase() !== "false";
 
 const CLAUDE_MODEL = process.env.CLAUDE_MODEL || "claude-opus-4-6";
 
@@ -91,22 +119,32 @@ async function callOllama(
   prompt: string,
   system: string | undefined,
   model: string,
-  maxTokens: number
+  maxTokens: number,
+  jsonMode = false
 ): Promise<string> {
   const messages: { role: string; content: string }[] = [];
   if (system) messages.push({ role: "system", content: system });
   messages.push({ role: "user", content: prompt });
 
-  const res = await fetch(`${OLLAMA_URL}/v1/chat/completions`, {
+  // Use the native /api/chat endpoint so we can pass format:"json" for
+  // strict JSON output — required by the agent loop.
+  const res = await fetch(`${OLLAMA_URL}/api/chat`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       model,
       messages,
-      max_tokens: maxTokens,
       stream: false,
+      format: jsonMode ? "json" : undefined,
+      // Keep the model resident in VRAM forever so repeated calls never
+      // pay the cold-load cost. Override with OLLAMA_KEEP_ALIVE if you
+      // want to reclaim VRAM on an idle box.
+      keep_alive: KEEP_ALIVE,
+      options: { num_predict: maxTokens },
     }),
-    signal: AbortSignal.timeout(60000),
+    signal: AbortSignal.timeout(
+      Number(process.env.OLLAMA_TIMEOUT_MS ?? 600000)
+    ),
   });
 
   if (!res.ok) {
@@ -114,7 +152,7 @@ async function callOllama(
   }
 
   const data = await res.json();
-  return data.choices?.[0]?.message?.content ?? "";
+  return data.message?.content ?? "";
 }
 
 // ─── Claude Provider ────────────────────────────────────────
@@ -169,40 +207,37 @@ export async function smartLLM(
     complexity: requestedComplexity = "auto",
     provider: forceProvider,
     maxTokens = 1024,
+    jsonMode = false,
   } = options;
 
-  // Determine actual complexity
   const complexity =
     requestedComplexity === "auto" ? detectComplexity(prompt) : requestedComplexity;
 
-  // Determine provider
-  let provider: "local" | "claude";
-  if (forceProvider) {
-    provider = forceProvider;
-  } else if (complexity === "high") {
-    provider = "claude";
-  } else {
-    provider = "local";
-  }
+  // Pick local model: simple → fast, medium/high → smart.
+  const localModel =
+    complexity === "simple" ? LOCAL_MODELS.fast : LOCAL_MODELS.smart;
 
-  // Try the chosen provider, fall back to the other on failure
+  // Routing:
+  // - explicit provider wins
+  // - OFFLINE_MODE forces local, no matter the complexity
+  // - otherwise high-complexity goes to Claude
+  let provider: "local" | "claude";
+  if (forceProvider) provider = forceProvider;
+  else if (OFFLINE_MODE) provider = "local";
+  else provider = complexity === "high" ? "claude" : "local";
+
   if (provider === "local") {
     try {
-      const model = complexity === "medium" ? LOCAL_MODELS.smart : LOCAL_MODELS.fast;
-      const text = await callOllama(prompt, system, model, maxTokens);
-      return { text, provider: "local", model, costUsd: 0 };
+      const text = await callOllama(prompt, system, localModel, maxTokens, jsonMode);
+      return { text, provider: "local", model: localModel, costUsd: 0 };
     } catch (err) {
-      // Local failed — fall back to Claude if available
-      if (process.env.ANTHROPIC_API_KEY) {
-        console.warn("Local LLM failed, falling back to Claude:", err);
-        provider = "claude";
-      } else {
-        throw err;
-      }
+      if (OFFLINE_MODE || !process.env.ANTHROPIC_API_KEY) throw err;
+      console.warn("Local LLM failed, falling back to Claude:", err);
+      provider = "claude";
     }
   }
 
-  // Claude path
+  // Claude path (only reached if OFFLINE_MODE is false)
   try {
     const { text, inputTokens, outputTokens } = await callClaude(
       prompt,
@@ -214,9 +249,8 @@ export async function smartLLM(
       (outputTokens / 1_000_000) * CLAUDE_OUTPUT_COST_PER_MTOK;
     return { text, provider: "claude", model: CLAUDE_MODEL, costUsd };
   } catch (err) {
-    // Claude failed — last resort fall back to local
     console.warn("Claude failed, falling back to local:", err);
-    const text = await callOllama(prompt, system, LOCAL_MODELS.fast, maxTokens);
+    const text = await callOllama(prompt, system, LOCAL_MODELS.fast, maxTokens, jsonMode);
     return { text, provider: "local", model: LOCAL_MODELS.fast, costUsd: 0 };
   }
 }
@@ -233,6 +267,129 @@ export async function localLLM(prompt: string, system?: string): Promise<string>
 export async function claudeLLM(prompt: string, system?: string): Promise<string> {
   const result = await smartLLM({ prompt, system, provider: "claude" });
   return result.text;
+}
+
+// ─── Streaming ─────────────────────────────────────────────
+
+export interface SmartLLMStreamOptions extends Omit<SmartLLMOptions, "jsonMode"> {
+  /** Called once per token chunk as the model emits them. */
+  onToken?: (chunk: string) => void;
+}
+
+/**
+ * Stream tokens from a local Ollama model.
+ *
+ * Returns an async iterable of string chunks AND a promise that resolves
+ * to the full text once generation finishes. Errors are thrown from the
+ * iterator. Uses the same routing rules as `smartLLM` but is local-only —
+ * Claude streaming would need a different code path and we're sovereign
+ * by default.
+ */
+export async function* smartLLMStream(
+  options: SmartLLMStreamOptions
+): AsyncGenerator<string, { text: string; model: string }, void> {
+  const {
+    prompt,
+    system,
+    complexity: requestedComplexity = "auto",
+    maxTokens = 1024,
+    onToken,
+  } = options;
+
+  const complexity =
+    requestedComplexity === "auto" ? detectComplexity(prompt) : requestedComplexity;
+  const model = complexity === "simple" ? LOCAL_MODELS.fast : LOCAL_MODELS.smart;
+
+  const messages: { role: string; content: string }[] = [];
+  if (system) messages.push({ role: "system", content: system });
+  messages.push({ role: "user", content: prompt });
+
+  const res = await fetch(`${OLLAMA_URL}/api/chat`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      model,
+      messages,
+      stream: true,
+      keep_alive: KEEP_ALIVE,
+      options: { num_predict: maxTokens },
+    }),
+  });
+
+  if (!res.ok || !res.body) {
+    throw new Error(`Ollama stream error: ${res.status} ${await res.text()}`);
+  }
+
+  const reader = res.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = "";
+  let full = "";
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    buffer += decoder.decode(value, { stream: true });
+
+    // Ollama emits newline-delimited JSON objects.
+    let nl: number;
+    while ((nl = buffer.indexOf("\n")) !== -1) {
+      const line = buffer.slice(0, nl).trim();
+      buffer = buffer.slice(nl + 1);
+      if (!line) continue;
+      try {
+        const msg = JSON.parse(line);
+        const chunk: string = msg.message?.content ?? "";
+        if (chunk) {
+          full += chunk;
+          onToken?.(chunk);
+          yield chunk;
+        }
+        if (msg.done) return { text: full, model };
+      } catch {
+        // Partial JSON mid-buffer — skip, it'll arrive on the next read.
+      }
+    }
+  }
+  return { text: full, model };
+}
+
+// ─── Warmup ────────────────────────────────────────────────
+
+/**
+ * Pre-load the hot local models into VRAM so the first real request
+ * doesn't pay the cold-load tax. Fires a 1-token call at each model and
+ * one embedding call. Safe to call repeatedly; cheap no-op if already
+ * warm. Fail-soft: a failure here should never crash the app.
+ */
+export async function warmupLocalModels(): Promise<{
+  fast: boolean;
+  smart: boolean;
+  durationMs: number;
+}> {
+  const start = Date.now();
+  const ping = async (model: string): Promise<boolean> => {
+    try {
+      await fetch(`${OLLAMA_URL}/api/chat`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          model,
+          messages: [{ role: "user", content: "ok" }],
+          stream: false,
+          keep_alive: KEEP_ALIVE,
+          options: { num_predict: 1 },
+        }),
+      });
+      return true;
+    } catch {
+      return false;
+    }
+  };
+  const [fast, smart] = await Promise.all([
+    ping(LOCAL_MODELS.fast),
+    ping(LOCAL_MODELS.smart),
+  ]);
+  return { fast, smart, durationMs: Date.now() - start };
 }
 
 /** Check if local LLM is available */

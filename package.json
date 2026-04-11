@@ -13,7 +13,14 @@
     "db:migrate": "prisma migrate dev",
     "db:seed": "npx tsx prisma/seed.ts",
     "db:studio": "prisma studio",
-    "db:reset": "prisma migrate reset --force"
+    "db:reset": "prisma migrate reset --force",
+    "ai:index": "tsx scripts/index-vault.ts",
+    "ai:test": "tsx scripts/test-local-ai.ts",
+    "ai:watch": "tsx scripts/watch-vault.ts",
+    "ai:serve": "tsx server/local-ai-server.ts",
+    "ai:eval": "tsx scripts/eval-local-ai.ts",
+    "ai:client:sync": "tsx scripts/sync-client.ts",
+    "ai:env:sync": "tsx scripts/update-client-env.ts"
   },
   "prisma": {
     "seed": "npx tsx prisma/seed.ts"
@@ -23,6 +30,7 @@
   "license": "ISC",
   "dependencies": {
     "@anthropic-ai/sdk": "^0.87.0",
+    "@fastify/cors": "^11.2.0",
     "@paper-design/shaders-react": "^0.0.72",
     "@prisma/client": "^6.19.2",
     "@radix-ui/react-checkbox": "^1.3.3",
@@ -34,13 +42,17 @@
     "@stripe/react-stripe-js": "^6.1.0",
     "@stripe/stripe-js": "^9.0.1",
     "@tailwindcss/postcss": "^4.2.2",
+    "@types/better-sqlite3": "^7.6.13",
     "@types/node": "^25.5.0",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@vercel/blob": "^2.3.3",
     "bcryptjs": "^3.0.3",
+    "better-sqlite3": "^12.8.0",
+    "chokidar": "^5.0.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "fastify": "^5.8.4",
     "framer-motion": "^12.38.0",
     "jose": "^6.2.2",
     "jsonwebtoken": "^9.0.3",

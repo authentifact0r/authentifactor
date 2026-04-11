@@ -5,7 +5,7 @@ import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
 import { ExpandingCards, type CardItem } from "@/components/ui/expanding-cards";
 import { ClientShowcaseCards } from "@/components/ui/client-showcase-cards";
-import ShaderHero from "@/components/ui/shader-hero";
+import { SplitHero } from "@/components/ui/split-hero";
 import { StickyServiceSection } from "@/components/ui/sticky-scroll-cards-section";
 import { BentoCapabilities } from "@/components/ui/bento-capabilities";
 import { FloatingCTABanner } from "@/components/ui/contact-section";
@@ -107,7 +107,7 @@ export default function PlatformLandingPage() {
   return (
     <div className="bg-white">
       {/* ═══ HERO ═══ */}
-      <ShaderHero />
+      <SplitHero />
 
       {/* ═══ METRICS ═══ */}
       <section className="bg-white py-16 md:py-20">

@@ -1,0 +1,16 @@
+2026-04-10T03:40:13: 👁  Watching /Users/olu/Documents/ObsidianVault
+2026-04-10T03:40:13:    (Ctrl+C to stop)
+2026-04-10T03:40:13: 
+2026-04-10T03:40:13: [3:40:13 AM] ready — tracking 403 paths
+2026-04-10T03:40:24: 
+2026-04-10T03:40:24: stopping watcher…
+2026-04-10T03:42:16: 👁  Watching /Users/olu/Documents/ObsidianVault
+2026-04-10T03:42:16:    (Ctrl+C to stop)
+2026-04-10T03:42:16: 
+2026-04-10T03:42:16: [3:42:16 AM] ready — tracking 403 paths
+2026-04-10T11:43:14: [11:43:14 AM] add:__watcher_probe__.md
+2026-04-10T11:43:15: [11:43:15 AM] unlink:__watcher_probe__.md
+2026-04-10T11:43:16: [11:43:16 AM] rebuilding… (1 change)
+2026-04-10T11:43:17: [11:43:17 AM] ✓ done in 296ms — +0 ~0 -0 (total 3317)
+2026-04-10T11:43:25: 
+2026-04-10T11:43:25: stopping watcher…
