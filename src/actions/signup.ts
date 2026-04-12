@@ -19,7 +19,7 @@ const signupSchema = z.object({
   lastName: z.string().min(1, "Last name is required"),
   storeName: z.string().min(2, "Store name must be at least 2 characters"),
   slug: z.string().min(2, "Slug must be at least 2 characters"),
-  planId: z.enum(["basic", "standard", "premium"]),
+  planId: z.enum(["accelerator", "growth", "transformation"]),
   currency: z.enum(["GBP", "NGN", "USD", "EUR", "GHS", "KES"]).default("GBP"),
   vertical: z
     .enum(["grocery", "fashion", "catering", "beauty", "education", "other"])

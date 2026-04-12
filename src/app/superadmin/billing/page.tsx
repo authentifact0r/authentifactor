@@ -108,9 +108,9 @@ export default function SuperadminBillingPage() {
           </select>
           <select value={filterPlan} onChange={(e) => setFilterPlan(e.target.value)} className="rounded-lg border border-gray-200 bg-white px-3 py-2 text-xs font-medium text-gray-700">
             <option value="all">All Plans</option>
-            <option value="basic">Basic</option>
-            <option value="standard">Standard</option>
-            <option value="premium">Premium</option>
+            <option value="accelerator">Accelerator</option>
+            <option value="growth">Growth Partner</option>
+            <option value="transformation">Transformation</option>
           </select>
         </div>
 

@@ -89,16 +89,20 @@ const selectClass =
 
 /* ─── Plan tier icons ─── */
 const planIcons: Record<string, React.ReactNode> = {
-  basic: <Zap className="h-5 w-5" />,
-  standard: <Star className="h-5 w-5" />,
-  premium: <Shield className="h-5 w-5" />,
+  accelerator: <Zap className="h-5 w-5" />,
+  growth: <Star className="h-5 w-5" />,
+  transformation: <Shield className="h-5 w-5" />,
 };
+
+function formatPrice(amount: number): string {
+  return amount.toLocaleString("en-GB");
+}
 
 /* ─── Step config ─── */
 const steps = [
   { label: "Choose Plan", icon: CreditCard },
-  { label: "Your Details", icon: Store },
-  { label: "Launch", icon: Sparkles },
+  { label: "Your Business", icon: Store },
+  { label: "Get Started", icon: Sparkles },
 ];
 
 /* ─── Component ─── */
@@ -118,7 +122,7 @@ function GetStartedContent() {
   const [direction, setDirection] = useState(1);
 
   // Form state
-  const [selectedPlan, setSelectedPlan] = useState<BillingPlanId>("standard");
+  const [selectedPlan, setSelectedPlan] = useState<BillingPlanId>("growth");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
@@ -225,12 +229,12 @@ function GetStartedContent() {
             {refCode ? (
               <div className="inline-flex items-center gap-2 rounded-full border border-amber-500/20 bg-amber-500/10 px-4 py-1.5 text-xs font-medium text-amber-400 mb-6">
                 <Sparkles className="h-3.5 w-3.5" />
-                You were referred! Enjoy your 14-day free trial
+                You were referred! Enjoy priority onboarding
               </div>
             ) : (
               <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-4 py-1.5 text-xs font-medium text-emerald-400 mb-6">
                 <Clock className="h-3.5 w-3.5" />
-                14-day free trial — no credit card required
+                30-day money-back guarantee — risk-free
               </div>
             )}
 
@@ -346,7 +350,7 @@ function GetStartedContent() {
                   <div className="grid grid-cols-1 gap-6 md:grid-cols-3 mb-10">
                     {plans.map((plan, i) => {
                       const isSelected = selectedPlan === plan.id;
-                      const isRecommended = plan.id === "standard";
+                      const isRecommended = plan.id === "growth";
 
                       return (
                         <motion.button
@@ -388,7 +392,7 @@ function GetStartedContent() {
                               </div>
                               <div>
                                 <p className="font-semibold text-white">{plan.name}</p>
-                                <p className="text-xs text-white/40">{plan.description.split(".")[0]}</p>
+                                <p className="text-xs text-white/40">{plan.tagline}</p>
                               </div>
                             </div>
 
@@ -396,13 +400,15 @@ function GetStartedContent() {
                             <div className="mb-5">
                               <div className="flex items-baseline gap-1">
                                 <span className="text-4xl font-bold text-white">
-                                  £{plan.priceMonthly}
+                                  £{formatPrice(plan.priceMonthly)}
                                 </span>
                                 <span className="text-sm text-white/40">/month</span>
                               </div>
-                              <p className="text-xs text-emerald-400 mt-1">
-                                14-day free trial included
-                              </p>
+                              <div className="flex items-center gap-3 mt-1.5">
+                                <span className="text-xs text-emerald-400">{plan.hours} of expert time</span>
+                                <span className="text-xs text-white/20">|</span>
+                                <span className="text-xs text-white/30">30-day money-back guarantee</span>
+                              </div>
                             </div>
 
                             <Separator className="bg-white/[0.06] mb-5" />
@@ -741,7 +747,7 @@ function GetStartedContent() {
                             {BILLING_PLANS[selectedPlan].name}
                           </p>
                           <p className="text-sm text-white/40">
-                            £{BILLING_PLANS[selectedPlan].priceMonthly}/mo after trial
+                            £{formatPrice(BILLING_PLANS[selectedPlan].priceMonthly)}/mo
                           </p>
                         </div>
                       </div>
@@ -754,11 +760,11 @@ function GetStartedContent() {
                       </h4>
                       <ul className="space-y-3">
                         {[
-                          { icon: Zap, text: "Go live in under 5 minutes" },
-                          { icon: CreditCard, text: "Paystack + Stripe payments" },
-                          { icon: Globe, text: "Custom domain support" },
-                          { icon: Shield, text: "Full admin dashboard" },
-                          { icon: Lock, text: "SSL certificate included" },
+                          { icon: Zap, text: "Dedicated solution architect" },
+                          { icon: CreditCard, text: "Stripe + Paystack integration" },
+                          { icon: Globe, text: "AI, CRM & analytics included" },
+                          { icon: Shield, text: "Cyber security & compliance" },
+                          { icon: Lock, text: "30-day money-back guarantee" },
                         ].map((item) => (
                           <li key={item.text} className="flex items-center gap-3 text-sm text-white/60">
                             <item.icon className="h-4 w-4 text-emerald-400 shrink-0" />
@@ -776,8 +782,9 @@ function GetStartedContent() {
                         ))}
                       </div>
                       <p className="text-sm text-white/60 leading-relaxed italic">
-                        &ldquo;We went from zero to taking orders in a single afternoon.
-                        The platform handles everything so I can focus on my products.&rdquo;
+                        &ldquo;Authentifactor didn&apos;t just build our store — they architected
+                        our entire digital strategy. Commerce, payments, brand, analytics,
+                        all unified under one team.&rdquo;
                       </p>
                       <div className="mt-3 flex items-center gap-2">
                         <div className="h-7 w-7 rounded-full bg-gradient-to-br from-emerald-400 to-cyan-400" />
@@ -837,12 +844,12 @@ function GetStartedContent() {
                             {BILLING_PLANS[selectedPlan].name}
                           </p>
                           <p className="text-xs text-white/40">
-                            £{BILLING_PLANS[selectedPlan].priceMonthly}/mo after trial
+                            £{formatPrice(BILLING_PLANS[selectedPlan].priceMonthly)}/mo
                           </p>
                         </div>
                       </div>
                       <p className="mt-2 text-xs text-emerald-400">
-                        14-day free trial — no card required
+                        30-day money-back guarantee
                       </p>
                     </div>
 
@@ -983,7 +990,7 @@ function GetStartedContent() {
                     </div>
                     <div className="flex items-center gap-1.5 text-[11px]">
                       <CreditCard className="h-3 w-3" />
-                      <span>No card for trial</span>
+                      <span>30-day guarantee</span>
                     </div>
                   </div>
                 </div>
