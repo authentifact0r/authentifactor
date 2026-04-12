@@ -34,16 +34,16 @@ const techCards = [
 
 export function TechStackSection() {
   return (
-    <section className="w-full bg-white py-20 md:py-28">
+    <section className="w-full bg-[#1e1e1e] py-20 md:py-28">
       {/* Feature Cards */}
       <div className="text-center max-w-2xl mx-auto mb-12 px-6">
-        <p className="text-sm font-semibold uppercase tracking-[0.2em] text-emerald-600 mb-3">
+        <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[#ff8f70] mb-3">
           Technology
         </p>
-        <h1 className="text-3xl font-semibold text-gray-900 tracking-tight">
+        <h1 className="text-3xl font-semibold text-[#f0ede8] tracking-tight">
           Our Technology Stack
         </h1>
-        <p className="text-sm text-gray-500 mt-2">
+        <p className="text-sm text-[#9e9a94] mt-2">
           Battle-tested, modern infrastructure powering every Authentifactor product — from e-commerce to clinical platforms.
         </p>
       </div>
@@ -68,10 +68,10 @@ export function TechStackSection() {
                 </div>
               ))}
             </div>
-            <h3 className="text-base font-semibold text-gray-700 mt-4">
+            <h3 className="text-base font-semibold text-[#f0ede8] mt-4">
               {card.title}
             </h3>
-            <p className="text-sm text-gray-600 mt-1">
+            <p className="text-sm text-[#9e9a94] mt-1">
               {card.description}
             </p>
           </div>
@@ -80,7 +80,7 @@ export function TechStackSection() {
 
       {/* Trusted By — showcase images */}
       <div className="max-w-6xl mx-auto mt-20 px-6">
-        <p className="bg-gradient-to-r from-gray-800 to-[#4D6EA3] text-transparent bg-clip-text text-3xl text-left max-w-2xl font-semibold tracking-tight">
+        <p className="bg-gradient-to-r from-[#f0ede8] to-[#ff8f70] text-transparent bg-clip-text text-3xl text-left max-w-2xl font-semibold tracking-tight">
           Trusted by 100+ clients worldwide.
         </p>
         <div className="flex flex-col-reverse md:flex-row items-center justify-center max-h-[450px] gap-6 mt-6">

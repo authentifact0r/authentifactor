@@ -163,11 +163,11 @@ export function ClientShowcaseCards({ className }: { className?: string }) {
           <li
             key={client.id}
             className={cn(
-              "group relative cursor-pointer overflow-hidden rounded-2xl border transition-all duration-500",
+              "group relative cursor-pointer overflow-hidden rounded-2xl transition-all duration-500",
               "min-h-0 min-w-0 md:min-w-[60px]",
               isActive
-                ? "border-white/[0.12] bg-white/[0.05]"
-                : "border-white/[0.06] bg-white/[0.02] hover:border-white/[0.10]",
+                ? "bg-[#201f1f]"
+                : "bg-[#181818] hover:bg-[#201f1f]",
             )}
             onMouseEnter={() => setActiveIndex(index)}
             onClick={() => setActiveIndex(index)}

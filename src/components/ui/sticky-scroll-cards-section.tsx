@@ -34,8 +34,8 @@ const services: ServiceCard[] = [
     imageUrl:
       "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?q=80&w=2070&auto=format&fit=crop",
     icon: <Store className="h-6 w-6" />,
-    bgColor: "bg-emerald-100",
-    textColor: "text-gray-700",
+    bgColor: "bg-[#2c2c2c]",
+    textColor: "text-[#f0ede8]",
   },
   {
     number: "02",
@@ -45,8 +45,8 @@ const services: ServiceCard[] = [
     imageUrl:
       "https://images.unsplash.com/photo-1677442136019-21780ecad995?q=80&w=2070&auto=format&fit=crop",
     icon: <Brain className="h-6 w-6" />,
-    bgColor: "bg-violet-100",
-    textColor: "text-gray-700",
+    bgColor: "bg-[#2c2c2c]",
+    textColor: "text-[#f0ede8]",
   },
   {
     number: "03",
@@ -56,8 +56,8 @@ const services: ServiceCard[] = [
     imageUrl:
       "https://images.unsplash.com/photo-1552581234-26160f608093?q=80&w=2070&auto=format&fit=crop",
     icon: <Users className="h-6 w-6" />,
-    bgColor: "bg-blue-100",
-    textColor: "text-gray-700",
+    bgColor: "bg-[#2c2c2c]",
+    textColor: "text-[#f0ede8]",
   },
   {
     number: "04",
@@ -67,8 +67,8 @@ const services: ServiceCard[] = [
     imageUrl:
       "https://images.unsplash.com/photo-1563013544-824ae1b704d3?q=80&w=2070&auto=format&fit=crop",
     icon: <CreditCard className="h-6 w-6" />,
-    bgColor: "bg-amber-100",
-    textColor: "text-gray-800",
+    bgColor: "bg-[#2c2c2c]",
+    textColor: "text-[#f0ede8]",
   },
   {
     number: "05",
@@ -78,8 +78,8 @@ const services: ServiceCard[] = [
     imageUrl:
       "https://images.unsplash.com/photo-1561070791-2526d30994b5?q=80&w=2000&auto=format&fit=crop",
     icon: <Palette className="h-6 w-6" />,
-    bgColor: "bg-pink-100",
-    textColor: "text-gray-700",
+    bgColor: "bg-[#2c2c2c]",
+    textColor: "text-[#f0ede8]",
   },
   {
     number: "06",
@@ -89,8 +89,8 @@ const services: ServiceCard[] = [
     imageUrl:
       "https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=2015&auto=format&fit=crop",
     icon: <Search className="h-6 w-6" />,
-    bgColor: "bg-teal-100",
-    textColor: "text-gray-700",
+    bgColor: "bg-[#2c2c2c]",
+    textColor: "text-[#f0ede8]",
   },
   {
     number: "07",
@@ -100,8 +100,8 @@ const services: ServiceCard[] = [
     imageUrl:
       "https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=2070&auto=format&fit=crop",
     icon: <BarChart3 className="h-6 w-6" />,
-    bgColor: "bg-indigo-100",
-    textColor: "text-gray-700",
+    bgColor: "bg-[#2c2c2c]",
+    textColor: "text-[#f0ede8]",
   },
   {
     number: "08",
@@ -111,8 +111,8 @@ const services: ServiceCard[] = [
     imageUrl:
       "https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=2070&auto=format&fit=crop",
     icon: <Workflow className="h-6 w-6" />,
-    bgColor: "bg-cyan-100",
-    textColor: "text-gray-700",
+    bgColor: "bg-[#2c2c2c]",
+    textColor: "text-[#f0ede8]",
   },
   {
     number: "09",
@@ -122,8 +122,8 @@ const services: ServiceCard[] = [
     imageUrl:
       "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=2070&auto=format&fit=crop",
     icon: <ShieldCheck className="h-6 w-6" />,
-    bgColor: "bg-red-100",
-    textColor: "text-gray-700",
+    bgColor: "bg-[#2c2c2c]",
+    textColor: "text-[#f0ede8]",
   },
   {
     number: "10",
@@ -133,8 +133,8 @@ const services: ServiceCard[] = [
     imageUrl:
       "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?q=80&w=2070&auto=format&fit=crop",
     icon: <Briefcase className="h-6 w-6" />,
-    bgColor: "bg-orange-100",
-    textColor: "text-gray-700",
+    bgColor: "bg-[#2c2c2c]",
+    textColor: "text-[#f0ede8]",
   },
 ];
 
@@ -161,18 +161,18 @@ export function StickyServiceSection() {
   const [pRef, pInView] = useScrollAnimation();
 
   return (
-    <div id="services" className="bg-gray-50">
+    <div id="services" className="bg-[#252525]">
       <div className="px-[5%]">
         <div className="max-w-6xl mx-auto">
           <section className="py-20 md:py-28 flex flex-col items-center">
             {/* Header */}
             <div className="text-center max-w-3xl mx-auto mb-16">
-              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-emerald-600 mb-4">
+              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[#ff8f70] mb-4">
                 What We Do
               </p>
               <h2
                 ref={headerRef as React.Ref<HTMLHeadingElement>}
-                className={`text-4xl md:text-5xl font-bold transition-all duration-700 ease-out text-gray-900 ${
+                className={`text-4xl md:text-5xl font-bold transition-all duration-700 ease-out text-[#f0ede8] ${
                   headerInView
                     ? "opacity-100 translate-y-0"
                     : "opacity-0 translate-y-10"
@@ -181,7 +181,7 @@ export function StickyServiceSection() {
               >
                 Full-spectrum digital consulting,{" "}
                 <span
-                  className="font-light italic text-gray-400"
+                  className="font-light italic text-[#9e9a94]"
                   style={{ fontFamily: "var(--font-serif)" }}
                 >
                   obsessively crafted.
@@ -189,7 +189,7 @@ export function StickyServiceSection() {
               </h2>
               <p
                 ref={pRef as React.Ref<HTMLParagraphElement>}
-                className={`text-lg text-gray-600 mt-4 transition-all duration-700 ease-out delay-200 ${
+                className={`text-lg text-[#9e9a94] mt-4 transition-all duration-700 ease-out delay-200 ${
                   pInView
                     ? "opacity-100 translate-y-0"
                     : "opacity-0 translate-y-10"
@@ -213,14 +213,14 @@ export function StickyServiceSection() {
                   {/* Card Content */}
                   <div className="flex flex-col justify-center py-2">
                     <div className="flex items-center gap-3 mb-4">
-                      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/80 shadow-sm text-gray-700">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#1e1e1e] text-[#f0ede8]">
                         {service.icon}
                       </div>
-                      <span className="text-xs font-medium text-gray-400 tabular-nums tracking-wider uppercase">
+                      <span className="text-xs font-medium text-[#9e9a94] tabular-nums tracking-wider uppercase">
                         {service.number}
                       </span>
                     </div>
-                    <h3 className="text-xl sm:text-2xl md:text-3xl font-bold mb-3 text-gray-900 tracking-tight">
+                    <h3 className="text-xl sm:text-2xl md:text-3xl font-bold mb-3 text-[#f0ede8] tracking-tight">
                       {service.title}
                     </h3>
                     <p className={`${service.textColor} leading-relaxed text-sm sm:text-base`}>

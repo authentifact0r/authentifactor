@@ -40,7 +40,7 @@ const capabilities = [
 
 export function SplitHero() {
   return (
-    <div className="relative w-full bg-zinc-950 text-white overflow-hidden font-sans">
+    <div className="relative w-full bg-[#1e1e1e] text-white overflow-hidden font-sans">
       <style>{`
         @keyframes splitHeroFadeIn {
           from { opacity: 0; transform: translateY(20px); }
@@ -66,9 +66,9 @@ export function SplitHero() {
 
       {/* Background gradient + radial accents */}
       <div className="absolute inset-0 z-0">
-        <div className="absolute inset-0 bg-gradient-to-br from-zinc-950 via-emerald-950/20 to-zinc-950" />
-        <div className="absolute top-0 left-1/4 h-[500px] w-[500px] rounded-full bg-emerald-500/10 blur-[120px]" />
-        <div className="absolute bottom-0 right-1/4 h-[400px] w-[400px] rounded-full bg-emerald-400/5 blur-[100px]" />
+        <div className="absolute inset-0 bg-gradient-to-br from-[#1e1e1e] via-[#ff8f70]/10 to-[#1e1e1e]" />
+        <div className="absolute top-0 left-1/4 h-[500px] w-[500px] rounded-full bg-[#ff8f70]/10 blur-[120px]" />
+        <div className="absolute bottom-0 right-1/4 h-[400px] w-[400px] rounded-full bg-[#8ab4f8]/8 blur-[100px]" />
       </div>
 
       <div className="relative z-10 mx-auto max-w-7xl px-4 pt-32 pb-16 sm:px-6 md:pt-40 md:pb-24 lg:px-8">
@@ -77,10 +77,10 @@ export function SplitHero() {
           <div className="lg:col-span-7 flex flex-col justify-center space-y-8 pt-8">
             {/* Badge */}
             <div className="split-hero-fade split-hero-d1">
-              <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 backdrop-blur-md transition-colors hover:bg-white/10">
-                <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-zinc-300 flex items-center gap-2">
+              <div className="inline-flex items-center gap-2 rounded-full bg-[#262626] px-3 py-1.5 backdrop-blur-md transition-colors hover:bg-[#2c2c2c]">
+                <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-[#9e9a94] flex items-center gap-2">
                   Digital Solution Architects
-                  <Star className="w-3.5 h-3.5 text-emerald-400 fill-emerald-400" />
+                  <Star className="w-3.5 h-3.5 text-[#ff8f70] fill-[#ff8f70]" />
                 </span>
               </div>
             </div>
@@ -89,7 +89,7 @@ export function SplitHero() {
             <h1 className="split-hero-fade split-hero-d2 text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-medium tracking-tighter leading-[0.9]">
               We don&apos;t just build.{" "}
               <br />
-              <span className="bg-gradient-to-br from-white via-white to-emerald-300 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-br from-white via-white to-[#ff8f70] bg-clip-text text-transparent">
                 We architect
               </span>
               <br />
@@ -102,7 +102,7 @@ export function SplitHero() {
             </h1>
 
             {/* Description */}
-            <p className="split-hero-fade split-hero-d3 max-w-xl text-lg text-zinc-400 leading-relaxed">
+            <p className="split-hero-fade split-hero-d3 max-w-xl text-lg text-[#9e9a94] leading-relaxed">
               From commerce platforms to AI integration, CRM to payment
               infrastructure — we consult, design, engineer, and scale
               world-class digital products for ambitious brands.
@@ -130,16 +130,16 @@ export function SplitHero() {
           {/* ─── RIGHT COLUMN ─── */}
           <div className="lg:col-span-5 space-y-6 lg:mt-12">
             {/* Capabilities Card */}
-            <div className="split-hero-fade split-hero-d5 relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 p-8 backdrop-blur-xl shadow-2xl">
-              <div className="absolute top-0 right-0 -mr-16 -mt-16 h-64 w-64 rounded-full bg-emerald-500/10 blur-3xl pointer-events-none" />
+            <div className="split-hero-fade split-hero-d5 relative overflow-hidden rounded-3xl bg-[#201f1f] p-8 backdrop-blur-xl shadow-2xl">
+              <div className="absolute top-0 right-0 -mr-16 -mt-16 h-64 w-64 rounded-full bg-[#ff8f70]/10 blur-3xl pointer-events-none" />
 
               <div className="relative z-10">
                 <div className="flex items-center gap-4 mb-6">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-500/20 ring-1 ring-emerald-400/30">
-                    <Brain className="h-6 w-6 text-emerald-300" />
+                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#ff8f70]/20 ring-1 ring-[#ff8f70]/30">
+                    <Brain className="h-6 w-6 text-[#ff8f70]" />
                   </div>
                   <div>
-                    <div className="text-sm font-medium text-zinc-400">What we do</div>
+                    <div className="text-sm font-medium text-[#9e9a94]">What we do</div>
                     <div className="text-lg font-bold text-white">Full-Spectrum Digital</div>
                   </div>
                 </div>
@@ -149,9 +149,9 @@ export function SplitHero() {
                   {capabilities.map((cap) => (
                     <div
                       key={cap.label}
-                      className="flex items-center gap-2.5 rounded-xl border border-white/[0.08] bg-white/[0.03] px-3.5 py-2.5 transition-all hover:bg-white/[0.06] hover:border-white/[0.15]"
+                      className="flex items-center gap-2.5 rounded-xl bg-[#262626] px-3.5 py-2.5 transition-all hover:bg-[#2c2c2c]"
                     >
-                      <cap.icon className="h-4 w-4 text-emerald-400 shrink-0" />
+                      <cap.icon className="h-4 w-4 text-[#ff8f70] shrink-0" />
                       <span className="text-xs font-medium text-white/70">{cap.label}</span>
                     </div>
                   ))}
@@ -164,7 +164,7 @@ export function SplitHero() {
                   {["Commerce", "SaaS", "Healthcare", "Education", "Fashion", "Food & Bev"].map((tag) => (
                     <span
                       key={tag}
-                      className="rounded-full border border-white/[0.08] bg-white/[0.03] px-3 py-1 text-[10px] font-medium tracking-wide text-zinc-400"
+                      className="rounded-full bg-[#262626] px-3 py-1 text-[10px] font-medium tracking-wide text-[#9e9a94]"
                     >
                       {tag}
                     </span>
@@ -173,15 +173,15 @@ export function SplitHero() {
 
                 {/* Tag Pills */}
                 <div className="mt-6 flex flex-wrap gap-2">
-                  <div className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1 text-[10px] font-medium tracking-wide text-emerald-300">
+                  <div className="inline-flex items-center gap-1.5 rounded-full bg-[#ff8f70]/10 px-3 py-1 text-[10px] font-medium tracking-wide text-[#ff8f70]">
                     <span className="relative flex h-2 w-2">
-                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                      <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#ff8f70] opacity-75" />
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-[#ff8f70]" />
                     </span>
                     ACCEPTING PROJECTS
                   </div>
-                  <div className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[10px] font-medium tracking-wide text-zinc-300">
-                    <Crown className="w-3 h-3 text-emerald-400" />
+                  <div className="inline-flex items-center gap-1.5 rounded-full bg-[#262626] px-3 py-1 text-[10px] font-medium tracking-wide text-[#9e9a94]">
+                    <Crown className="w-3 h-3 text-[#ff8f70]" />
                     GDPR + PCI COMPLIANT
                   </div>
                 </div>
@@ -189,8 +189,8 @@ export function SplitHero() {
             </div>
 
             {/* Marquee Card */}
-            <div className="split-hero-fade split-hero-d5 relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 py-8 backdrop-blur-xl">
-              <h3 className="mb-6 px-8 text-sm font-medium text-zinc-400">
+            <div className="split-hero-fade split-hero-d5 relative overflow-hidden rounded-3xl bg-[#201f1f] py-8 backdrop-blur-xl">
+              <h3 className="mb-6 px-8 text-sm font-medium text-[#9e9a94]">
                 Powering ambitious brands
               </h3>
               <div
@@ -208,7 +208,7 @@ export function SplitHero() {
                       key={i}
                       className="flex items-center gap-2 opacity-60 transition-all hover:opacity-100 hover:scale-105 cursor-default"
                     >
-                      <client.icon className="h-5 w-5 text-emerald-300" />
+                      <client.icon className="h-5 w-5 text-[#ff8f70]" />
                       <span className="text-base font-semibold text-white tracking-tight">
                         {client.name}
                       </span>

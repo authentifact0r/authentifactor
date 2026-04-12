@@ -125,14 +125,14 @@ function BentoCapabilities() {
   ];
 
   return (
-    <div className="relative w-full bg-[#030303] text-white overflow-hidden">
+    <div className="relative w-full bg-[#0e0e0e] text-white overflow-hidden">
       {/* Background */}
       <div className="absolute inset-0 -z-30 overflow-hidden">
         <div
           className="absolute inset-0"
           style={{
             background:
-              "radial-gradient(ellipse 55% 100% at 12% 0%, rgba(16,185,129,0.12), transparent 65%), radial-gradient(ellipse 40% 80% at 88% 0%, rgba(59,130,246,0.08), transparent 70%), #030303",
+              "radial-gradient(ellipse 55% 100% at 12% 0%, rgba(255,143,112,0.10), transparent 65%), radial-gradient(ellipse 40% 80% at 88% 0%, rgba(138,180,248,0.08), transparent 70%), #0e0e0e",
           }}
         />
         <div
@@ -153,7 +153,7 @@ function BentoCapabilities() {
         <div
           className="pointer-events-none absolute inset-0"
           style={{
-            background: "radial-gradient(circle at center, rgba(0,0,0,0) 55%, #030303 100%)",
+            background: "radial-gradient(circle at center, rgba(0,0,0,0) 55%, #0e0e0e 100%)",
             filter: "blur(40px)",
             opacity: 0.75,
           }}
@@ -169,7 +169,7 @@ function BentoCapabilities() {
         {/* Header */}
         <header className="mb-12 flex flex-col gap-6 border-b border-white/10 pb-8 md:flex-row md:items-end md:justify-between">
           <div className="flex flex-col gap-2">
-            <span className="text-xs uppercase tracking-[0.3em] text-emerald-400/80">
+            <span className="text-xs uppercase tracking-[0.3em] text-[#ff8f70]">
               Capabilities
             </span>
             <h2 className="text-3xl font-bold tracking-tight text-white md:text-5xl">
@@ -228,19 +228,19 @@ function BentoCard({
 
   return (
     <article
-      className={`group relative flex h-full flex-col justify-between overflow-hidden rounded-2xl border border-white/[0.08] bg-white/[0.03] p-6 shadow-[0_18px_40px_rgba(0,0,0,0.35)] backdrop-blur-sm transition-all duration-300 ease-out hover:-translate-y-1 hover:border-white/[0.15] hover:bg-white/[0.05] hover:shadow-[0_28px_70px_rgba(0,0,0,0.55)] motion-safe:opacity-0 ${
+      className={`group relative flex h-full flex-col justify-between overflow-hidden rounded-2xl bg-[#201f1f] p-6 shadow-[0_18px_40px_rgba(0,0,0,0.35)] backdrop-blur-sm transition-all duration-300 ease-out hover:-translate-y-1 hover:bg-[#252525] hover:shadow-[0_28px_70px_rgba(0,0,0,0.55)] motion-safe:opacity-0 ${
         isVisible ? "motion-safe:animate-[bento-cap-card_0.8s_ease-out_forwards]" : ""
       } ${span}`}
       style={{ animationDelay }}
     >
       {/* Gradient fill */}
       <div className="absolute inset-0 -z-10 overflow-hidden rounded-2xl">
-        <div className="absolute inset-0 bg-white/[0.03]" />
+        <div className="absolute inset-0 bg-transparent" />
         <div
           className="absolute inset-0 opacity-50"
           style={{
             background:
-              "radial-gradient(ellipse 60% 120% at 12% 0%, rgba(16,185,129,0.15), transparent 72%)",
+              "radial-gradient(ellipse 60% 120% at 12% 0%, rgba(255,143,112,0.10), transparent 72%)",
           }}
         />
       </div>

@@ -94,9 +94,9 @@ export function FloatingCTABanner() {
             exit={{ opacity: 0, y: 80 }}
             transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
           >
-            <div className="relative overflow-hidden rounded-2xl border border-white/[0.1] bg-gray-950/95 px-6 py-5 shadow-[0_20px_60px_rgba(0,0,0,0.5)] backdrop-blur-2xl">
+            <div className="relative overflow-hidden rounded-2xl bg-[#131313]/95 px-6 py-5 shadow-[0_20px_60px_rgba(0,0,0,0.5)] backdrop-blur-2xl">
               {/* Accent glow */}
-              <div className="absolute -left-8 -top-8 h-32 w-32 rounded-full bg-emerald-500/20 blur-3xl" />
+              <div className="absolute -left-8 -top-8 h-32 w-32 rounded-full bg-[#ff8f70]/20 blur-3xl" />
 
               <button
                 onClick={dismissBanner}
@@ -107,8 +107,8 @@ export function FloatingCTABanner() {
               </button>
 
               <div className="relative flex items-center gap-4">
-                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-emerald-500/10 border border-emerald-500/20">
-                  <Sparkles className="h-5 w-5 text-emerald-400" />
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#ff8f70]/10">
+                  <Sparkles className="h-5 w-5 text-[#ff8f70]" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-semibold text-white">
@@ -146,7 +146,7 @@ export function FloatingCTABanner() {
 
             {/* Form Card */}
             <motion.div
-              className="fixed inset-x-4 top-[5vh] bottom-[5vh] z-[70] mx-auto max-w-xl overflow-y-auto rounded-3xl border border-white/[0.1] bg-gray-950/95 p-8 shadow-[0_32px_80px_rgba(0,0,0,0.6)] backdrop-blur-2xl sm:inset-x-auto sm:top-[8vh] sm:bottom-auto sm:max-h-[84vh]"
+              className="fixed inset-x-4 top-[5vh] bottom-[5vh] z-[70] mx-auto max-w-xl overflow-y-auto rounded-3xl bg-[#131313]/95 p-8 shadow-[0_32px_80px_rgba(0,0,0,0.6)] backdrop-blur-2xl sm:inset-x-auto sm:top-[8vh] sm:bottom-auto sm:max-h-[84vh]"
               initial={{ opacity: 0, y: 60, scale: 0.95 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 40, scale: 0.97 }}
@@ -161,8 +161,8 @@ export function FloatingCTABanner() {
               </button>
 
               <div className="flex items-center gap-3 mb-6">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-500/10">
-                  <MessageSquare className="h-5 w-5 text-emerald-400" />
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#ff8f70]/10">
+                  <MessageSquare className="h-5 w-5 text-[#ff8f70]" />
                 </div>
                 <div>
                   <h3 className="text-lg font-semibold text-white">
@@ -187,7 +187,7 @@ export function FloatingCTABanner() {
                       value={formData.name}
                       onChange={handleChange}
                       required
-                      className="border-white/10 bg-white/[0.04] text-white placeholder:text-white/25 focus-visible:ring-emerald-500/50"
+                      className="border-transparent bg-[#181818] text-white placeholder:text-white/25 focus-visible:ring-[#ff8f70]/50"
                     />
                   </div>
                   <div className="space-y-2">
@@ -202,7 +202,7 @@ export function FloatingCTABanner() {
                       value={formData.email}
                       onChange={handleChange}
                       required
-                      className="border-white/10 bg-white/[0.04] text-white placeholder:text-white/25 focus-visible:ring-emerald-500/50"
+                      className="border-transparent bg-[#181818] text-white placeholder:text-white/25 focus-visible:ring-[#ff8f70]/50"
                     />
                   </div>
                 </div>
@@ -215,7 +215,7 @@ export function FloatingCTABanner() {
                     id="cta-message"
                     name="message"
                     placeholder="Briefly describe your project idea..."
-                    className="min-h-[100px] border-white/10 bg-white/[0.04] text-white placeholder:text-white/25 focus-visible:ring-emerald-500/50"
+                    className="min-h-[100px] border-transparent bg-[#181818] text-white placeholder:text-white/25 focus-visible:ring-[#ff8f70]/50"
                     value={formData.message}
                     onChange={handleChange}
                     required
@@ -233,7 +233,7 @@ export function FloatingCTABanner() {
                           onCheckedChange={(checked) =>
                             handleCheckboxChange(option, checked as boolean)
                           }
-                          className="border-white/20 data-[state=checked]:bg-emerald-500 data-[state=checked]:border-emerald-500"
+                          className="border-white/20 data-[state=checked]:bg-[#ff8f70] data-[state=checked]:border-[#ff8f70]"
                         />
                         <Label
                           htmlFor={`cta-${option.replace(/\s/g, "-").toLowerCase()}`}

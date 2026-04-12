@@ -11,15 +11,15 @@ interface GlowCardProps {
 const glowColorMap = {
   blue: { base: 220, spread: 200 },
   purple: { base: 280, spread: 300 },
-  green: { base: 150, spread: 200 },
+  green: { base: 120, spread: 200 },
   red: { base: 0, spread: 200 },
-  orange: { base: 30, spread: 200 },
+  orange: { base: 15, spread: 60 },
 };
 
 const GlowCard: React.FC<GlowCardProps> = ({
   children,
   className = "",
-  glowColor = "green",
+  glowColor = "orange",
 }) => {
   const cardRef = useRef<HTMLDivElement>(null);
 

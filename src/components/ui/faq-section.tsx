@@ -128,7 +128,7 @@ export function FAQSection() {
       }`}
     >
       <header className="space-y-4">
-        <p className="text-xs uppercase tracking-[0.3em] text-emerald-400/80">
+        <p className="text-xs uppercase tracking-[0.3em] text-[#ff8f70]">
           Frequently Asked
         </p>
         <h2 className="text-3xl font-bold tracking-tight text-white md:text-5xl">
@@ -155,7 +155,7 @@ export function FAQSection() {
           return (
             <li
               key={item.question}
-              className="group relative overflow-hidden rounded-2xl border border-white/[0.08] bg-white/[0.03] backdrop-blur-xl transition-all duration-500 hover:-translate-y-0.5 shadow-[0_36px_140px_-60px_rgba(10,10,10,0.95)]"
+              className="group relative overflow-hidden rounded-2xl bg-[#181818] backdrop-blur-xl transition-all duration-500 hover:-translate-y-0.5 shadow-[0_36px_140px_-60px_rgba(10,10,10,0.95)]"
               onMouseMove={setCardGlow}
               onMouseLeave={clearCardGlow}
             >
@@ -166,7 +166,7 @@ export function FAQSection() {
                 }`}
                 style={{
                   background:
-                    "radial-gradient(240px circle at var(--faq-x, 50%) var(--faq-y, 50%), rgba(16, 185, 129, 0.08), transparent 70%)",
+                    "radial-gradient(240px circle at var(--faq-x, 50%) var(--faq-y, 50%), rgba(255, 143, 112, 0.08), transparent 70%)",
                 }}
               />
 
@@ -176,7 +176,7 @@ export function FAQSection() {
                 aria-controls={panelId}
                 aria-expanded={open}
                 onClick={() => setActiveIndex(prev => prev === index ? -1 : index)}
-                className="relative flex w-full items-start gap-5 px-7 py-6 text-left transition-colors duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-emerald-500/40 cursor-pointer"
+                className="relative flex w-full items-start gap-5 px-7 py-6 text-left transition-colors duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#ff8f70]/40 cursor-pointer"
               >
                 {/* Icon */}
                 <span className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-white/[0.1] bg-white/[0.05] transition-all duration-500 group-hover:scale-105">
@@ -203,7 +203,7 @@ export function FAQSection() {
                       {item.question}
                     </h3>
                     {item.meta && (
-                      <span className="inline-flex w-fit items-center rounded-full border border-white/[0.08] px-2.5 py-0.5 text-[10px] uppercase tracking-[0.3em] text-white/30 sm:ml-auto">
+                      <span className="inline-flex w-fit items-center rounded-full bg-[#262626] px-2.5 py-0.5 text-[10px] uppercase tracking-[0.3em] text-[#6b6762] sm:ml-auto">
                         {item.meta}
                       </span>
                     )}

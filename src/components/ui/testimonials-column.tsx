@@ -36,9 +36,9 @@ export function TestimonialsColumn({
             {testimonials.map((t, i) => (
               <div
                 key={i}
-                className="p-8 rounded-2xl border border-gray-200 bg-white shadow-sm max-w-xs w-full"
+                className="p-8 rounded-2xl bg-[#252525] shadow-[0_4px_16px_rgba(0,0,0,0.6)] max-w-xs w-full"
               >
-                <p className="text-sm text-gray-600 leading-relaxed">&ldquo;{t.text}&rdquo;</p>
+                <p className="text-sm text-[#9e9a94] leading-relaxed">&ldquo;{t.text}&rdquo;</p>
                 <div className="flex items-center gap-3 mt-5">
                   <img
                     src={t.image}
@@ -48,8 +48,8 @@ export function TestimonialsColumn({
                     className="h-10 w-10 rounded-full object-cover"
                   />
                   <div>
-                    <p className="text-sm font-semibold text-gray-900 leading-tight">{t.name}</p>
-                    <p className="text-xs text-gray-500 leading-tight">{t.role}</p>
+                    <p className="text-sm font-semibold text-[#f0ede8] leading-tight">{t.name}</p>
+                    <p className="text-xs text-[#6b6762] leading-tight">{t.role}</p>
                   </div>
                 </div>
               </div>
@@ -74,8 +74,8 @@ export function TestimonialsSection({
     <section className="py-20 overflow-hidden">
       <div className="mx-auto max-w-6xl px-6">
         <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-gray-900">{title}</h2>
-          <p className="mt-3 text-gray-500 max-w-lg mx-auto">{subtitle}</p>
+          <h2 className="text-3xl font-bold text-[#f0ede8]">{title}</h2>
+          <p className="mt-3 text-[#9e9a94] max-w-lg mx-auto">{subtitle}</p>
         </div>
       </div>
       <div className="flex justify-center gap-6 [mask-image:linear-gradient(to_bottom,transparent,black_20%,black_80%,transparent)] max-h-[600px]">
