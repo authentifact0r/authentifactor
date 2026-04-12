@@ -72,7 +72,7 @@ const processCards: CardItem[] = [
 
 export default function PlatformLandingPage() {
   return (
-    <div className="bg-white">
+    <div className="bg-[#1e1e1e]">
       {/* ═══ HERO ═══ */}
       <SplitHero />
 
@@ -85,7 +85,7 @@ export default function PlatformLandingPage() {
       </div>
 
       {/* ═══ PROCESS (expanding cards) ═══ */}
-      <section id="process" className="bg-white py-20 md:py-28">
+      <section id="process" className="bg-[#1e1e1e] py-20 md:py-28">
         <div className="mx-auto max-w-6xl px-6">
           <motion.div
             initial="hidden"
@@ -93,16 +93,16 @@ export default function PlatformLandingPage() {
             viewport={{ once: true, margin: "-100px" }}
             variants={stagger}
           >
-            <motion.p variants={fadeUp} className="text-sm font-semibold uppercase tracking-[0.2em] text-emerald-600">
+            <motion.p variants={fadeUp} className="text-sm font-semibold uppercase tracking-[0.2em] text-[#ff8f70]">
               Our Process
             </motion.p>
-            <motion.h2 variants={fadeUp} className="mt-4 max-w-2xl text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">
+            <motion.h2 variants={fadeUp} className="mt-4 max-w-2xl text-4xl font-bold tracking-tight text-[#f0ede8] sm:text-5xl">
               How we{" "}
-              <span className="font-light italic text-gray-400" style={{ fontFamily: "var(--font-serif)" }}>
+              <span className="font-light italic text-[#9e9a94]" style={{ fontFamily: "var(--font-serif)" }}>
                 bring it to life.
               </span>
             </motion.h2>
-            <motion.p variants={fadeUp} className="mt-4 max-w-xl text-base text-gray-500">
+            <motion.p variants={fadeUp} className="mt-4 max-w-xl text-base text-[#9e9a94]">
               From first conversation to live product — a proven methodology refined across dozens of projects.
             </motion.p>
           </motion.div>
@@ -124,7 +124,7 @@ export default function PlatformLandingPage() {
       </section>
 
       {/* ═══ CLIENT SHOWCASE ═══ */}
-      <section id="work" className="relative overflow-hidden bg-gray-950 py-20 md:py-28">
+      <section id="work" className="relative overflow-hidden bg-[#0e0e0e] py-20 md:py-28">
         <div className="relative z-10 mx-auto max-w-6xl px-6">
           <motion.div
             initial="hidden"
@@ -132,16 +132,16 @@ export default function PlatformLandingPage() {
             viewport={{ once: true, margin: "-100px" }}
             variants={stagger}
           >
-            <motion.p variants={fadeUp} className="text-sm font-semibold uppercase tracking-[0.2em] text-emerald-400">
+            <motion.p variants={fadeUp} className="text-sm font-semibold uppercase tracking-[0.2em] text-[#ff8f70]">
               Selected Work
             </motion.p>
             <motion.h2 variants={fadeUp} className="mt-4 max-w-2xl text-4xl font-bold tracking-tight text-white sm:text-5xl">
               Brands we&apos;ve{" "}
-              <span className="font-light italic text-gray-500" style={{ fontFamily: "var(--font-serif)" }}>
+              <span className="font-light italic text-[#9e9a94]" style={{ fontFamily: "var(--font-serif)" }}>
                 brought to life.
               </span>
             </motion.h2>
-            <motion.p variants={fadeUp} className="mt-4 max-w-lg text-base text-gray-500">
+            <motion.p variants={fadeUp} className="mt-4 max-w-lg text-base text-[#9e9a94]">
               Hover each card to preview the live website.
             </motion.p>
           </motion.div>
@@ -194,8 +194,8 @@ export default function PlatformLandingPage() {
       />
 
       {/* ═══ FAQ ═══ */}
-      <div className="relative w-full bg-[#030303] overflow-hidden">
-        <div className="absolute inset-0" style={{ background: "radial-gradient(ellipse 50% 100% at 10% 0%, rgba(16, 185, 129, 0.06), transparent 65%), #030303" }} />
+      <div className="relative w-full bg-[#0e0e0e] overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "radial-gradient(ellipse 50% 100% at 10% 0%, rgba(255, 143, 112, 0.06), transparent 65%), #0e0e0e" }} />
         <FAQSection />
       </div>
 
