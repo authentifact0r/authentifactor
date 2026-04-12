@@ -16,6 +16,7 @@ import {
   Rocket,
 } from "lucide-react";
 import { TestimonialsSection } from "@/components/ui/testimonials-column";
+import { FAQSection } from "@/components/ui/faq-section";
 
 /* ─── Motion ─── */
 const ease = [0.16, 1, 0.3, 1];
@@ -191,6 +192,12 @@ export default function PlatformLandingPage() {
           },
         ]}
       />
+
+      {/* ═══ FAQ ═══ */}
+      <div className="relative w-full bg-[#030303] overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "radial-gradient(ellipse 50% 100% at 10% 0%, rgba(16, 185, 129, 0.06), transparent 65%), #030303" }} />
+        <FAQSection />
+      </div>
 
       {/* ═══ Floating CTA Banner ═══ */}
       <FloatingCTABanner />
