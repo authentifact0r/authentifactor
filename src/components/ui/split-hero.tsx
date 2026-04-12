@@ -111,7 +111,7 @@ export function SplitHero() {
             {/* CTA Buttons */}
             <div className="split-hero-fade split-hero-d4 flex flex-col sm:flex-row gap-4">
               <Link
-                href="/platform/get-started"
+                href="/get-started"
                 className="group inline-flex items-center justify-center gap-2 rounded-full bg-white px-8 py-4 text-sm font-semibold text-zinc-950 transition-all hover:scale-[1.02] hover:bg-zinc-200 active:scale-[0.98]"
               >
                 Start a Project

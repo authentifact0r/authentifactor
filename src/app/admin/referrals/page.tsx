@@ -46,7 +46,7 @@ export default async function ReferralsPage() {
   });
 
   const referralUrl = tenant.referralCode
-    ? `https://authentifactor.com/platform/get-started?ref=${tenant.referralCode}`
+    ? `https://authentifactor.com/get-started?ref=${tenant.referralCode}`
     : null;
 
   const activeReferrals = referrals.filter(

@@ -22,12 +22,12 @@ export const metadata: Metadata = {
   publisher: "Authentifactor",
   metadataBase: new URL("https://authentifactor.com"),
   alternates: {
-    canonical: "/platform",
+    canonical: "/",
   },
   openGraph: {
     type: "website",
     locale: "en_GB",
-    url: "https://authentifactor.com/platform",
+    url: "https://authentifactor.com",
     siteName: "Authentifactor",
     title: "Authentifactor — We Architect Digital Infrastructure That Scales",
     description:

@@ -140,7 +140,7 @@ export function StorefrontHero({
               </Link>
 
               <Link
-                href="/platform"
+                href="/"
                 className="group inline-flex items-center justify-center gap-2 rounded-full border border-white/10 bg-white/5 px-8 py-4 text-sm font-semibold text-white backdrop-blur-sm transition-colors hover:border-white/20 hover:bg-white/10"
               >
                 <Play className="h-4 w-4 fill-current" />

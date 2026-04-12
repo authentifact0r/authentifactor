@@ -63,6 +63,8 @@ const publicPaths = [
   "/favicon.ico",
   "/images",
   "/platform",
+  "/get-started",
+  "/marketplace",
   "/legal",
 ];
 
@@ -70,14 +72,23 @@ export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const host = request.headers.get("host") ?? "";
 
-  // ── Platform host hitting root "/" → rewrite (not redirect) to /platform ──
-  // This keeps the URL as authentifactor.com while serving platform content.
-  // But not for admin subdomains (admin.styledbymaryam.com should go to /admin)
+  // ── Platform host: rewrite clean URLs to /platform/* routes ──
+  // Keeps URLs as authentifactor.com/get-started while serving /platform/get-started content.
   const isAdminSubdomain = !!ADMIN_DOMAIN_MAP[host.replace(/:\d+$/, "")];
-  if (isPlatformHost(host) && pathname === "/" && !isAdminSubdomain) {
-    const url = request.nextUrl.clone();
-    url.pathname = "/platform";
-    return NextResponse.rewrite(url);
+  if (isPlatformHost(host) && !isAdminSubdomain) {
+    // Root → /platform
+    if (pathname === "/") {
+      const url = request.nextUrl.clone();
+      url.pathname = "/platform";
+      return NextResponse.rewrite(url);
+    }
+    // /get-started → /platform/get-started, /marketplace → /platform/marketplace
+    const platformSubpages = ["/get-started", "/marketplace"];
+    if (platformSubpages.some((p) => pathname === p)) {
+      const url = request.nextUrl.clone();
+      url.pathname = `/platform${pathname}`;
+      return NextResponse.rewrite(url);
+    }
   }
   // Admin subdomain root → redirect to /admin
   if (isAdminSubdomain && pathname === "/") {

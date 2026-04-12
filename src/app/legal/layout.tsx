@@ -20,7 +20,7 @@ export default function LegalLayout({ children }: { children: React.ReactNode })
     <div className="min-h-screen bg-white">
       <header className="border-b border-gray-100">
         <div className="mx-auto max-w-4xl flex items-center justify-between px-6 h-16">
-          <Link href="/platform" className="flex items-center gap-2">
+          <Link href="/" className="flex items-center gap-2">
             <Image src="/images/authentifactor-logo.png" alt="Authentifactor" width={200} height={60} className="h-8 w-auto" />
           </Link>
           <nav className="hidden sm:flex items-center gap-1">

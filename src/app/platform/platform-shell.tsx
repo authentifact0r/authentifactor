@@ -96,30 +96,30 @@ const megaNavItems = [
   },
   {
     label: "Marketplace",
-    href: "/platform/marketplace",
+    href: "/marketplace",
     columns: [
       {
         title: "For Merchants",
         links: [
-          { label: "Browse Stores", href: "/platform/marketplace" },
-          { label: "Start Selling", href: "/platform/get-started" },
-          { label: "Pricing Plans", href: "/platform/get-started" },
-          { label: "Referral Program", href: "/platform/get-started" },
+          { label: "Browse Stores", href: "/marketplace" },
+          { label: "Start Selling", href: "/get-started" },
+          { label: "Pricing Plans", href: "/get-started" },
+          { label: "Referral Program", href: "/get-started" },
         ],
       },
       {
         title: "By Category",
         links: [
-          { label: "Grocery & Food", href: "/platform/marketplace" },
-          { label: "Fashion & Textiles", href: "/platform/marketplace" },
-          { label: "Catering & Meal Prep", href: "/platform/marketplace" },
-          { label: "Beauty & Cosmetics", href: "/platform/marketplace" },
+          { label: "Grocery & Food", href: "/marketplace" },
+          { label: "Fashion & Textiles", href: "/marketplace" },
+          { label: "Catering & Meal Prep", href: "/marketplace" },
+          { label: "Beauty & Cosmetics", href: "/marketplace" },
         ],
       },
     ],
     features: [
-      { image: "https://images.unsplash.com/photo-1542838132-92c53300491e?w=400&q=80&fit=crop", title: "Discover Stores", link: "/platform/marketplace" },
-      { image: "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=400&q=80&fit=crop", title: "Join the Platform", link: "/platform/get-started" },
+      { image: "https://images.unsplash.com/photo-1542838132-92c53300491e?w=400&q=80&fit=crop", title: "Discover Stores", link: "/marketplace" },
+      { image: "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=400&q=80&fit=crop", title: "Join the Platform", link: "/get-started" },
     ],
   },
 ];
@@ -128,8 +128,8 @@ const mobileNavLinks = [
   { label: "Services", href: "#services" },
   { label: "Capabilities", href: "#capabilities" },
   { label: "Work", href: "#work" },
-  { label: "Marketplace", href: "/platform/marketplace" },
-  { label: "Get Started", href: "/platform/get-started" },
+  { label: "Marketplace", href: "/marketplace" },
+  { label: "Get Started", href: "/get-started" },
 ];
 
 export default function PlatformShell({
@@ -172,7 +172,7 @@ export default function PlatformShell({
       >
         <div className="mx-auto flex h-[68px] max-w-[1400px] items-center justify-between px-6 lg:px-10">
           {/* Logo */}
-          <Link href="/platform" className="flex items-center gap-3 shrink-0 z-[1002]">
+          <Link href="/" className="flex items-center gap-3 shrink-0 z-[1002]">
             <Image
               src="/images/authentifactor-logo.png"
               alt="Authentifactor"
@@ -276,7 +276,7 @@ export default function PlatformShell({
               Sign In
             </Link>
             <button
-              onClick={() => router.push("/platform/get-started")}
+              onClick={() => router.push("/get-started")}
               className="hidden lg:block ml-2 bg-white px-6 py-2.5 text-[11px] font-semibold uppercase tracking-[0.1em] text-gray-950 hover:bg-gray-100 transition-all cursor-pointer rounded-full"
             >
               Get Started
@@ -324,7 +324,7 @@ export default function PlatformShell({
               </ul>
               <div className="mt-8 space-y-3">
                 <Link
-                  href="/platform/get-started"
+                  href="/get-started"
                   onClick={() => setMobileOpen(false)}
                   className="block w-full text-center bg-white text-gray-950 py-3.5 text-sm font-semibold uppercase tracking-wider rounded-full"
                 >
@@ -367,7 +367,7 @@ export default function PlatformShell({
               </p>
             </div>
             <Link
-              href="/platform/get-started"
+              href="/get-started"
               className="group flex items-center gap-3 text-lg font-semibold text-white transition-colors hover:text-emerald-400"
             >
               Start a project
