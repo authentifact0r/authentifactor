@@ -17,20 +17,18 @@ const megaNavItems = [
       {
         title: "Build",
         links: [
-          { label: "Commerce & Platforms", href: "#services" },
-          { label: "AI Integration & Automation", href: "#services" },
-          { label: "CRM & Customer Data", href: "#services" },
-          { label: "Payment & Fintech", href: "#services" },
-          { label: "Digital Ops & Automation", href: "#services" },
+          { label: "Commerce Platforms", href: "#services" },
+          { label: "AI & Automation", href: "#services" },
+          { label: "CRM & Data", href: "#services" },
+          { label: "Payments & Fintech", href: "#services" },
         ],
       },
       {
         title: "Grow",
         links: [
-          { label: "Brand Strategy & Storytelling", href: "#services" },
-          { label: "Lead Gen & Conversion", href: "#services" },
-          { label: "Analytics & BI", href: "#services" },
-          { label: "Cyber Security & Compliance", href: "#services" },
+          { label: "Brand Strategy", href: "#services" },
+          { label: "Lead Generation", href: "#services" },
+          { label: "Cyber Security", href: "#services" },
           { label: "Business Consulting", href: "#services" },
         ],
       },
@@ -41,63 +39,31 @@ const megaNavItems = [
     ],
   },
   {
-    label: "Capabilities",
-    href: "#capabilities",
-    columns: [
-      {
-        title: "Technology",
-        links: [
-          { label: "Multi-Tenant Architecture", href: "#capabilities" },
-          { label: "AI-Powered Intelligence", href: "#capabilities" },
-          { label: "Edge Performance & CDN", href: "#capabilities" },
-          { label: "Stripe, Paystack & Mobile Money", href: "#capabilities" },
-        ],
-      },
-      {
-        title: "Trust & Scale",
-        links: [
-          { label: "Enterprise Security & RBAC", href: "#capabilities" },
-          { label: "GDPR & PCI-DSS Compliance", href: "#capabilities" },
-          { label: "Real-Time Analytics & BI", href: "#capabilities" },
-          { label: "CRM & Automation Pipelines", href: "#capabilities" },
-        ],
-      },
-    ],
-    features: [
-      { image: "https://images.unsplash.com/photo-1553877522-43269d4ea984?w=400&q=80&fit=crop", title: "Enterprise Grade", link: "#capabilities" },
-      { image: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=400&q=80&fit=crop", title: "Scale Ready", link: "#capabilities" },
-    ],
-  },
-  {
     label: "Work",
     href: "#work",
     columns: [
       {
-        title: "Live Projects",
+        title: "Industries",
         links: [
-          { label: "Taste of Motherland — Grocery", href: "https://taste-of-motherland.authentifactor.com" },
-          { label: "Styled by Maryam — Fashion", href: "https://styledbymaryam.com" },
-          { label: "Vibrant Minds — Education", href: "https://vibrantmindsasc.org.uk" },
-          { label: "Toks Mimi — Catering", href: "https://toks-mimi.authentifactor.com" },
-          { label: "Careceutical — Healthcare", href: "#work" },
-          { label: "BowSea — Career Tech", href: "https://bowsea.com" },
+          { label: "Grocery & Food", href: "#work" },
+          { label: "Fashion & Luxury", href: "#work" },
+          { label: "Education", href: "#work" },
+          { label: "Healthcare", href: "#work" },
         ],
       },
       {
-        title: "What We Delivered",
+        title: "Outcomes",
         links: [
-          { label: "Commerce & Multi-Tenant", href: "#work" },
-          { label: "AI & Automation Pipelines", href: "#work" },
-          { label: "Payment & Fintech Stack", href: "#work" },
-          { label: "Brand Identity & Storytelling", href: "#work" },
-          { label: "CRM & Lead Generation", href: "#work" },
-          { label: "Cyber Security Audits", href: "#work" },
+          { label: "Case Studies", href: "#work" },
+          { label: "Client Results", href: "#work" },
+          { label: "Our Process", href: "#process" },
+          { label: "FAQ", href: "#faq" },
         ],
       },
     ],
     features: [
-      { image: "/images/screenshots/styledbymaryam.png", title: "Styled by Maryam", link: "https://styledbymaryam.com" },
-      { image: "/images/screenshots/vibrantminds.png", title: "Vibrant Minds", link: "https://vibrantmindsasc.org.uk" },
+      { image: "/images/screenshots/styledbymaryam.png", title: "Fashion E-Commerce", link: "#work" },
+      { image: "/images/screenshots/vibrantminds.png", title: "EdTech Platform", link: "#work" },
     ],
   },
   {
@@ -105,25 +71,21 @@ const megaNavItems = [
     href: "/marketplace",
     columns: [
       {
-        title: "Explore",
+        title: "Browse",
         links: [
-          { label: "Browse All Stores", href: "/marketplace" },
+          { label: "All Stores", href: "/marketplace" },
           { label: "Grocery & Food", href: "/marketplace" },
-          { label: "Fashion & Textiles", href: "/marketplace" },
-          { label: "Catering & Meal Prep", href: "/marketplace" },
-          { label: "Beauty & Cosmetics", href: "/marketplace" },
-          { label: "Education & Learning", href: "/marketplace" },
+          { label: "Fashion", href: "/marketplace" },
+          { label: "Beauty & Wellness", href: "/marketplace" },
         ],
       },
       {
-        title: "For Businesses",
+        title: "Get Started",
         links: [
           { label: "Start a Project", href: "/get-started" },
-          { label: "View Pricing", href: "/get-started" },
-          { label: "Book a Consultation", href: "mailto:cs@authentifactor.com?subject=Consultation%20Request" },
+          { label: "Pricing", href: "/get-started" },
+          { label: "Book a Call", href: "mailto:cs@authentifactor.com?subject=Consultation%20Request" },
           { label: "Referral Programme", href: "/get-started" },
-          { label: "Case Studies", href: "#work" },
-          { label: "FAQ", href: "#faq" },
         ],
       },
     ],
