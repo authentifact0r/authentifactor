@@ -60,7 +60,7 @@ export function MarketplaceClient({ tenants }: { tenants: TenantListing[] }) {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease }}
         >
-          <div className="inline-flex items-center gap-2 rounded-full bg-[#ff8f70]/10 px-4 py-1.5 text-xs font-medium text-[#ff8f70] mb-6">
+          <div className="inline-flex items-center gap-2 rounded-full bg-[#2DD4A0]/10 px-4 py-1.5 text-xs font-medium text-[#2DD4A0] mb-6">
             <Sparkles className="h-3.5 w-3.5" />
             {tenants.length} stores and growing
           </div>
@@ -86,7 +86,7 @@ export function MarketplaceClient({ tenants }: { tenants: TenantListing[] }) {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search stores..."
-              className="w-full rounded-xl bg-[#252525] pl-11 pr-4 py-3 text-sm text-[#f0ede8] placeholder-[#6b6762] outline-none transition-colors focus:ring-2 focus:ring-[#ff8f70]/20"
+              className="w-full rounded-xl bg-[#252525] pl-11 pr-4 py-3 text-sm text-[#f0ede8] placeholder-[#6b6762] outline-none transition-colors focus:ring-2 focus:ring-[#2DD4A0]/20"
             />
           </div>
           <div className="flex gap-2 overflow-x-auto pb-1">
@@ -96,7 +96,7 @@ export function MarketplaceClient({ tenants }: { tenants: TenantListing[] }) {
                 onClick={() => setVerticalFilter(v.value)}
                 className={`shrink-0 rounded-full px-4 py-2.5 text-xs font-medium transition-all cursor-pointer ${
                   verticalFilter === v.value
-                    ? "bg-[#ff8f70]/20 text-[#ff8f70]"
+                    ? "bg-[#2DD4A0]/20 text-[#2DD4A0]"
                     : "bg-[#252525] text-[#9e9a94] hover:bg-[#2c2c2c] hover:text-[#f0ede8]"
                 }`}
               >
@@ -151,7 +151,7 @@ export function MarketplaceClient({ tenants }: { tenants: TenantListing[] }) {
                       )}
                     </div>
                     <div className="min-w-0 flex-1">
-                      <h3 className="text-base font-semibold text-white truncate group-hover:text-[#ff8f70] transition-colors">
+                      <h3 className="text-base font-semibold text-white truncate group-hover:text-[#2DD4A0] transition-colors">
                         {t.name}
                       </h3>
                       {t.tagline && (
@@ -160,7 +160,7 @@ export function MarketplaceClient({ tenants }: { tenants: TenantListing[] }) {
                         </p>
                       )}
                     </div>
-                    <ExternalLink className="h-4 w-4 shrink-0 text-gray-700 group-hover:text-[#ff8f70] transition-colors" />
+                    <ExternalLink className="h-4 w-4 shrink-0 text-gray-700 group-hover:text-[#2DD4A0] transition-colors" />
                   </div>
 
                   {/* Meta */}

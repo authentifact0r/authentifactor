@@ -167,7 +167,7 @@ export function StickyServiceSection() {
           <section className="py-20 md:py-28 flex flex-col items-center">
             {/* Header */}
             <div className="text-center max-w-3xl mx-auto mb-16">
-              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[#ff8f70] mb-4">
+              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[#2DD4A0] mb-4">
                 What We Do
               </p>
               <h2

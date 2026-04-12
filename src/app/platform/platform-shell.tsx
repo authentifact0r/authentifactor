@@ -227,7 +227,7 @@ export default function PlatformShell({
                                   <Link
                                     href={link.href}
                                     onClick={() => setActiveMega(null)}
-                                    className="text-[13px] text-[#9e9a94] hover:text-[#ff8f70] transition-colors"
+                                    className="text-[13px] text-[#9e9a94] hover:text-[#2DD4A0] transition-colors"
                                   >
                                     {link.label}
                                   </Link>
@@ -277,7 +277,7 @@ export default function PlatformShell({
             </Link>
             <button
               onClick={() => router.push("/get-started")}
-              className="hidden lg:block ml-2 bg-[#ff8f70] px-6 py-2.5 text-[11px] font-semibold uppercase tracking-[0.1em] text-[#1e1e1e] hover:bg-[#cc7259] transition-all cursor-pointer rounded-full"
+              className="hidden lg:block ml-2 bg-[#2DD4A0] px-6 py-2.5 text-[11px] font-semibold uppercase tracking-[0.1em] text-[#1e1e1e] hover:bg-[#1FA87D] transition-all cursor-pointer rounded-full"
             >
               Get Started
             </button>
@@ -312,10 +312,10 @@ export default function PlatformShell({
                     <Link
                       href={link.href}
                       onClick={() => setMobileOpen(false)}
-                      className="flex items-center justify-between py-5 text-2xl font-light italic text-[#f0ede8] hover:text-[#ff8f70] transition-colors group"
+                      className="flex items-center justify-between py-5 text-2xl font-light italic text-[#f0ede8] hover:text-[#2DD4A0] transition-colors group"
                     >
                       {link.label}
-                      <span className="text-sm font-normal not-italic text-[#6b6762] group-hover:text-[#ff8f70] group-hover:translate-x-1 transition-all">
+                      <span className="text-sm font-normal not-italic text-[#6b6762] group-hover:text-[#2DD4A0] group-hover:translate-x-1 transition-all">
                         →
                       </span>
                     </Link>
@@ -326,7 +326,7 @@ export default function PlatformShell({
                 <Link
                   href="/get-started"
                   onClick={() => setMobileOpen(false)}
-                  className="block w-full text-center bg-[#ff8f70] text-[#1e1e1e] py-3.5 text-sm font-semibold uppercase tracking-wider rounded-full"
+                  className="block w-full text-center bg-[#2DD4A0] text-[#1e1e1e] py-3.5 text-sm font-semibold uppercase tracking-wider rounded-full"
                 >
                   Get Started
                 </Link>
@@ -356,7 +356,7 @@ export default function PlatformShell({
           <div className="rounded-2xl bg-white/[0.03] p-10 md:p-14 text-center mb-16">
             <h3 className="text-2xl md:text-3xl font-bold text-[#f0ede8] tracking-tight">
               Ready to architect your{" "}
-              <span className="font-light italic text-[#ff8f70]" style={{ fontFamily: "var(--font-serif)" }}>
+              <span className="font-light italic text-[#2DD4A0]" style={{ fontFamily: "var(--font-serif)" }}>
                 next move?
               </span>
             </h3>
@@ -366,7 +366,7 @@ export default function PlatformShell({
             <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
               <Link
                 href="/get-started"
-                className="group inline-flex items-center gap-2 rounded-full bg-[#ff8f70] px-8 py-3.5 text-sm font-bold text-[#1e1e1e] shadow-lg shadow-[#ff8f70]/25 transition-all hover:bg-[#cc7259] hover:shadow-[#ff8f70]/40 hover:scale-[1.02]"
+                className="group inline-flex items-center gap-2 rounded-full bg-[#2DD4A0] px-8 py-3.5 text-sm font-bold text-[#1e1e1e] shadow-lg shadow-[#2DD4A0]/25 transition-all hover:bg-[#1FA87D] hover:shadow-[#2DD4A0]/40 hover:scale-[1.02]"
               >
                 Start a Project
                 <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
@@ -397,7 +397,7 @@ export default function PlatformShell({
             </div>
             <a
               href="mailto:cs@authentifactor.com"
-              className="text-sm text-[#9e9a94] hover:text-[#ff8f70] transition-colors"
+              className="text-sm text-[#9e9a94] hover:text-[#2DD4A0] transition-colors"
             >
               cs@authentifactor.com
             </a>

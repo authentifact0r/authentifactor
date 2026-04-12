@@ -93,7 +93,7 @@ export default function PlatformLandingPage() {
             viewport={{ once: true, margin: "-100px" }}
             variants={stagger}
           >
-            <motion.p variants={fadeUp} className="text-sm font-semibold uppercase tracking-[0.2em] text-[#ff8f70]">
+            <motion.p variants={fadeUp} className="text-sm font-semibold uppercase tracking-[0.2em] text-[#2DD4A0]">
               Our Process
             </motion.p>
             <motion.h2 variants={fadeUp} className="mt-4 max-w-2xl text-4xl font-bold tracking-tight text-[#f0ede8] sm:text-5xl">
@@ -132,7 +132,7 @@ export default function PlatformLandingPage() {
             viewport={{ once: true, margin: "-100px" }}
             variants={stagger}
           >
-            <motion.p variants={fadeUp} className="text-sm font-semibold uppercase tracking-[0.2em] text-[#ff8f70]">
+            <motion.p variants={fadeUp} className="text-sm font-semibold uppercase tracking-[0.2em] text-[#2DD4A0]">
               Selected Work
             </motion.p>
             <motion.h2 variants={fadeUp} className="mt-4 max-w-2xl text-4xl font-bold tracking-tight text-white sm:text-5xl">

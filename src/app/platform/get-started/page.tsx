@@ -83,10 +83,10 @@ const clientLogos = [
 ];
 
 const inputClass =
-  "w-full rounded-xl bg-[#252525] px-4 py-3.5 text-sm text-white placeholder-white/30 outline-none transition-all focus:ring-2 focus:ring-[#ff8f70]/20 focus:bg-[#2c2c2c]";
+  "w-full rounded-xl bg-[#252525] px-4 py-3.5 text-sm text-white placeholder-white/30 outline-none transition-all focus:ring-2 focus:ring-[#2DD4A0]/20 focus:bg-[#2c2c2c]";
 const labelClass = "block text-xs font-semibold uppercase tracking-[0.12em] text-white/40 mb-2";
 const selectClass =
-  "w-full rounded-xl bg-[#252525] px-4 py-3.5 text-sm text-white outline-none transition-all focus:ring-2 focus:ring-[#ff8f70]/20";
+  "w-full rounded-xl bg-[#252525] px-4 py-3.5 text-sm text-white outline-none transition-all focus:ring-2 focus:ring-[#2DD4A0]/20";
 
 /* ─── Plan tier icons ─── */
 const planIcons: Record<string, React.ReactNode> = {
@@ -213,8 +213,8 @@ function GetStartedContent() {
     <div className="min-h-screen bg-[#1e1e1e] relative overflow-hidden">
       {/* ─── Background ambience ─── */}
       <div className="pointer-events-none absolute inset-0">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-[#ff8f70]/[0.04] rounded-full blur-[120px]" />
-        <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-[#8ab4f8]/[0.03] rounded-full blur-[100px]" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-[#2DD4A0]/[0.04] rounded-full blur-[120px]" />
+        <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-[#00BFFF]/[0.03] rounded-full blur-[100px]" />
       </div>
 
       <div className="relative z-10 pt-28 pb-20">
@@ -233,7 +233,7 @@ function GetStartedContent() {
                 You were referred! Enjoy priority onboarding
               </div>
             ) : (
-              <div className="inline-flex items-center gap-2 rounded-full bg-[#ff8f70]/10 px-4 py-1.5 text-xs font-medium text-[#ff8f70] mb-6">
+              <div className="inline-flex items-center gap-2 rounded-full bg-[#2DD4A0]/10 px-4 py-1.5 text-xs font-medium text-[#2DD4A0] mb-6">
                 <Clock className="h-3.5 w-3.5" />
                 30-day money-back guarantee — risk-free
               </div>
@@ -241,7 +241,7 @@ function GetStartedContent() {
 
             <h1 className="text-4xl font-bold tracking-tight text-white sm:text-5xl lg:text-6xl">
               Launch your{" "}
-              <span className="font-[family-name:var(--font-serif)] italic text-[#ff8f70]">
+              <span className="font-[family-name:var(--font-serif)] italic text-[#2DD4A0]">
                 digital presence
               </span>
             </h1>
@@ -279,7 +279,7 @@ function GetStartedContent() {
                     className={cn(
                       "flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition-all",
                       i === step
-                        ? "bg-[#ff8f70]/20 text-[#ff8f70]"
+                        ? "bg-[#2DD4A0]/20 text-[#2DD4A0]"
                         : i < step
                           ? "bg-[#252525] text-white cursor-pointer hover:bg-[#2c2c2c]"
                           : "bg-[#201f1f] text-white/30"
@@ -291,7 +291,7 @@ function GetStartedContent() {
                         animate={{ scale: 1 }}
                         transition={{ type: "spring", stiffness: 400, damping: 20 }}
                       >
-                        <Check className="h-4 w-4 text-[#ff8f70]" />
+                        <Check className="h-4 w-4 text-[#2DD4A0]" />
                       </motion.div>
                     ) : (
                       <Icon className="h-4 w-4" />
@@ -305,7 +305,7 @@ function GetStartedContent() {
             {/* Animated progress track */}
             <div className="h-1 rounded-full bg-white/[0.06] overflow-hidden">
               <motion.div
-                className="h-full rounded-full bg-gradient-to-r from-[#ff8f70] to-[#8ab4f8]"
+                className="h-full rounded-full bg-gradient-to-r from-[#2DD4A0] to-[#00BFFF]"
                 initial={{ width: "0%" }}
                 animate={{ width: `${progressPercent}%` }}
                 transition={{ duration: 0.6, ease }}
@@ -362,10 +362,10 @@ function GetStartedContent() {
                           animate="visible"
                         >
                           <GlowCard
-                            glowColor={isSelected ? "orange" : "blue"}
+                            glowColor={isSelected ? "jade" : "cyan"}
                             className={cn(
                               "transition-all duration-300 cursor-pointer group",
-                              isSelected && "ring-2 ring-[#ff8f70]/30 scale-[1.02]"
+                              isSelected && "ring-2 ring-[#2DD4A0]/30 scale-[1.02]"
                             )}
                           >
                             <button
@@ -376,7 +376,7 @@ function GetStartedContent() {
                               {/* Most Popular badge */}
                               {isRecommended && (
                                 <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-10">
-                                  <span className="inline-flex items-center gap-1.5 rounded-full bg-[#ff8f70] px-3.5 py-1 text-[11px] font-bold text-[#1e1e1e] shadow-lg shadow-[#ff8f70]/25 uppercase tracking-wider">
+                                  <span className="inline-flex items-center gap-1.5 rounded-full bg-[#2DD4A0] px-3.5 py-1 text-[11px] font-bold text-[#1e1e1e] shadow-lg shadow-[#2DD4A0]/25 uppercase tracking-wider">
                                     <Star className="h-3 w-3 fill-current" />
                                     Most Popular
                                   </span>
@@ -389,7 +389,7 @@ function GetStartedContent() {
                                   <div className={cn(
                                     "flex h-10 w-10 items-center justify-center rounded-xl transition-colors",
                                     isSelected
-                                      ? "bg-[#ff8f70]/20 text-[#ff8f70]"
+                                      ? "bg-[#2DD4A0]/20 text-[#2DD4A0]"
                                       : "bg-[#252525] text-white/40 group-hover:text-white/60"
                                   )}>
                                     {planIcons[plan.id]}
@@ -409,7 +409,7 @@ function GetStartedContent() {
                                     <span className="text-sm text-white/40">/month</span>
                                   </div>
                                   <div className="flex items-center gap-3 mt-1.5">
-                                    <span className="text-xs text-[#ff8f70]">{plan.hours} of expert time</span>
+                                    <span className="text-xs text-[#2DD4A0]">{plan.hours} of expert time</span>
                                     <span className="text-xs text-white/20">|</span>
                                     <span className="text-xs text-white/30">30-day money-back guarantee</span>
                                   </div>
@@ -427,7 +427,7 @@ function GetStartedContent() {
                                       <Check
                                         className={cn(
                                           "h-4 w-4 mt-0.5 shrink-0",
-                                          isSelected ? "text-[#ff8f70]" : "text-white/20"
+                                          isSelected ? "text-[#2DD4A0]" : "text-white/20"
                                         )}
                                       />
                                       {feature}
@@ -440,7 +440,7 @@ function GetStartedContent() {
                               <div className={cn(
                                 "flex items-center justify-center gap-2 rounded-b-2xl border-t py-3.5 text-sm font-medium transition-all",
                                 isSelected
-                                  ? "border-t-0 bg-[#ff8f70]/10 text-[#ff8f70]"
+                                  ? "border-t-0 bg-[#2DD4A0]/10 text-[#2DD4A0]"
                                   : "border-t-0 bg-[#201f1f] text-white/30"
                               )}>
                                 {isSelected ? (
@@ -489,7 +489,7 @@ function GetStartedContent() {
                     <button
                       onClick={goNext}
                       disabled={!canProceedStep1}
-                      className="group inline-flex items-center gap-2 rounded-full bg-[#ff8f70] px-8 py-3.5 text-sm font-semibold text-[#1e1e1e] transition-all hover:bg-[#cc7259] hover:shadow-lg hover:shadow-[#ff8f70]/40 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+                      className="group inline-flex items-center gap-2 rounded-full bg-[#2DD4A0] px-8 py-3.5 text-sm font-semibold text-[#1e1e1e] transition-all hover:bg-[#1FA87D] hover:shadow-lg hover:shadow-[#2DD4A0]/40 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
                     >
                       Continue with {BILLING_PLANS[selectedPlan].name}
                       <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
@@ -617,7 +617,7 @@ function GetStartedContent() {
                         {/* Business URL */}
                         <div>
                           <label className={labelClass}>Your URL</label>
-                          <div className="flex items-center rounded-xl bg-[#252525] overflow-hidden focus-within:ring-2 focus-within:ring-[#ff8f70]/20 transition-all">
+                          <div className="flex items-center rounded-xl bg-[#252525] overflow-hidden focus-within:ring-2 focus-within:ring-[#2DD4A0]/20 transition-all">
                             <input
                               type="text"
                               value={slug}
@@ -644,7 +644,7 @@ function GetStartedContent() {
                               <motion.span
                                 initial={{ opacity: 0, x: -5 }}
                                 animate={{ opacity: 1, x: 0 }}
-                                className="text-xs text-[#ff8f70] flex items-center gap-1"
+                                className="text-xs text-[#2DD4A0] flex items-center gap-1"
                               >
                                 <Check className="h-3 w-3" />
                                 {slug}.authentifactor.com is yours
@@ -720,7 +720,7 @@ function GetStartedContent() {
                         <button
                           onClick={goNext}
                           disabled={!canProceedStep2}
-                          className="group inline-flex items-center gap-2 rounded-full bg-[#ff8f70] px-6 py-3 text-sm font-semibold text-[#1e1e1e] transition-all hover:bg-[#cc7259] disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+                          className="group inline-flex items-center gap-2 rounded-full bg-[#2DD4A0] px-6 py-3 text-sm font-semibold text-[#1e1e1e] transition-all hover:bg-[#1FA87D] disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
                         >
                           Review & Launch
                           <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
@@ -739,13 +739,13 @@ function GetStartedContent() {
                         </h4>
                         <button
                           onClick={() => { setDirection(-1); setStep(0); }}
-                          className="text-xs text-[#ff8f70] hover:underline cursor-pointer"
+                          className="text-xs text-[#2DD4A0] hover:underline cursor-pointer"
                         >
                           Change
                         </button>
                       </div>
                       <div className="flex items-center gap-3">
-                        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#ff8f70]/20 text-[#ff8f70]">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#2DD4A0]/20 text-[#2DD4A0]">
                           {planIcons[selectedPlan]}
                         </div>
                         <div>
@@ -773,7 +773,7 @@ function GetStartedContent() {
                           { icon: Lock, text: "30-day money-back guarantee" },
                         ].map((item) => (
                           <li key={item.text} className="flex items-center gap-3 text-sm text-white/60">
-                            <item.icon className="h-4 w-4 text-[#ff8f70] shrink-0" />
+                            <item.icon className="h-4 w-4 text-[#2DD4A0] shrink-0" />
                             {item.text}
                           </li>
                         ))}
@@ -784,7 +784,7 @@ function GetStartedContent() {
                     <div className="rounded-2xl bg-[#201f1f] p-6">
                       <div className="flex gap-1 mb-3">
                         {[...Array(5)].map((_, i) => (
-                          <Star key={i} className="h-3.5 w-3.5 fill-[#ff8f70] text-[#ff8f70]" />
+                          <Star key={i} className="h-3.5 w-3.5 fill-[#2DD4A0] text-[#2DD4A0]" />
                         ))}
                       </div>
                       <p className="text-sm text-white/60 leading-relaxed italic">
@@ -793,7 +793,7 @@ function GetStartedContent() {
                         all unified under one team.&rdquo;
                       </p>
                       <div className="mt-3 flex items-center gap-2">
-                        <div className="h-7 w-7 rounded-full bg-gradient-to-br from-[#ff8f70] to-[#8ab4f8]" />
+                        <div className="h-7 w-7 rounded-full bg-gradient-to-br from-[#2DD4A0] to-[#00BFFF]" />
                         <div>
                           <p className="text-xs font-medium text-white/70">Toks A.</p>
                           <p className="text-[11px] text-white/30">Taste of Motherland</p>
@@ -823,9 +823,9 @@ function GetStartedContent() {
                       initial={{ scale: 0 }}
                       animate={{ scale: 1 }}
                       transition={{ type: "spring", stiffness: 400, damping: 20, delay: 0.2 }}
-                      className="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-[#ff8f70]/20 mb-4"
+                      className="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-[#2DD4A0]/20 mb-4"
                     >
-                      <Sparkles className="h-7 w-7 text-[#ff8f70]" />
+                      <Sparkles className="h-7 w-7 text-[#2DD4A0]" />
                     </motion.div>
                     <h2 className="text-2xl font-semibold text-white">
                       You&apos;re almost live
@@ -842,7 +842,7 @@ function GetStartedContent() {
                         Plan
                       </h3>
                       <div className="flex items-center gap-3">
-                        <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#ff8f70]/20 text-[#ff8f70]">
+                        <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#2DD4A0]/20 text-[#2DD4A0]">
                           {planIcons[selectedPlan]}
                         </div>
                         <div>
@@ -854,7 +854,7 @@ function GetStartedContent() {
                           </p>
                         </div>
                       </div>
-                      <p className="mt-2 text-xs text-[#ff8f70]">
+                      <p className="mt-2 text-xs text-[#2DD4A0]">
                         30-day money-back guarantee
                       </p>
                     </div>
@@ -864,8 +864,8 @@ function GetStartedContent() {
                         Your Business
                       </h3>
                       <div className="flex items-center gap-3">
-                        <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#ff8f70]/20">
-                          <Store className="h-4.5 w-4.5 text-[#ff8f70]" />
+                        <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#2DD4A0]/20">
+                          <Store className="h-4.5 w-4.5 text-[#2DD4A0]" />
                         </div>
                         <div>
                           <p className="text-sm font-semibold text-white">
@@ -914,14 +914,14 @@ function GetStartedContent() {
                       type="checkbox"
                       checked={agreedToTerms}
                       onChange={(e) => setAgreedToTerms(e.target.checked)}
-                      className="mt-1 h-4 w-4 rounded border-white/20 bg-white/5 text-[#ff8f70] focus:ring-[#ff8f70]/30"
+                      className="mt-1 h-4 w-4 rounded border-white/20 bg-white/5 text-[#2DD4A0] focus:ring-[#2DD4A0]/30"
                     />
                     <span className="text-sm text-white/40 group-hover:text-white/60 transition-colors">
                       I agree to the{" "}
                       <Link
                         href="/legal/merchant-terms"
                         target="_blank"
-                        className="text-[#ff8f70] underline underline-offset-2 hover:text-[#cc7259]"
+                        className="text-[#2DD4A0] underline underline-offset-2 hover:text-[#1FA87D]"
                       >
                         Merchant Terms
                       </Link>{" "}
@@ -929,7 +929,7 @@ function GetStartedContent() {
                       <Link
                         href="/legal/privacy"
                         target="_blank"
-                        className="text-[#ff8f70] underline underline-offset-2 hover:text-[#cc7259]"
+                        className="text-[#2DD4A0] underline underline-offset-2 hover:text-[#1FA87D]"
                       >
                         Privacy Policy
                       </Link>
@@ -966,7 +966,7 @@ function GetStartedContent() {
                       <button
                         type="submit"
                         disabled={!canSubmit || isPending}
-                        className="group inline-flex items-center gap-2.5 rounded-full bg-[#ff8f70] px-8 py-3.5 text-sm font-bold text-[#1e1e1e] shadow-lg shadow-[#ff8f70]/25 transition-all hover:bg-[#cc7259] hover:shadow-[#ff8f70]/40 hover:scale-[1.02] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100 cursor-pointer"
+                        className="group inline-flex items-center gap-2.5 rounded-full bg-[#2DD4A0] px-8 py-3.5 text-sm font-bold text-[#1e1e1e] shadow-lg shadow-[#2DD4A0]/25 transition-all hover:bg-[#1FA87D] hover:shadow-[#2DD4A0]/40 hover:scale-[1.02] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100 cursor-pointer"
                       >
                         {isPending ? (
                           <>
@@ -1014,7 +1014,7 @@ function GetStartedContent() {
             Questions?{" "}
             <a
               href="mailto:cs@authentifactor.com"
-              className="text-[#ff8f70]/60 hover:text-[#ff8f70] hover:underline transition-colors"
+              className="text-[#2DD4A0]/60 hover:text-[#2DD4A0] hover:underline transition-colors"
             >
               cs@authentifactor.com
             </a>

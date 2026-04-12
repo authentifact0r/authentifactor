@@ -37,7 +37,7 @@ export function TechStackSection() {
     <section className="w-full bg-[#1e1e1e] py-20 md:py-28">
       {/* Feature Cards */}
       <div className="text-center max-w-2xl mx-auto mb-12 px-6">
-        <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[#ff8f70] mb-3">
+        <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[#2DD4A0] mb-3">
           Technology
         </p>
         <h1 className="text-3xl font-semibold text-[#f0ede8] tracking-tight">
@@ -80,7 +80,7 @@ export function TechStackSection() {
 
       {/* Trusted By — showcase images */}
       <div className="max-w-6xl mx-auto mt-20 px-6">
-        <p className="bg-gradient-to-r from-[#f0ede8] to-[#ff8f70] text-transparent bg-clip-text text-3xl text-left max-w-2xl font-semibold tracking-tight">
+        <p className="bg-gradient-to-r from-[#f0ede8] to-[#2DD4A0] text-transparent bg-clip-text text-3xl text-left max-w-2xl font-semibold tracking-tight">
           Trusted by 100+ clients worldwide.
         </p>
         <div className="flex flex-col-reverse md:flex-row items-center justify-center max-h-[450px] gap-6 mt-6">

@@ -169,7 +169,7 @@ function BentoCapabilities() {
         {/* Header */}
         <header className="mb-12 flex flex-col gap-6 border-b border-white/10 pb-8 md:flex-row md:items-end md:justify-between">
           <div className="flex flex-col gap-2">
-            <span className="text-xs uppercase tracking-[0.3em] text-[#ff8f70]">
+            <span className="text-xs uppercase tracking-[0.3em] text-[#2DD4A0]">
               Capabilities
             </span>
             <h2 className="text-3xl font-bold tracking-tight text-white md:text-5xl">

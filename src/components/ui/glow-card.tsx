@@ -5,21 +5,21 @@ import React, { useEffect, useRef, ReactNode } from "react";
 interface GlowCardProps {
   children: ReactNode;
   className?: string;
-  glowColor?: "blue" | "purple" | "green" | "red" | "orange";
+  glowColor?: "blue" | "purple" | "jade" | "red" | "cyan";
 }
 
 const glowColorMap = {
   blue: { base: 220, spread: 200 },
   purple: { base: 280, spread: 300 },
-  green: { base: 120, spread: 200 },
+  jade: { base: 160, spread: 60 },
   red: { base: 0, spread: 200 },
-  orange: { base: 15, spread: 60 },
+  cyan: { base: 190, spread: 40 },
 };
 
 const GlowCard: React.FC<GlowCardProps> = ({
   children,
   className = "",
-  glowColor = "orange",
+  glowColor = "jade",
 }) => {
   const cardRef = useRef<HTMLDivElement>(null);
 

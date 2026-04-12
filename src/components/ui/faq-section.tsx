@@ -128,7 +128,7 @@ export function FAQSection() {
       }`}
     >
       <header className="space-y-4">
-        <p className="text-xs uppercase tracking-[0.3em] text-[#ff8f70]">
+        <p className="text-xs uppercase tracking-[0.3em] text-[#2DD4A0]">
           Frequently Asked
         </p>
         <h2 className="text-3xl font-bold tracking-tight text-white md:text-5xl">
@@ -176,7 +176,7 @@ export function FAQSection() {
                 aria-controls={panelId}
                 aria-expanded={open}
                 onClick={() => setActiveIndex(prev => prev === index ? -1 : index)}
-                className="relative flex w-full items-start gap-5 px-7 py-6 text-left transition-colors duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#ff8f70]/40 cursor-pointer"
+                className="relative flex w-full items-start gap-5 px-7 py-6 text-left transition-colors duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#2DD4A0]/40 cursor-pointer"
               >
                 {/* Icon */}
                 <span className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-white/[0.1] bg-white/[0.05] transition-all duration-500 group-hover:scale-105">
