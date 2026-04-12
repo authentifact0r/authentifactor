@@ -10,8 +10,9 @@ import {
   CreditCard,
   Users,
   BarChart3,
-  MessageSquare,
+  ShieldCheck,
   Workflow,
+  Briefcase,
 } from "lucide-react";
 
 interface ServiceCard {
@@ -111,6 +112,28 @@ const services: ServiceCard[] = [
       "https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=2070&auto=format&fit=crop",
     icon: <Workflow className="h-6 w-6" />,
     bgColor: "bg-cyan-100",
+    textColor: "text-gray-700",
+  },
+  {
+    number: "09",
+    title: "Cyber Security & Compliance",
+    description:
+      "Penetration testing, vulnerability assessments, security audits, SSL management, GDPR compliance, PCI-DSS, and incident response planning. We harden your digital assets so you operate with confidence.",
+    imageUrl:
+      "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=2070&auto=format&fit=crop",
+    icon: <ShieldCheck className="h-6 w-6" />,
+    bgColor: "bg-red-100",
+    textColor: "text-gray-700",
+  },
+  {
+    number: "10",
+    title: "Business Consulting & Strategy",
+    description:
+      "Market research, competitive analysis, go-to-market strategy, revenue modelling, and digital transformation roadmaps. We sit at the table as co-founders, not just contractors — aligning technology with your business goals.",
+    imageUrl:
+      "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?q=80&w=2070&auto=format&fit=crop",
+    icon: <Briefcase className="h-6 w-6" />,
+    bgColor: "bg-orange-100",
     textColor: "text-gray-700",
   },
 ];

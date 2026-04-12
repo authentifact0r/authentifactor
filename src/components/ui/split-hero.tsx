@@ -17,6 +17,7 @@ import {
   BarChart3,
   CreditCard,
   Users,
+  Shield,
 } from "lucide-react";
 
 const CLIENTS = [
@@ -33,6 +34,8 @@ const capabilities = [
   { icon: CreditCard, label: "Payment & Fintech" },
   { icon: Users, label: "CRM & Leads" },
   { icon: BarChart3, label: "Analytics & BI" },
+  { icon: Shield, label: "Cyber Security" },
+  { icon: Briefcase, label: "Business Consulting" },
 ];
 
 export function SplitHero() {
@@ -143,7 +146,7 @@ export function SplitHero() {
                 </div>
 
                 {/* Capability pills */}
-                <div className="grid grid-cols-2 gap-3 mb-6">
+                <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 mb-6">
                   {capabilities.map((cap) => (
                     <div
                       key={cap.label}
