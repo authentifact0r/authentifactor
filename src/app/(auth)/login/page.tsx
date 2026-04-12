@@ -165,7 +165,7 @@ export default function LoginPage() {
                     transitionDelay: "0.2s",
                   }}
                 >
-                  <Image src="/images/authentifactor-logo.png" alt="Authentifactor" width={100} height={30} className="h-8 w-auto object-contain" />
+                  <Image src="/images/authentifactor-logo.png" alt="Authentifactor" width={120} height={40} className="h-10 w-auto object-contain" />
                 </div>
 
                 <div className="overflow-hidden rounded-xl">
@@ -190,7 +190,7 @@ export default function LoginPage() {
               }}
             >
               <div className="mb-8">
-                <Image src="/images/authentifactor-logo.png" alt="Authentifactor" width={150} height={40} className="h-8 w-auto mb-6 brightness-0 invert" />
+                <Image src="/images/authentifactor-logo.png" alt="Authentifactor" width={200} height={60} className="h-12 w-auto mb-6 brightness-0 invert" />
                 <h2 className="text-xl font-semibold text-[#f0ede8] mb-1">Sign in</h2>
                 <p className="text-sm text-[#9e9a94]">Enter your credentials to access your dashboard.</p>
               </div>
