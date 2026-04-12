@@ -105,8 +105,7 @@ export function SplitHero() {
             <p className="split-hero-fade split-hero-d3 max-w-xl text-lg text-zinc-400 leading-relaxed">
               From commerce platforms to AI integration, CRM to payment
               infrastructure — we consult, design, engineer, and scale
-              world-class digital products for ambitious brands across
-              London and Lagos.
+              world-class digital products for ambitious brands.
             </p>
 
             {/* CTA Buttons */}
