@@ -63,101 +63,150 @@ export default function LoginPage() {
   };
 
   const brandName = tenant?.name || "Authentifactor";
-  const accent = tenant?.accentColor || "#C5A059";
   const isTenant = !!tenant;
+
+  // Tenant stores use their own accent, platform uses jade green
+  const accent = isTenant ? (tenant?.accentColor || "#C5A059") : "#2DD4A0";
+  const accentHover = isTenant ? accent : "#1FA87D";
 
   const collageImages = getAuthImages(tenant?.vertical, isTenant);
 
   if (!mounted) return null;
 
+  // Tenant stores keep the cream luxury theme
+  if (isTenant) {
+    return (
+      <div className="min-h-screen w-full bg-[#F9F7F2]">
+        <div className="flex min-h-screen items-center justify-center p-4 md:p-0">
+          <div className={`w-full max-w-4xl overflow-hidden rounded-2xl bg-white shadow-xl shadow-gray-200/50 transition-all duration-500 ${formVisible ? "opacity-100 scale-100" : "opacity-0 scale-95"}`}>
+            <div className="flex flex-col md:flex-row">
+              <div className="hidden md:flex w-full md:w-1/2 bg-[#F5F0E8] p-4 items-center">
+                <div className="grid grid-cols-3 grid-rows-2 gap-2.5 w-full" style={{ height: "420px" }}>
+                  <div className="overflow-hidden rounded-xl row-span-2">
+                    <img src={collageImages[0].src} alt={collageImages[0].alt} className="w-full h-full object-cover" />
+                  </div>
+                  <div className="rounded-xl flex flex-col justify-center items-center p-3 text-white" style={{ backgroundColor: accent, transform: formVisible ? "translateY(0)" : "translateY(20px)", opacity: formVisible ? 1 : 0, transition: "transform 0.6s ease-out, opacity 0.6s ease-out", transitionDelay: "0.2s" }}>
+                    <h2 className="text-3xl font-bold mb-0.5" style={{ fontFamily: "var(--font-display, Georgia), serif" }}>✦</h2>
+                    <p className="text-center text-[10px] leading-tight opacity-90">{brandName}</p>
+                  </div>
+                  <div className="overflow-hidden rounded-xl"><img src={collageImages[1].src} alt={collageImages[1].alt} className="w-full h-full object-cover" /></div>
+                  <div className="overflow-hidden rounded-xl"><img src={collageImages[2].src} alt={collageImages[2].alt} className="w-full h-full object-cover" /></div>
+                  <div className="overflow-hidden rounded-xl"><img src={collageImages[3].src} alt={collageImages[3].alt} className="w-full h-full object-cover" /></div>
+                </div>
+              </div>
+              <div className="w-full md:w-1/2 p-8 md:p-10 bg-white flex flex-col justify-center" style={{ transform: formVisible ? "translateX(0)" : "translateX(20px)", opacity: formVisible ? 1 : 0, transition: "transform 0.6s ease-out, opacity 0.6s ease-out" }}>
+                <div className="mb-8">
+                  {tenant?.logo ? (
+                    <img src={tenant.logo} alt={brandName} className="h-10 w-auto object-contain mb-6" />
+                  ) : (
+                    <h1 className="text-2xl mb-6" style={{ fontFamily: "var(--font-display, Georgia), serif", fontStyle: "italic", color: "#1a1a1a" }}>{brandName}</h1>
+                  )}
+                  <h2 className="text-xl font-semibold text-[#1a1a1a] mb-1">Welcome back</h2>
+                  <p className="text-sm text-[#777]">{tenant?.tagline || "Enter your credentials to access your dashboard."}</p>
+                </div>
+                <form onSubmit={handleSubmit} className="space-y-5">
+                  {error && <div className="rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">{error}</div>}
+                  <div>
+                    <label htmlFor="login-email" className="block text-sm font-medium text-[#1a1a1a] mb-1.5">Email Address</label>
+                    <input type="email" id="login-email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" autoComplete="email" required className="block w-full rounded-lg border border-gray-300 py-3 px-4 text-sm text-[#1a1a1a] placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:border-transparent transition" />
+                  </div>
+                  <div>
+                    <div className="flex items-center justify-between mb-1.5">
+                      <label htmlFor="login-password" className="block text-sm font-medium text-[#1a1a1a]">Password</label>
+                      <a href="mailto:cs@authentifactor.com?subject=Password%20Reset%20Request" className="text-xs font-medium transition" style={{ color: accent }}>Forgot password?</a>
+                    </div>
+                    <div className="relative">
+                      <input type={showPassword ? "text" : "password"} id="login-password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Enter your password" autoComplete="current-password" required className="block w-full rounded-lg border border-gray-300 py-3 px-4 pr-10 text-sm text-[#1a1a1a] placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:border-transparent transition" />
+                      <button type="button" className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600 transition" onClick={() => setShowPassword(!showPassword)}>{showPassword ? <EyeOff size={16} /> : <Eye size={16} />}</button>
+                    </div>
+                  </div>
+                  <button type="submit" disabled={loading} className="flex w-full justify-center rounded-lg py-3 px-4 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed" style={{ backgroundColor: accent }}>{loading ? <span className="flex items-center"><svg className="mr-2 h-4 w-4 animate-spin" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" /></svg>Signing in...</span> : "Sign In"}</button>
+                </form>
+                <p className="mt-6 text-center text-xs text-gray-400">Don&apos;t have an account?{" "}<Link href="/register" className="font-medium transition" style={{ color: accent }}>Create one</Link></p>
+                <p className="mt-4 text-center text-[9px] text-gray-300 tracking-wide">Powered by Authentifactor</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ─── Platform login: Cinematic dark theme ───
   return (
-    <div className="min-h-screen w-full bg-[#F9F7F2]">
-      <div className="flex min-h-screen items-center justify-center p-4 md:p-0">
+    <div className="min-h-screen w-full bg-[#0e0e0e] relative overflow-hidden">
+      {/* Ambient glow */}
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-[#2DD4A0]/[0.06] rounded-full blur-[150px]" />
+        <div className="absolute bottom-0 right-1/4 w-[400px] h-[400px] bg-[#00BFFF]/[0.05] rounded-full blur-[120px]" />
+      </div>
+
+      <div className="relative z-10 flex min-h-screen items-center justify-center p-4 md:p-0">
         <div
-          className={`w-full max-w-4xl overflow-hidden rounded-2xl bg-white shadow-xl shadow-gray-200/50 transition-all duration-500 ${formVisible ? "opacity-100 scale-100" : "opacity-0 scale-95"}`}
+          className={`w-full max-w-4xl overflow-hidden rounded-2xl bg-[#1e1e1e] shadow-2xl shadow-black/60 transition-all duration-600 ${formVisible ? "opacity-100 scale-100" : "opacity-0 scale-95"}`}
         >
           <div className="flex flex-col md:flex-row">
 
-            {/* Left side — Fashion imagery collage */}
-            <div className="hidden md:flex w-full md:w-1/2 bg-[#F5F0E8] p-4 items-center">
+            {/* Left side — Tech collage */}
+            <div className="hidden md:flex w-full md:w-1/2 bg-[#131313] p-4 items-center">
               <div className="grid grid-cols-3 grid-rows-2 gap-2.5 w-full" style={{ height: "420px" }}>
-                {/* Image 1 — Dress */}
                 <div className="overflow-hidden rounded-xl row-span-2">
-                  <img src={collageImages[0].src} alt={collageImages[0].alt} className="w-full h-full object-cover" />
+                  <img src={collageImages[0].src} alt={collageImages[0].alt} className="w-full h-full object-cover opacity-80" />
                 </div>
 
-                {/* Stat card */}
+                {/* Stat card — jade green */}
                 <div
-                  className="rounded-xl flex flex-col justify-center items-center p-3 text-white"
+                  className="rounded-xl flex flex-col justify-center items-center p-3"
                   style={{
-                    backgroundColor: accent,
+                    background: "linear-gradient(135deg, #2DD4A0, #00BFFF)",
                     transform: formVisible ? "translateY(0)" : "translateY(20px)",
                     opacity: formVisible ? 1 : 0,
                     transition: "transform 0.6s ease-out, opacity 0.6s ease-out",
                     transitionDelay: "0.2s",
                   }}
                 >
-                  <h2 className="text-3xl font-bold mb-0.5" style={{ fontFamily: "var(--font-display, Georgia), serif" }}>
-                    {isTenant ? "✦" : "4+"}
+                  <h2 className="text-3xl font-bold mb-0.5 text-[#0e0e0e]" style={{ fontFamily: "var(--font-display, 'Space Grotesk'), sans-serif" }}>
+                    A
                   </h2>
-                  <p className="text-center text-[10px] leading-tight opacity-90">
-                    {isTenant ? brandName : "Live Brands"}
+                  <p className="text-center text-[10px] leading-tight text-[#0e0e0e]/70 font-medium">
+                    Authentifactor
                   </p>
                 </div>
 
-                {/* Image 2 — Earrings */}
                 <div className="overflow-hidden rounded-xl">
-                  <img src={collageImages[1].src} alt={collageImages[1].alt} className="w-full h-full object-cover" />
+                  <img src={collageImages[1].src} alt={collageImages[1].alt} className="w-full h-full object-cover opacity-80" />
                 </div>
-
-                {/* Image 3 — Handbag */}
                 <div className="overflow-hidden rounded-xl">
-                  <img src={collageImages[2].src} alt={collageImages[2].alt} className="w-full h-full object-cover" />
+                  <img src={collageImages[2].src} alt={collageImages[2].alt} className="w-full h-full object-cover opacity-80" />
                 </div>
-
-                {/* Image 4 — Fashion */}
                 <div className="overflow-hidden rounded-xl">
-                  <img src={collageImages[3].src} alt={collageImages[3].alt} className="w-full h-full object-cover" />
+                  <img src={collageImages[3].src} alt={collageImages[3].alt} className="w-full h-full object-cover opacity-80" />
                 </div>
               </div>
             </div>
 
             {/* Right side — Sign in form */}
             <div
-              className="w-full md:w-1/2 p-8 md:p-10 bg-white flex flex-col justify-center"
+              className="w-full md:w-1/2 p-8 md:p-10 bg-[#1e1e1e] flex flex-col justify-center"
               style={{
                 transform: formVisible ? "translateX(0)" : "translateX(20px)",
                 opacity: formVisible ? 1 : 0,
                 transition: "transform 0.6s ease-out, opacity 0.6s ease-out",
               }}
             >
-              {/* Header */}
               <div className="mb-8">
-                {tenant?.logo ? (
-                  <img src={tenant.logo} alt={brandName} className="h-10 w-auto object-contain mb-6" />
-                ) : isTenant ? (
-                  <h1 className="text-2xl mb-6" style={{ fontFamily: "var(--font-display, Georgia), serif", fontStyle: "italic", color: "#1a1a1a" }}>
-                    {brandName}
-                  </h1>
-                ) : (
-                  <Image src="/images/authentifactor-logo.png" alt="Authentifactor" width={150} height={40} className="h-8 w-auto mb-6" />
-                )}
-
-                <h2 className="text-xl font-semibold text-[#1a1a1a] mb-1">
-                  {isTenant ? "Welcome back" : "Sign in"}
-                </h2>
-                <p className="text-sm text-[#777]">
-                  {tenant?.tagline || "Enter your credentials to access your dashboard."}
-                </p>
+                <Image src="/images/authentifactor-logo.png" alt="Authentifactor" width={150} height={40} className="h-8 w-auto mb-6" />
+                <h2 className="text-xl font-semibold text-[#f0ede8] mb-1">Sign in</h2>
+                <p className="text-sm text-[#9e9a94]">Enter your credentials to access your dashboard.</p>
               </div>
 
               <form onSubmit={handleSubmit} className="space-y-5">
                 {error && (
-                  <div className="rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">{error}</div>
+                  <div className="rounded-lg bg-red-500/10 px-4 py-3 text-sm text-red-400">{error}</div>
                 )}
 
                 <div>
-                  <label htmlFor="login-email" className="block text-sm font-medium text-[#1a1a1a] mb-1.5">Email Address</label>
+                  <label htmlFor="login-email" className="block text-xs font-semibold uppercase tracking-[0.12em] text-[#9e9a94] mb-2">Email Address</label>
                   <input
                     type="email"
                     id="login-email"
@@ -166,15 +215,14 @@ export default function LoginPage() {
                     placeholder="you@example.com"
                     autoComplete="email"
                     required
-                    className="block w-full rounded-lg border border-gray-300 py-3 px-4 text-sm text-[#1a1a1a] placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:border-transparent transition"
-                    style={{ focusRingColor: accent } as any}
+                    className="block w-full rounded-xl bg-[#252525] py-3.5 px-4 text-sm text-[#f0ede8] placeholder:text-[#6b6762] focus:outline-none focus:ring-2 focus:ring-[#2DD4A0]/30 transition"
                   />
                 </div>
 
                 <div>
-                  <div className="flex items-center justify-between mb-1.5">
-                    <label htmlFor="login-password" className="block text-sm font-medium text-[#1a1a1a]">Password</label>
-                    <a href="mailto:cs@authentifactor.com?subject=Password%20Reset%20Request" className="text-xs font-medium transition" style={{ color: accent }}>Forgot password?</a>
+                  <div className="flex items-center justify-between mb-2">
+                    <label htmlFor="login-password" className="block text-xs font-semibold uppercase tracking-[0.12em] text-[#9e9a94]">Password</label>
+                    <a href="mailto:cs@authentifactor.com?subject=Password%20Reset%20Request" className="text-xs font-medium text-[#2DD4A0] hover:text-[#1FA87D] transition">Forgot password?</a>
                   </div>
                   <div className="relative">
                     <input
@@ -185,11 +233,11 @@ export default function LoginPage() {
                       placeholder="Enter your password"
                       autoComplete="current-password"
                       required
-                      className="block w-full rounded-lg border border-gray-300 py-3 px-4 pr-10 text-sm text-[#1a1a1a] placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:border-transparent transition"
+                      className="block w-full rounded-xl bg-[#252525] py-3.5 px-4 pr-10 text-sm text-[#f0ede8] placeholder:text-[#6b6762] focus:outline-none focus:ring-2 focus:ring-[#2DD4A0]/30 transition"
                     />
                     <button
                       type="button"
-                      className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600 transition"
+                      className="absolute inset-y-0 right-0 flex items-center pr-3 text-[#6b6762] hover:text-[#9e9a94] transition"
                       onClick={() => setShowPassword(!showPassword)}
                     >
                       {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
@@ -200,8 +248,8 @@ export default function LoginPage() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="flex w-full justify-center rounded-lg py-3 px-4 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed"
-                  style={{ backgroundColor: accent }}
+                  className="flex w-full justify-center rounded-xl py-3.5 px-4 text-sm font-semibold text-[#0e0e0e] shadow-lg shadow-[#2DD4A0]/20 transition-all duration-200 hover:shadow-[#2DD4A0]/40 hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                  style={{ background: "linear-gradient(135deg, #2DD4A0, #00BFFF)" }}
                 >
                   {loading ? (
                     <span className="flex items-center">
@@ -215,14 +263,14 @@ export default function LoginPage() {
                 </button>
 
                 <div className="relative flex items-center py-1">
-                  <div className="flex-grow border-t border-gray-200" />
-                  <span className="flex-shrink mx-4 text-xs text-gray-400 uppercase tracking-wider">or</span>
-                  <div className="flex-grow border-t border-gray-200" />
+                  <div className="flex-grow h-px bg-[#2a2826]" />
+                  <span className="flex-shrink mx-4 text-xs text-[#6b6762] uppercase tracking-wider">or</span>
+                  <div className="flex-grow h-px bg-[#2a2826]" />
                 </div>
 
                 <button
                   type="button"
-                  className="flex w-full items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white py-3 px-4 text-sm font-medium text-gray-700 hover:bg-gray-50 transition"
+                  className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#252525] py-3.5 px-4 text-sm font-medium text-[#C0C0C0] hover:bg-[#2c2c2c] hover:text-[#f0ede8] transition cursor-pointer"
                 >
                   <svg className="h-5 w-5" viewBox="0 0 24 24">
                     <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
@@ -234,16 +282,10 @@ export default function LoginPage() {
                 </button>
               </form>
 
-              <p className="mt-6 text-center text-xs text-gray-400">
+              <p className="mt-6 text-center text-xs text-[#6b6762]">
                 Don&apos;t have an account?{" "}
-                <Link href="/register" className="font-medium transition" style={{ color: accent }}>Create one</Link>
+                <Link href="/get-started" className="font-medium text-[#2DD4A0] hover:text-[#1FA87D] transition">Get Started</Link>
               </p>
-
-              {isTenant && (
-                <p className="mt-4 text-center text-[9px] text-gray-300 tracking-wide">
-                  Powered by Authentifactor
-                </p>
-              )}
             </div>
           </div>
         </div>
