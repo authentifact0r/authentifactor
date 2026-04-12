@@ -352,78 +352,141 @@ export default function PlatformShell({
       {/* ─── Editorial Footer ─── */}
       <footer className="bg-gray-950 pt-24 pb-12">
         <div className="mx-auto max-w-6xl px-6">
-          <div className="flex flex-col items-start gap-8 border-b border-white/[0.06] pb-16 md:flex-row md:items-end md:justify-between">
+          {/* ─── CTA Banner ─── */}
+          <div className="rounded-2xl border border-white/[0.06] bg-white/[0.03] p-10 md:p-14 text-center mb-16">
+            <h3 className="text-2xl md:text-3xl font-bold text-white tracking-tight">
+              Ready to architect your{" "}
+              <span className="font-light italic text-emerald-400" style={{ fontFamily: "var(--font-serif)" }}>
+                next move?
+              </span>
+            </h3>
+            <p className="mt-4 text-sm text-gray-400 max-w-md mx-auto">
+              Tell us about your business. We&apos;ll map a strategy, scope the work, and move fast.
+            </p>
+            <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
+              <Link
+                href="/get-started"
+                className="group inline-flex items-center gap-2 rounded-full bg-emerald-500 px-8 py-3.5 text-sm font-bold text-white shadow-lg shadow-emerald-500/25 transition-all hover:bg-emerald-400 hover:shadow-emerald-500/40 hover:scale-[1.02]"
+              >
+                Start a Project
+                <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+              </Link>
+              <a
+                href="mailto:cs@authentifactor.com"
+                className="inline-flex items-center gap-2 rounded-full border border-white/[0.08] px-6 py-3 text-sm font-medium text-gray-400 transition-colors hover:bg-white/[0.04] hover:text-white"
+              >
+                Or email us directly
+              </a>
+            </div>
+          </div>
+
+          {/* ─── Logo + tagline ─── */}
+          <div className="flex flex-col items-start gap-8 border-b border-white/[0.06] pb-12 md:flex-row md:items-center md:justify-between">
             <div>
               <Image
                 src="/images/authentifactor-logo.png"
                 alt="Authentifactor"
                 width={375}
                 height={375}
-                className="h-20 w-auto"
+                className="h-16 w-auto"
               />
-              <p className="mt-6 max-w-sm text-sm leading-relaxed text-gray-500">
-                We architect the digital infrastructure that powers ambitious brands.
-                Your vision, our engineering.
+              <p className="mt-4 max-w-sm text-sm leading-relaxed text-gray-500">
+                Digital solution architects for ambitious brands.
+                Commerce, AI, CRM, security, and strategy — unified.
               </p>
             </div>
-            <Link
-              href="/get-started"
-              className="group flex items-center gap-3 text-lg font-semibold text-white transition-colors hover:text-emerald-400"
+            <a
+              href="mailto:cs@authentifactor.com"
+              className="text-sm text-gray-500 hover:text-emerald-400 transition-colors"
             >
-              Start a project
-              <ArrowUpRight className="h-5 w-5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-            </Link>
+              cs@authentifactor.com
+            </a>
           </div>
 
+          {/* ─── Link columns ─── */}
           <div className="grid gap-10 border-b border-white/[0.06] py-12 md:grid-cols-4">
             <div>
-              <h4 className="text-xs font-semibold uppercase tracking-[0.2em] text-gray-600">Services</h4>
+              <h4 className="text-xs font-semibold uppercase tracking-[0.2em] text-white/30">Services</h4>
               <ul className="mt-5 space-y-3">
                 {[
-                  { label: "Commerce & Platforms", href: "#services" },
-                  { label: "AI Integration", href: "#services" },
-                  { label: "CRM & Lead Gen", href: "#services" },
-                  { label: "Cyber Security", href: "#services" },
-                  { label: "Business Consulting", href: "#services" },
+                  { label: "Commerce & Platforms", href: "/#services" },
+                  { label: "AI & Automation", href: "/#services" },
+                  { label: "CRM & Lead Gen", href: "/#services" },
+                  { label: "Payment & Fintech", href: "/#services" },
+                  { label: "Cyber Security", href: "/#services" },
+                  { label: "Business Consulting", href: "/#services" },
                 ].map((s) => (
-                  <li key={s.label}><a href={s.href} className="text-sm text-gray-500 transition-colors hover:text-white">{s.label}</a></li>
+                  <li key={s.label}>
+                    <Link href={s.href} className="text-sm text-gray-500 transition-colors hover:text-white">
+                      {s.label}
+                    </Link>
+                  </li>
                 ))}
               </ul>
             </div>
             <div>
-              <h4 className="text-xs font-semibold uppercase tracking-[0.2em] text-gray-600">Company</h4>
+              <h4 className="text-xs font-semibold uppercase tracking-[0.2em] text-white/30">Company</h4>
               <ul className="mt-5 space-y-3">
                 {[
-                  { label: "Our Work", href: "#work" },
-                  { label: "Capabilities", href: "#capabilities" },
-                  { label: "Process", href: "#process" },
+                  { label: "Our Work", href: "/#work" },
+                  { label: "Capabilities", href: "/#capabilities" },
+                  { label: "Process", href: "/#process" },
                   { label: "Get Started", href: "/get-started" },
+                  { label: "Marketplace", href: "/marketplace" },
                 ].map((s) => (
-                  <li key={s.label}><a href={s.href} className="text-sm text-gray-500 transition-colors hover:text-white">{s.label}</a></li>
+                  <li key={s.label}>
+                    <Link href={s.href} className="text-sm text-gray-500 transition-colors hover:text-white">
+                      {s.label}
+                    </Link>
+                  </li>
                 ))}
               </ul>
             </div>
             <div>
-              <h4 className="text-xs font-semibold uppercase tracking-[0.2em] text-gray-600">Legal</h4>
+              <h4 className="text-xs font-semibold uppercase tracking-[0.2em] text-white/30">Legal</h4>
               <ul className="mt-5 space-y-3">
-                {[{ label: "Privacy Policy", href: "/legal/privacy" }, { label: "Terms of Service", href: "/legal/terms" }, { label: "Cookie Policy", href: "/legal/cookies" }, { label: "Merchant Terms", href: "/legal/merchant-terms" }].map((s) => (
-                  <li key={s.label}><Link href={s.href} className="text-sm text-gray-500 transition-colors hover:text-white">{s.label}</Link></li>
+                {[
+                  { label: "Privacy Policy", href: "/legal/privacy" },
+                  { label: "Terms of Service", href: "/legal/terms" },
+                  { label: "Cookie Policy", href: "/legal/cookies" },
+                  { label: "Merchant Terms", href: "/legal/merchant-terms" },
+                  { label: "GDPR", href: "/legal/gdpr" },
+                  { label: "Security", href: "/legal/security" },
+                ].map((s) => (
+                  <li key={s.label}>
+                    <Link href={s.href} className="text-sm text-gray-500 transition-colors hover:text-white">
+                      {s.label}
+                    </Link>
+                  </li>
                 ))}
               </ul>
             </div>
             <div>
-              <h4 className="text-xs font-semibold uppercase tracking-[0.2em] text-gray-600">Connect</h4>
+              <h4 className="text-xs font-semibold uppercase tracking-[0.2em] text-white/30">Connect</h4>
               <ul className="mt-5 space-y-3">
-                <li><a href="mailto:cs@authentifactor.com" className="text-sm text-gray-500 transition-colors hover:text-white">cs@authentifactor.com</a></li>
-                <li><a href="https://linkedin.com/company/authentifactor" target="_blank" rel="noopener noreferrer" className="text-sm text-gray-500 transition-colors hover:text-white">LinkedIn</a></li>
-                <li><a href="https://x.com/authentifactor" target="_blank" rel="noopener noreferrer" className="text-sm text-gray-500 transition-colors hover:text-white">X (Twitter)</a></li>
+                <li>
+                  <a href="mailto:cs@authentifactor.com" className="text-sm text-gray-500 transition-colors hover:text-white">
+                    cs@authentifactor.com
+                  </a>
+                </li>
+                <li>
+                  <a href="https://linkedin.com/company/authentifactor" target="_blank" rel="noopener noreferrer" className="text-sm text-gray-500 transition-colors hover:text-white">
+                    LinkedIn
+                  </a>
+                </li>
+                <li>
+                  <a href="https://x.com/authentifactor" target="_blank" rel="noopener noreferrer" className="text-sm text-gray-500 transition-colors hover:text-white">
+                    X (Twitter)
+                  </a>
+                </li>
               </ul>
             </div>
           </div>
 
+          {/* ─── Bottom bar ─── */}
           <div className="flex flex-col items-center justify-between gap-4 pt-8 md:flex-row">
-            <p className="text-xs text-gray-700">&copy; 2026 Authentifactor. All rights reserved.</p>
-            <p className="text-xs text-gray-800">Built by Authentifactor</p>
+            <p className="text-xs text-gray-600">&copy; {new Date().getFullYear()} Authentifactor Ltd. All rights reserved.</p>
+            <p className="text-xs text-gray-700">Digital Solution Architects</p>
           </div>
         </div>
       </footer>
