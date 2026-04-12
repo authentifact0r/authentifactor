@@ -71,12 +71,12 @@ const megaNavItems = [
     href: "/marketplace",
     columns: [
       {
-        title: "Browse",
+        title: "Solutions",
         links: [
-          { label: "All Stores", href: "/marketplace" },
-          { label: "Grocery & Food", href: "/marketplace" },
-          { label: "Fashion", href: "/marketplace" },
-          { label: "Beauty & Wellness", href: "/marketplace" },
+          { label: "SaaS & Platform as a Service", href: "/marketplace" },
+          { label: "Web & Product Development", href: "/marketplace" },
+          { label: "Lead Generation & Growth", href: "/marketplace" },
+          { label: "Digital Trust & Security", href: "/marketplace" },
         ],
       },
       {
