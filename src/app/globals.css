@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Instrument+Serif:ital@0;1&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Instrument+Serif:ital@0;1&family=Space+Grotesk:wght@300;400;500;600;700&family=Manrope:wght@200..800&family=JetBrains+Mono:wght@400;500;600&display=swap');
 @import "tailwindcss";
 
 @theme {
@@ -6,6 +6,83 @@
   --color-accent: #F59E0B;
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-serif: "Instrument Serif", serif;
+}
+
+/* ─── Cinematic AI Editorial Theme ────────────────────────────
+   Applied to platform pages via data-theme="cinematic" on the
+   platform-shell root div. Does NOT affect admin, superadmin,
+   or tenant storefronts. */
+
+[data-theme="cinematic"] {
+  /* Surfaces */
+  --cin-bg: #1e1e1e;
+  --cin-surface: #0e0e0e;
+  --cin-surface-low: #131313;
+  --cin-card: #181818;
+  --cin-card-high: #201f1f;
+  --cin-elevated: #262626;
+  --cin-glass: #2c2c2c;
+
+  /* Brand accents */
+  --cin-accent: #ff8f70;
+  --cin-accent-dim: #cc7259;
+  --cin-accent-glow: rgba(255, 143, 112, 0.15);
+  --cin-secondary: #e8d5c4;
+  --cin-tertiary: #8ab4f8;
+  --cin-error: #f28b82;
+
+  /* Text */
+  --cin-text: #f0ede8;
+  --cin-text-secondary: #9e9a94;
+  --cin-text-muted: #6b6762;
+  --cin-outline: #3d3a36;
+  --cin-outline-dim: #2a2826;
+
+  /* Fonts — override base vars for platform pages */
+  --font-sans: "Manrope", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Space Grotesk", sans-serif;
+  --font-display: "Space Grotesk", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+}
+
+/* Cinematic utilities */
+.cin-glass {
+  background: rgba(44, 44, 44, 0.50);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(240, 237, 232, 0.06);
+}
+.cin-light-bleed {
+  background: radial-gradient(
+    ellipse 80% 50% at 50% 100%,
+    rgba(255, 143, 112, 0.12) 0%,
+    transparent 70%
+  );
+}
+.cin-light-bleed-blue {
+  background: radial-gradient(
+    ellipse 80% 50% at 50% 100%,
+    rgba(138, 180, 248, 0.08) 0%,
+    transparent 70%
+  );
+}
+
+/* Cinematic motion */
+@keyframes cin-fade-up {
+  0% { opacity: 0; transform: translate3d(0, 20px, 0); filter: blur(4px); }
+  100% { opacity: 1; transform: translate3d(0, 0, 0); filter: blur(0); }
+}
+@keyframes cin-glow-pulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.8; }
+}
+.cin-fade-up { animation: cin-fade-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+.cin-glow { animation: cin-glow-pulse 4s ease-in-out infinite; }
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .cin-fade-up,
+  .cin-glow { animation-duration: 0.01ms !important; }
 }
 
 html {
