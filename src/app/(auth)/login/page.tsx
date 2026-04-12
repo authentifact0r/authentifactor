@@ -154,7 +154,7 @@ export default function LoginPage() {
                   <img src={collageImages[0].src} alt={collageImages[0].alt} className="w-full h-full object-cover opacity-80" />
                 </div>
 
-                {/* Stat card — jade green */}
+                {/* Brand card — jade/blue gradient */}
                 <div
                   className="rounded-xl flex flex-col justify-center items-center p-3"
                   style={{
@@ -165,12 +165,7 @@ export default function LoginPage() {
                     transitionDelay: "0.2s",
                   }}
                 >
-                  <h2 className="text-3xl font-bold mb-0.5 text-[#0e0e0e]" style={{ fontFamily: "var(--font-display, 'Space Grotesk'), sans-serif" }}>
-                    A
-                  </h2>
-                  <p className="text-center text-[10px] leading-tight text-[#0e0e0e]/70 font-medium">
-                    Authentifactor
-                  </p>
+                  <Image src="/images/authentifactor-logo.png" alt="Authentifactor" width={100} height={30} className="h-8 w-auto object-contain" />
                 </div>
 
                 <div className="overflow-hidden rounded-xl">
@@ -195,7 +190,7 @@ export default function LoginPage() {
               }}
             >
               <div className="mb-8">
-                <Image src="/images/authentifactor-logo.png" alt="Authentifactor" width={150} height={40} className="h-8 w-auto mb-6" />
+                <Image src="/images/authentifactor-logo.png" alt="Authentifactor" width={150} height={40} className="h-8 w-auto mb-6 brightness-0 invert" />
                 <h2 className="text-xl font-semibold text-[#f0ede8] mb-1">Sign in</h2>
                 <p className="text-sm text-[#9e9a94]">Enter your credentials to access your dashboard.</p>
               </div>
