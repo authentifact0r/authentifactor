@@ -190,7 +190,7 @@ export default function LoginPage() {
               }}
             >
               <div className="mb-8">
-                <Image src="/images/authentifactor-logo.png" alt="Authentifactor" width={200} height={60} className="h-12 w-auto mb-6 brightness-0 invert" />
+                <Image src="/images/authentifactor-logo.png" alt="Authentifactor" width={300} height={90} className="h-20 w-auto mb-8 brightness-0 invert" />
                 <h2 className="text-xl font-semibold text-[#f0ede8] mb-1">Sign in</h2>
                 <p className="text-sm text-[#9e9a94]">Enter your credentials to access your dashboard.</p>
               </div>
