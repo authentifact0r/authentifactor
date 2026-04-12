@@ -194,8 +194,8 @@ export default function PlatformLandingPage() {
       />
 
       {/* ═══ FAQ ═══ */}
-      <div className="relative w-full bg-[#0e0e0e] overflow-hidden">
-        <div className="absolute inset-0" style={{ background: "radial-gradient(ellipse 50% 100% at 10% 0%, rgba(255, 143, 112, 0.06), transparent 65%), #0e0e0e" }} />
+      <div id="faq" className="relative w-full bg-[#0e0e0e] overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "radial-gradient(ellipse 50% 100% at 10% 0%, rgba(45, 212, 160, 0.06), transparent 65%), #0e0e0e" }} />
         <FAQSection />
       </div>
 

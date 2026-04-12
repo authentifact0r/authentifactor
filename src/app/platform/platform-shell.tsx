@@ -15,27 +15,29 @@ const megaNavItems = [
     href: "#services",
     columns: [
       {
-        title: "Commerce",
+        title: "Build",
         links: [
-          { label: "E-Commerce Platforms", href: "#services" },
-          { label: "Multi-Tenant Storefronts", href: "#services" },
-          { label: "Payment Integration", href: "#services" },
-          { label: "Subscription & Auto-Ship", href: "#services" },
+          { label: "Commerce & Platforms", href: "#services" },
+          { label: "AI Integration & Automation", href: "#services" },
+          { label: "CRM & Customer Data", href: "#services" },
+          { label: "Payment & Fintech", href: "#services" },
+          { label: "Digital Ops & Automation", href: "#services" },
         ],
       },
       {
-        title: "Digital",
+        title: "Grow",
         links: [
-          { label: "Brand Websites", href: "#services" },
-          { label: "Mobile Apps", href: "#services" },
-          { label: "SEO & Growth", href: "#services" },
-          { label: "Custom Development", href: "#services" },
+          { label: "Brand Strategy & Storytelling", href: "#services" },
+          { label: "Lead Gen & Conversion", href: "#services" },
+          { label: "Analytics & BI", href: "#services" },
+          { label: "Cyber Security & Compliance", href: "#services" },
+          { label: "Business Consulting", href: "#services" },
         ],
       },
     ],
     features: [
-      { image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&q=80&fit=crop", title: "E-Commerce", link: "#services" },
-      { image: "https://images.unsplash.com/photo-1551434678-e076c223a692?w=400&q=80&fit=crop", title: "Custom Dev", link: "#services" },
+      { image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&q=80&fit=crop", title: "10 Services", link: "#services" },
+      { image: "https://images.unsplash.com/photo-1551434678-e076c223a692?w=400&q=80&fit=crop", title: "Full Spectrum", link: "#services" },
     ],
   },
   {
@@ -43,26 +45,26 @@ const megaNavItems = [
     href: "#capabilities",
     columns: [
       {
-        title: "Platform",
+        title: "Technology",
         links: [
           { label: "Multi-Tenant Architecture", href: "#capabilities" },
-          { label: "Stripe & Paystack", href: "#capabilities" },
-          { label: "Apple Pay & Google Pay", href: "#capabilities" },
-          { label: "Geo-Currency Detection", href: "#capabilities" },
+          { label: "AI-Powered Intelligence", href: "#capabilities" },
+          { label: "Edge Performance & CDN", href: "#capabilities" },
+          { label: "Stripe, Paystack & Mobile Money", href: "#capabilities" },
         ],
       },
       {
-        title: "Infrastructure",
+        title: "Trust & Scale",
         links: [
-          { label: "Vercel Edge Deployment", href: "#capabilities" },
-          { label: "Custom Domain Routing", href: "#capabilities" },
-          { label: "GDPR & Compliance", href: "#capabilities" },
-          { label: "Real-Time Analytics", href: "#capabilities" },
+          { label: "Enterprise Security & RBAC", href: "#capabilities" },
+          { label: "GDPR & PCI-DSS Compliance", href: "#capabilities" },
+          { label: "Real-Time Analytics & BI", href: "#capabilities" },
+          { label: "CRM & Automation Pipelines", href: "#capabilities" },
         ],
       },
     ],
     features: [
-      { image: "https://images.unsplash.com/photo-1553877522-43269d4ea984?w=400&q=80&fit=crop", title: "Platform Power", link: "#capabilities" },
+      { image: "https://images.unsplash.com/photo-1553877522-43269d4ea984?w=400&q=80&fit=crop", title: "Enterprise Grade", link: "#capabilities" },
       { image: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=400&q=80&fit=crop", title: "Scale Ready", link: "#capabilities" },
     ],
   },
@@ -71,21 +73,25 @@ const megaNavItems = [
     href: "#work",
     columns: [
       {
-        title: "Live Clients",
+        title: "Live Projects",
         links: [
-          { label: "Taste of Motherland", href: "https://taste-of-motherland.authentifactor.com" },
-          { label: "Styled by Maryam", href: "https://styledbymaryam.com" },
-          { label: "Vibrant Minds", href: "https://vibrantmindsasc.org.uk" },
-          { label: "Toks Mimi Foods", href: "https://toks-mimi.authentifactor.com" },
+          { label: "Taste of Motherland — Grocery", href: "https://taste-of-motherland.authentifactor.com" },
+          { label: "Styled by Maryam — Fashion", href: "https://styledbymaryam.com" },
+          { label: "Vibrant Minds — Education", href: "https://vibrantmindsasc.org.uk" },
+          { label: "Toks Mimi — Catering", href: "https://toks-mimi.authentifactor.com" },
+          { label: "Careceutical — Healthcare", href: "#work" },
+          { label: "BowSea — Career Tech", href: "https://bowsea.com" },
         ],
       },
       {
-        title: "Industries",
+        title: "What We Delivered",
         links: [
-          { label: "African Grocery", href: "#work" },
-          { label: "Luxury Fashion", href: "#work" },
-          { label: "Education", href: "#work" },
-          { label: "Healthcare", href: "#work" },
+          { label: "Commerce & Multi-Tenant", href: "#work" },
+          { label: "AI & Automation Pipelines", href: "#work" },
+          { label: "Payment & Fintech Stack", href: "#work" },
+          { label: "Brand Identity & Storytelling", href: "#work" },
+          { label: "CRM & Lead Generation", href: "#work" },
+          { label: "Cyber Security Audits", href: "#work" },
         ],
       },
     ],
@@ -99,27 +105,31 @@ const megaNavItems = [
     href: "/marketplace",
     columns: [
       {
-        title: "For Merchants",
+        title: "Explore",
         links: [
-          { label: "Browse Stores", href: "/marketplace" },
-          { label: "Start Selling", href: "/get-started" },
-          { label: "Pricing Plans", href: "/get-started" },
-          { label: "Referral Program", href: "/get-started" },
-        ],
-      },
-      {
-        title: "By Category",
-        links: [
+          { label: "Browse All Stores", href: "/marketplace" },
           { label: "Grocery & Food", href: "/marketplace" },
           { label: "Fashion & Textiles", href: "/marketplace" },
           { label: "Catering & Meal Prep", href: "/marketplace" },
           { label: "Beauty & Cosmetics", href: "/marketplace" },
+          { label: "Education & Learning", href: "/marketplace" },
+        ],
+      },
+      {
+        title: "For Businesses",
+        links: [
+          { label: "Start a Project", href: "/get-started" },
+          { label: "View Pricing", href: "/get-started" },
+          { label: "Book a Consultation", href: "mailto:cs@authentifactor.com?subject=Consultation%20Request" },
+          { label: "Referral Programme", href: "/get-started" },
+          { label: "Case Studies", href: "#work" },
+          { label: "FAQ", href: "#faq" },
         ],
       },
     ],
     features: [
       { image: "https://images.unsplash.com/photo-1542838132-92c53300491e?w=400&q=80&fit=crop", title: "Discover Stores", link: "/marketplace" },
-      { image: "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=400&q=80&fit=crop", title: "Join the Platform", link: "/get-started" },
+      { image: "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=400&q=80&fit=crop", title: "Start a Project", link: "/get-started" },
     ],
   },
 ];
