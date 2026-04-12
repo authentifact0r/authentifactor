@@ -174,7 +174,7 @@ export default function LoginPage() {
                 <div>
                   <div className="flex items-center justify-between mb-1.5">
                     <label htmlFor="login-password" className="block text-sm font-medium text-[#1a1a1a]">Password</label>
-                    <a href="#" className="text-xs font-medium transition" style={{ color: accent }}>Forgot password?</a>
+                    <a href="mailto:cs@authentifactor.com?subject=Password%20Reset%20Request" className="text-xs font-medium transition" style={{ color: accent }}>Forgot password?</a>
                   </div>
                   <div className="relative">
                     <input

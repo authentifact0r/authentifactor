@@ -82,7 +82,7 @@ export default async function RevenuePage() {
   const totalFees = tenantRevenue.reduce((s, t) => s + t.fees, 0);
   const totalOrders = tenantRevenue.reduce((s, t) => s + t.orderCount, 0);
   const subscriptionMRR = tenants.reduce((s, t) => {
-    const planPrices: Record<string, number> = { basic: 49, standard: 99, premium: 199 };
+    const planPrices: Record<string, number> = { accelerator: 1995, growth: 4995, transformation: 9995 };
     return s + (planPrices[t.billingPlan] ?? 0);
   }, 0);
 
@@ -146,7 +146,7 @@ export default async function RevenuePage() {
         data={(() => {
           const now = new Date();
           const months: { month: string; gmv: number; fees: number; subscriptions: number }[] = [];
-          const planPrices: Record<string, number> = { basic: 49, standard: 99, premium: 199 };
+          const planPrices: Record<string, number> = { accelerator: 1995, growth: 4995, transformation: 9995 };
 
           for (let i = 5; i >= 0; i--) {
             const monthStart = new Date(now.getFullYear(), now.getMonth() - i, 1);

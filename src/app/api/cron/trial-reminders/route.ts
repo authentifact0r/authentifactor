@@ -45,9 +45,9 @@ export async function GET(request: NextRequest) {
       if (!admin) continue;
 
       const planNames: Record<string, string> = {
-        basic: "Basic",
-        standard: "Standard",
-        premium: "Premium",
+        accelerator: "Accelerator",
+        growth: "Growth Partner",
+        transformation: "Transformation",
       };
 
       await sendTrialExpiryReminder({
@@ -56,7 +56,7 @@ export async function GET(request: NextRequest) {
         storeName: tenant.name,
         storeSlug: tenant.slug,
         daysLeft,
-        planName: planNames[tenant.billingPlan] ?? "Standard",
+        planName: planNames[tenant.billingPlan] ?? "Accelerator",
       });
       sent++;
     }

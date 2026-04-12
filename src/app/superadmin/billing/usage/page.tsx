@@ -33,8 +33,8 @@ export default function SuperadminUsagePage() {
             const res = await fetch(`/api/billing/usage?tenantId=${t.id}&months=1`);
             const usage = await res.json();
             const latest = usage.records?.[0];
-            const planPrices: Record<string, number> = { basic: 49, standard: 99, premium: 199 };
-            const basePlan = planPrices[t.billingPlan] || 99;
+            const planPrices: Record<string, number> = { accelerator: 1995, growth: 4995, transformation: 9995 };
+            const basePlan = planPrices[t.billingPlan] || 1995;
 
             results.push({
               tenantId: t.id,

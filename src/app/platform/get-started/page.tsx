@@ -509,10 +509,10 @@ function GetStartedContent() {
                   <div className="lg:col-span-7">
                     <div className="rounded-2xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-sm p-8">
                       <h2 className="text-xl font-semibold text-white mb-1">
-                        Set up your brand
+                        Tell us about your business
                       </h2>
                       <p className="text-sm text-white/40 mb-8">
-                        Your store details. You can change everything later.
+                        Your business details. You can update everything later.
                       </p>
 
                       <div className="space-y-6">
@@ -581,9 +581,9 @@ function GetStartedContent() {
 
                         <Separator className="bg-white/[0.06]" />
 
-                        {/* Store Name */}
+                        {/* Business Name */}
                         <div>
-                          <label className={labelClass}>Store Name</label>
+                          <label className={labelClass}>Business Name</label>
                           <input
                             type="text"
                             value={storeName}
@@ -593,10 +593,10 @@ function GetStartedContent() {
                           />
                         </div>
 
-                        {/* Store Description */}
+                        {/* Business Description */}
                         <div>
                           <label className={labelClass}>
-                            Store Description{" "}
+                            Business Description{" "}
                             <span className="text-white/20 normal-case tracking-normal">(optional)</span>
                           </label>
                           <textarea
@@ -604,13 +604,13 @@ function GetStartedContent() {
                             onChange={(e) => setStoreDescription(e.target.value)}
                             rows={3}
                             className={cn(inputClass, "resize-y min-h-[80px]")}
-                            placeholder="Tell customers what your store is about..."
+                            placeholder="Tell us what your business does..."
                           />
                         </div>
 
-                        {/* Store URL */}
+                        {/* Business URL */}
                         <div>
-                          <label className={labelClass}>Store URL</label>
+                          <label className={labelClass}>Your URL</label>
                           <div className="flex items-center rounded-xl border border-white/[0.08] bg-white/[0.04] overflow-hidden focus-within:border-emerald-500/50 focus-within:ring-2 focus-within:ring-emerald-500/20 transition-all">
                             <input
                               type="text"
@@ -855,7 +855,7 @@ function GetStartedContent() {
 
                     <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-5">
                       <h3 className="text-xs font-semibold uppercase tracking-[0.12em] text-white/30 mb-3">
-                        Your Store
+                        Your Business
                       </h3>
                       <div className="flex items-center gap-3">
                         <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-500/20">
@@ -965,12 +965,12 @@ function GetStartedContent() {
                         {isPending ? (
                           <>
                             <Loader2 className="h-4 w-4 animate-spin" />
-                            Launching your store...
+                            Setting up your project...
                           </>
                         ) : (
                           <>
                             <Sparkles className="h-4 w-4" />
-                            Launch My Store
+                            Start My Project
                             <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
                           </>
                         )}

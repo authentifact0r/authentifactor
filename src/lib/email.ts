@@ -80,7 +80,7 @@ export async function sendWelcomeEmail(params: {
           <hr style="border: none; border-top: 1px solid #E5E7EB; margin: 32px 0;" />
 
           <p style="font-size: 12px; color: #9CA3AF; text-align: center;">
-            Authentifactor — The commerce platform for ambitious brands.<br/>
+            Authentifactor — Digital solution architects for ambitious brands.<br/>
             <a href="https://authentifactor.com" style="color: #6B7280;">authentifactor.com</a>
           </p>
         </div>
@@ -159,7 +159,7 @@ export async function sendTrialExpiryReminder(params: {
     await resend.emails.send({
       from: FROM_EMAIL,
       to: params.to,
-      subject: `${params.daysLeft} day${params.daysLeft !== 1 ? "s" : ""} left on your free trial — ${params.storeName}`,
+      subject: `${params.daysLeft} day${params.daysLeft !== 1 ? "s" : ""} left on your trial — ${params.storeName}`,
       html: `
         <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 40px 20px;">
           <h2 style="font-size: 20px; font-weight: 700; color: #111;">Your trial is ending soon</h2>
@@ -169,8 +169,8 @@ export async function sendTrialExpiryReminder(params: {
           </p>
 
           <p style="font-size: 16px; color: #333; line-height: 1.6;">
-            Your free trial for <strong>${params.storeName}</strong> ends in <strong>${params.daysLeft} day${params.daysLeft !== 1 ? "s" : ""}</strong>.
-            To keep your store running uninterrupted, add a payment method before your trial expires.
+            Your trial for <strong>${params.storeName}</strong> ends in <strong>${params.daysLeft} day${params.daysLeft !== 1 ? "s" : ""}</strong>.
+            To keep your services running uninterrupted, add a payment method before your trial expires.
           </p>
 
           <div style="text-align: center; margin: 32px 0;">
@@ -180,7 +180,7 @@ export async function sendTrialExpiryReminder(params: {
           </div>
 
           <p style="font-size: 14px; color: #666; line-height: 1.6;">
-            Your ${params.planName} plan is £${params.planName === "Basic" ? "49" : params.planName === "Standard" ? "99" : "199"}/month. You can change plans or cancel anytime.
+            Your ${params.planName} plan continues at the agreed retainer rate. You can change plans or cancel anytime.
           </p>
 
           <hr style="border: none; border-top: 1px solid #E5E7EB; margin: 32px 0;" />

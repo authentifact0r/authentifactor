@@ -2,13 +2,13 @@
  * Split billing pricing: Base Retainer + Hosting (Vercel) + Backend (GCP)
  */
 
-export type PlanId = "basic" | "standard" | "premium";
+export type PlanId = "accelerator" | "growth" | "transformation";
 
 export const usagePricing = {
   base_retainer: {
-    basic: 49,
-    standard: 99,
-    premium: 199,
+    accelerator: 1995,
+    growth: 4995,
+    transformation: 9995,
   } as Record<PlanId, number>,
 
   hosting: {

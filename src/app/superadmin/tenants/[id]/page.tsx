@@ -49,7 +49,7 @@ export default async function TenantDetailPage({
   });
 
   // Compute billing metrics
-  const plan = (tenant.billingPlan || "standard") as PlanId;
+  const plan = (tenant.billingPlan || "accelerator") as PlanId;
   const provider = tenant.hostingProvider || "vercel";
   const metrics = latestUsage
     ? computeBillingMetrics(plan, latestUsage as any, provider)

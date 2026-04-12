@@ -23,11 +23,22 @@ interface ClientCard {
   description: string;
   stat: string;
   icon: React.ReactNode;
+  /** Local fallback screenshot path */
   screenshot: string;
   /** CSS object-position for the screenshot (default: "top") */
   imgPosition?: string;
   /** CSS object-fit override (default: "cover") */
   imgFit?: "cover" | "contain" | "fill";
+}
+
+/**
+ * Build a live screenshot URL using thum.io.
+ * Free, no API key, captures current state of any public URL.
+ * https://www.thum.io/documentation
+ */
+function liveSnapshot(url: string, width = 1280): string {
+  const clean = url.replace(/^https?:\/\//, "");
+  return `https://image.thum.io/get/width/${width}/crop/900/noanimate/https://${clean}`;
 }
 
 const clientData: ClientCard[] = [
@@ -36,7 +47,7 @@ const clientData: ClientCard[] = [
     name: "BowSea",
     industry: "Career Tech",
     domain: "bowsea.com",
-    url: "https://placementsportal-81608.web.app",
+    url: "https://bowsea.com",
     color: "#1E40AF",
     description: "Career launchpad connecting students with placements, employers with talent, and coaches with impact.",
     stat: "4,200+ Jobs",

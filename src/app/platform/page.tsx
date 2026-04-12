@@ -41,7 +41,7 @@ const processCards: CardItem[] = [
     description: "We map your business model, market, audience, and growth levers. No templates — every engagement starts with deep research and strategic clarity.",
     imgSrc: "https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=2070&auto=format&fit=crop",
     icon: <Compass size={24} />,
-    linkHref: "#",
+    linkHref: "/get-started",
   },
   {
     id: "architecture",
@@ -49,7 +49,7 @@ const processCards: CardItem[] = [
     description: "Brand identity, system design, integration mapping, and interactive prototypes. You see the solution before we build it.",
     imgSrc: "https://images.unsplash.com/photo-1561070791-2526d30994b5?q=80&w=2000&auto=format&fit=crop",
     icon: <Layers size={24} />,
-    linkHref: "#",
+    linkHref: "/get-started",
   },
   {
     id: "engineering",
@@ -57,7 +57,7 @@ const processCards: CardItem[] = [
     description: "Full-stack development, AI integration, CRM wiring, payment infrastructure, and API orchestration. Production-grade from day one.",
     imgSrc: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=2070&auto=format&fit=crop",
     icon: <Code2 size={24} />,
-    linkHref: "#",
+    linkHref: "/get-started",
   },
   {
     id: "launch",
@@ -65,7 +65,7 @@ const processCards: CardItem[] = [
     description: "Deployment, analytics, SEO, lead generation, and ongoing optimisation. We don't disappear after launch — we partner on growth.",
     imgSrc: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=2015&auto=format&fit=crop",
     icon: <Rocket size={24} />,
-    linkHref: "#",
+    linkHref: "/get-started",
   },
 ];
 
@@ -79,10 +79,12 @@ export default function PlatformLandingPage() {
       <StickyServiceSection />
 
       {/* ═══ CAPABILITIES (bento grid) ═══ */}
-      <BentoCapabilities />
+      <div id="capabilities">
+        <BentoCapabilities />
+      </div>
 
       {/* ═══ PROCESS (expanding cards) ═══ */}
-      <section className="bg-white py-20 md:py-28">
+      <section id="process" className="bg-white py-20 md:py-28">
         <div className="mx-auto max-w-6xl px-6">
           <motion.div
             initial="hidden"

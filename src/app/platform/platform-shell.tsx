@@ -379,16 +379,27 @@ export default function PlatformShell({
             <div>
               <h4 className="text-xs font-semibold uppercase tracking-[0.2em] text-gray-600">Services</h4>
               <ul className="mt-5 space-y-3">
-                {["E-Commerce", "Brand Websites", "Mobile Apps", "SEO & Growth", "Custom Dev"].map((s) => (
-                  <li key={s}><a href="#services" className="text-sm text-gray-500 transition-colors hover:text-white">{s}</a></li>
+                {[
+                  { label: "Commerce & Platforms", href: "#services" },
+                  { label: "AI Integration", href: "#services" },
+                  { label: "CRM & Lead Gen", href: "#services" },
+                  { label: "Cyber Security", href: "#services" },
+                  { label: "Business Consulting", href: "#services" },
+                ].map((s) => (
+                  <li key={s.label}><a href={s.href} className="text-sm text-gray-500 transition-colors hover:text-white">{s.label}</a></li>
                 ))}
               </ul>
             </div>
             <div>
               <h4 className="text-xs font-semibold uppercase tracking-[0.2em] text-gray-600">Company</h4>
               <ul className="mt-5 space-y-3">
-                {["About", "Clients", "Process", "Contact"].map((s) => (
-                  <li key={s}><a href="#" className="text-sm text-gray-500 transition-colors hover:text-white">{s}</a></li>
+                {[
+                  { label: "Our Work", href: "#work" },
+                  { label: "Capabilities", href: "#capabilities" },
+                  { label: "Process", href: "#process" },
+                  { label: "Get Started", href: "/get-started" },
+                ].map((s) => (
+                  <li key={s.label}><a href={s.href} className="text-sm text-gray-500 transition-colors hover:text-white">{s.label}</a></li>
                 ))}
               </ul>
             </div>
@@ -404,8 +415,8 @@ export default function PlatformShell({
               <h4 className="text-xs font-semibold uppercase tracking-[0.2em] text-gray-600">Connect</h4>
               <ul className="mt-5 space-y-3">
                 <li><a href="mailto:cs@authentifactor.com" className="text-sm text-gray-500 transition-colors hover:text-white">cs@authentifactor.com</a></li>
-                <li><a href="#" className="text-sm text-gray-500 transition-colors hover:text-white">LinkedIn</a></li>
-                <li><a href="#" className="text-sm text-gray-500 transition-colors hover:text-white">Twitter / X</a></li>
+                <li><a href="https://linkedin.com/company/authentifactor" target="_blank" rel="noopener noreferrer" className="text-sm text-gray-500 transition-colors hover:text-white">LinkedIn</a></li>
+                <li><a href="https://x.com/authentifactor" target="_blank" rel="noopener noreferrer" className="text-sm text-gray-500 transition-colors hover:text-white">X (Twitter)</a></li>
               </ul>
             </div>
           </div>

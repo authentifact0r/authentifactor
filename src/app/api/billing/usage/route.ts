@@ -32,7 +32,7 @@ export async function GET(request: NextRequest) {
       orderBy: { periodStart: "desc" },
     });
 
-    const plan = (tenant.billingPlan || "standard") as PlanId;
+    const plan = (tenant.billingPlan || "accelerator") as PlanId;
     const provider = tenant.hostingProvider || "vercel";
 
     const periodsWithMetrics = records.map((r) => {
@@ -69,7 +69,7 @@ export async function POST(request: NextRequest) {
       select: { billingPlan: true, hostingProvider: true },
     });
 
-    const plan = (tenant?.billingPlan || "standard") as PlanId;
+    const plan = (tenant?.billingPlan || "accelerator") as PlanId;
     const provider = tenant?.hostingProvider || "vercel";
 
     const usageData = {

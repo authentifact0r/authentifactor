@@ -1121,3 +1121,9 @@
 2026-04-11T03:45:19: {"level":30,"time":1775893519882,"pid":80046,"hostname":"Olus-MacBook-Pro.local","reqId":"req-8s","res":{"statusCode":200},"responseTime":0.40462493896484375,"msg":"request completed"}
 2026-04-11T03:45:20: {"level":30,"time":1775893520110,"pid":80046,"hostname":"Olus-MacBook-Pro.local","reqId":"req-8t","req":{"method":"GET","url":"/tools","host":"ai.linkolu.com","remoteAddress":"127.0.0.1","remotePort":65412},"msg":"incoming request"}
 2026-04-11T03:45:20: {"level":30,"time":1775893520111,"pid":80046,"hostname":"Olus-MacBook-Pro.local","reqId":"req-8t","res":{"statusCode":200},"responseTime":1.0962910652160645,"msg":"request completed"}
+2026-04-12T05:56:50: {"level":30,"time":1775987810867,"pid":80046,"hostname":"Olus-MacBook-Pro.local","msg":"rebuild 1553ms — +14 ~0 -0"}
+2026-04-12T05:57:23: {"level":30,"time":1775987843549,"pid":80046,"hostname":"Olus-MacBook-Pro.local","msg":"rebuild 549ms — +10 ~0 -0"}
+2026-04-12T05:57:32: {"level":30,"time":1775987852577,"pid":80046,"hostname":"Olus-MacBook-Pro.local","msg":"rebuild 405ms — +0 ~1 -0"}
+2026-04-12T06:02:15: {"level":30,"time":1775988135373,"pid":80046,"hostname":"Olus-MacBook-Pro.local","msg":"rebuild 676ms — +1 ~2 -0"}
+2026-04-12T06:04:24: {"level":30,"time":1775988264931,"pid":80046,"hostname":"Olus-MacBook-Pro.local","msg":"rebuild 636ms — +0 ~1 -0"}
+2026-04-12T06:28:44: {"level":30,"time":1775989724409,"pid":80046,"hostname":"Olus-MacBook-Pro.local","msg":"rebuild 1027ms — +1 ~2 -0"}

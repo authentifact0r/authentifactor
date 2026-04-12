@@ -49,7 +49,7 @@ export async function GET() {
           orderBy: { periodStart: "desc" },
         });
 
-        const plan = (t.billingPlan || "standard") as PlanId;
+        const plan = (t.billingPlan || "accelerator") as PlanId;
         const provider = t.hostingProvider || "vercel";
 
         if (latestUsage) {

@@ -38,11 +38,11 @@ export default async function SuperAdminDashboard() {
     ]);
 
     const revenue = Number(revenueAgg._sum.total ?? 0);
-    const planPrices: Record<string, number> = { basic: 49, standard: 99, premium: 199 };
+    const planPrices: Record<string, number> = { accelerator: 1995, growth: 4995, transformation: 9995 };
 
     // Calculate MRR from tenant plans
     const allTenants = await db.tenant.findMany({ select: { billingPlan: true }, where: { isActive: true } });
-    const mrr = allTenants.reduce((s, t) => s + (planPrices[t.billingPlan] || 99), 0);
+    const mrr = allTenants.reduce((s, t) => s + (planPrices[t.billingPlan] || 1995), 0);
 
     data = {
       totalTenants: tenantCount,

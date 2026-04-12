@@ -30,7 +30,7 @@ interface UsageRecord {
 
 export default function TenantUsagePage() {
   const [records, setRecords] = useState<UsageRecord[]>([]);
-  const [plan, setPlan] = useState("standard");
+  const [plan, setPlan] = useState("accelerator");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -45,7 +45,7 @@ export default function TenantUsagePage() {
       .then((data) => {
         if (data) {
           setRecords(data.records || []);
-          setPlan(data.plan || "standard");
+          setPlan(data.plan || "accelerator");
         }
         setLoading(false);
       })
