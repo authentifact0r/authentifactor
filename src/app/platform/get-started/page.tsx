@@ -24,6 +24,7 @@ import { signupTenant, type SignupState } from "@/actions/signup";
 import { BILLING_PLANS, type BillingPlanId } from "@/config/billingPlans";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
+import { GlowCard } from "@/components/ui/glow-card";
 import Link from "next/link";
 
 /* ─── Motion ─── */
@@ -342,7 +343,7 @@ function GetStartedContent() {
                       Choose the right plan for your brand
                     </h2>
                     <p className="mt-2 text-sm text-white/50">
-                      All plans include a 14-day free trial. Upgrade or downgrade anytime — no lock-in.
+                      All plans include a 30-day money-back guarantee. Upgrade or downgrade anytime — no lock-in.
                     </p>
                   </div>
 
@@ -353,102 +354,107 @@ function GetStartedContent() {
                       const isRecommended = plan.id === "growth";
 
                       return (
-                        <motion.button
+                        <motion.div
                           key={plan.id}
-                          type="button"
                           custom={i}
                           variants={fadeUp}
                           initial="hidden"
                           animate="visible"
-                          onClick={() => setSelectedPlan(plan.id)}
-                          className={cn(
-                            "relative text-left rounded-2xl border transition-all duration-300 cursor-pointer group",
-                            isSelected
-                              ? "border-emerald-500/40 bg-emerald-500/[0.06] ring-2 ring-emerald-500/20 scale-[1.02]"
-                              : "border-white/[0.06] bg-white/[0.02] hover:border-white/[0.12] hover:bg-white/[0.04]",
-                            isRecommended && !isSelected && "border-emerald-500/20"
-                          )}
                         >
-                          {/* Most Popular badge */}
-                          {isRecommended && (
-                            <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-10">
-                              <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500 px-3.5 py-1 text-[11px] font-bold text-white shadow-lg shadow-emerald-500/25 uppercase tracking-wider">
-                                <Star className="h-3 w-3 fill-current" />
-                                Most Popular
-                              </span>
-                            </div>
-                          )}
-
-                          <div className="p-6 pt-8">
-                            {/* Icon + name */}
-                            <div className="flex items-center gap-3 mb-4">
-                              <div className={cn(
-                                "flex h-10 w-10 items-center justify-center rounded-xl transition-colors",
-                                isSelected
-                                  ? "bg-emerald-500/20 text-emerald-400"
-                                  : "bg-white/[0.06] text-white/40 group-hover:text-white/60"
-                              )}>
-                                {planIcons[plan.id]}
-                              </div>
-                              <div>
-                                <p className="font-semibold text-white">{plan.name}</p>
-                                <p className="text-xs text-white/40">{plan.tagline}</p>
-                              </div>
-                            </div>
-
-                            {/* Price */}
-                            <div className="mb-5">
-                              <div className="flex items-baseline gap-1">
-                                <span className="text-4xl font-bold text-white">
-                                  £{formatPrice(plan.priceMonthly)}
-                                </span>
-                                <span className="text-sm text-white/40">/month</span>
-                              </div>
-                              <div className="flex items-center gap-3 mt-1.5">
-                                <span className="text-xs text-emerald-400">{plan.hours} of expert time</span>
-                                <span className="text-xs text-white/20">|</span>
-                                <span className="text-xs text-white/30">30-day money-back guarantee</span>
-                              </div>
-                            </div>
-
-                            <Separator className="bg-white/[0.06] mb-5" />
-
-                            {/* Features */}
-                            <ul className="space-y-2.5">
-                              {plan.features.map((feature, idx) => (
-                                <li
-                                  key={idx}
-                                  className="flex items-start gap-2.5 text-sm text-white/60"
-                                >
-                                  <Check
-                                    className={cn(
-                                      "h-4 w-4 mt-0.5 shrink-0",
-                                      isSelected ? "text-emerald-400" : "text-white/20"
-                                    )}
-                                  />
-                                  {feature}
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-
-                          {/* Selection indicator */}
-                          <div className={cn(
-                            "flex items-center justify-center gap-2 rounded-b-2xl border-t py-3.5 text-sm font-medium transition-all",
-                            isSelected
-                              ? "border-emerald-500/20 bg-emerald-500/10 text-emerald-400"
-                              : "border-white/[0.04] bg-white/[0.01] text-white/30"
-                          )}>
-                            {isSelected ? (
-                              <>
-                                <CircleCheck className="h-4 w-4" />
-                                Selected
-                              </>
-                            ) : (
-                              "Select this plan"
+                          <GlowCard
+                            glowColor={isSelected ? "green" : "blue"}
+                            className={cn(
+                              "transition-all duration-300 cursor-pointer group",
+                              isSelected && "ring-2 ring-emerald-500/30 scale-[1.02]"
                             )}
-                          </div>
-                        </motion.button>
+                          >
+                            <button
+                              type="button"
+                              onClick={() => setSelectedPlan(plan.id)}
+                              className="w-full text-left"
+                            >
+                              {/* Most Popular badge */}
+                              {isRecommended && (
+                                <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-10">
+                                  <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500 px-3.5 py-1 text-[11px] font-bold text-white shadow-lg shadow-emerald-500/25 uppercase tracking-wider">
+                                    <Star className="h-3 w-3 fill-current" />
+                                    Most Popular
+                                  </span>
+                                </div>
+                              )}
+
+                              <div className="p-6 pt-8">
+                                {/* Icon + name */}
+                                <div className="flex items-center gap-3 mb-4">
+                                  <div className={cn(
+                                    "flex h-10 w-10 items-center justify-center rounded-xl transition-colors",
+                                    isSelected
+                                      ? "bg-emerald-500/20 text-emerald-400"
+                                      : "bg-white/[0.06] text-white/40 group-hover:text-white/60"
+                                  )}>
+                                    {planIcons[plan.id]}
+                                  </div>
+                                  <div>
+                                    <p className="font-semibold text-white">{plan.name}</p>
+                                    <p className="text-xs text-white/40">{plan.tagline}</p>
+                                  </div>
+                                </div>
+
+                                {/* Price */}
+                                <div className="mb-5">
+                                  <div className="flex items-baseline gap-1">
+                                    <span className="text-4xl font-bold text-white">
+                                      £{formatPrice(plan.priceMonthly)}
+                                    </span>
+                                    <span className="text-sm text-white/40">/month</span>
+                                  </div>
+                                  <div className="flex items-center gap-3 mt-1.5">
+                                    <span className="text-xs text-emerald-400">{plan.hours} of expert time</span>
+                                    <span className="text-xs text-white/20">|</span>
+                                    <span className="text-xs text-white/30">30-day money-back guarantee</span>
+                                  </div>
+                                </div>
+
+                                <Separator className="bg-white/[0.06] mb-5" />
+
+                                {/* Features */}
+                                <ul className="space-y-2.5">
+                                  {plan.features.map((feature, idx) => (
+                                    <li
+                                      key={idx}
+                                      className="flex items-start gap-2.5 text-sm text-white/60"
+                                    >
+                                      <Check
+                                        className={cn(
+                                          "h-4 w-4 mt-0.5 shrink-0",
+                                          isSelected ? "text-emerald-400" : "text-white/20"
+                                        )}
+                                      />
+                                      {feature}
+                                    </li>
+                                  ))}
+                                </ul>
+                              </div>
+
+                              {/* Selection indicator */}
+                              <div className={cn(
+                                "flex items-center justify-center gap-2 rounded-b-2xl border-t py-3.5 text-sm font-medium transition-all",
+                                isSelected
+                                  ? "border-emerald-500/20 bg-emerald-500/10 text-emerald-400"
+                                  : "border-white/[0.04] bg-white/[0.01] text-white/30"
+                              )}>
+                                {isSelected ? (
+                                  <>
+                                    <CircleCheck className="h-4 w-4" />
+                                    Selected
+                                  </>
+                                ) : (
+                                  "Select this plan"
+                                )}
+                              </div>
+                            </button>
+                          </GlowCard>
+                        </motion.div>
                       );
                     })}
                   </div>
