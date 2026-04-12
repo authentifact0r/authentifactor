@@ -130,18 +130,15 @@ function GetStartedContent() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [storeName, setStoreName] = useState("");
+  const [website, setWebsite] = useState("");
   const [slug, setSlug] = useState("");
   const [currency, setCurrency] = useState("GBP");
   const [vertical, setVertical] = useState("");
   const [storeDescription, setStoreDescription] = useState("");
   const [agreedToTerms, setAgreedToTerms] = useState(false);
-
-  // Slug availability
-  const [slugAvailable, setSlugAvailable] = useState<boolean | null>(null);
-  const [slugSuggestion, setSlugSuggestion] = useState<string | null>(null);
-  const [checkingSlug, setCheckingSlug] = useState(false);
 
   // Server action
   const [state, formAction, isPending] = useActionState<SignupState, FormData>(
@@ -149,7 +146,7 @@ function GetStartedContent() {
     {}
   );
 
-  // Auto-generate slug from store name
+  // Auto-generate slug from business name for internal use
   useEffect(() => {
     if (storeName) {
       const generated = storeName
@@ -158,36 +155,8 @@ function GetStartedContent() {
         .replace(/[\s_]+/g, "-")
         .replace(/^-+|-+$/g, "");
       setSlug(generated);
-      setSlugAvailable(null);
-      setSlugSuggestion(null);
     }
   }, [storeName]);
-
-  // Debounced slug check
-  useEffect(() => {
-    if (!slug || slug.length < 2) {
-      setSlugAvailable(null);
-      return;
-    }
-
-    const timer = setTimeout(async () => {
-      setCheckingSlug(true);
-      try {
-        const res = await fetch(
-          `/api/platform/check-slug?slug=${encodeURIComponent(slug)}`
-        );
-        const data = await res.json();
-        setSlugAvailable(data.available);
-        setSlugSuggestion(data.suggestion ?? null);
-      } catch {
-        setSlugAvailable(null);
-      } finally {
-        setCheckingSlug(false);
-      }
-    }, 500);
-
-    return () => clearTimeout(timer);
-  }, [slug]);
 
   const goNext = useCallback(() => {
     setDirection(1);
@@ -204,10 +173,9 @@ function GetStartedContent() {
     firstName &&
     lastName &&
     email &&
+    phone &&
     password.length >= 8 &&
-    storeName &&
-    slug &&
-    slugAvailable === true;
+    storeName;
   const canSubmit = agreedToTerms && canProceedStep2;
 
   const progressPercent = step === 0 ? 33 : step === 1 ? 66 : 100;
@@ -554,7 +522,7 @@ function GetStartedContent() {
                           </div>
                         </div>
 
-                        {/* Email + Password */}
+                        {/* Email + Phone */}
                         <div className="grid gap-4 md:grid-cols-2">
                           <div>
                             <label className={labelClass}>Email</label>
@@ -572,23 +540,35 @@ function GetStartedContent() {
                             )}
                           </div>
                           <div>
-                            <label className={labelClass}>Password</label>
+                            <label className={labelClass}>Phone Number</label>
                             <input
-                              type="password"
-                              value={password}
-                              onChange={(e) => setPassword(e.target.value)}
+                              type="tel"
+                              value={phone}
+                              onChange={(e) => setPhone(e.target.value)}
                               className={inputClass}
-                              placeholder="Min. 8 characters"
+                              placeholder="+44 7700 900000"
                             />
-                            {state.fieldErrors?.password && (
-                              <p className="mt-1 text-xs text-red-400">
-                                {state.fieldErrors.password[0]}
-                              </p>
-                            )}
                           </div>
                         </div>
 
-                        <Separator className="bg-white/[0.06]" />
+                        {/* Password */}
+                        <div>
+                          <label className={labelClass}>Password</label>
+                          <input
+                            type="password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            className={inputClass}
+                            placeholder="Min. 8 characters"
+                          />
+                          {state.fieldErrors?.password && (
+                            <p className="mt-1 text-xs text-red-400">
+                              {state.fieldErrors.password[0]}
+                            </p>
+                          )}
+                        </div>
+
+                        <Separator className="bg-[#2a2826]" />
 
                         {/* Business Name */}
                         <div>
@@ -617,65 +597,22 @@ function GetStartedContent() {
                           />
                         </div>
 
-                        {/* Business URL */}
+                        {/* Website */}
                         <div>
-                          <label className={labelClass}>Your URL</label>
-                          <div className="flex items-center rounded-xl bg-[#252525] overflow-hidden focus-within:ring-2 focus-within:ring-[#2DD4A0]/20 transition-all">
-                            <input
-                              type="text"
-                              value={slug}
-                              onChange={(e) => {
-                                setSlug(e.target.value);
-                                setSlugAvailable(null);
-                                setSlugSuggestion(null);
-                              }}
-                              className="flex-1 bg-transparent px-4 py-3.5 text-sm text-white placeholder-white/30 outline-none"
-                              placeholder="my-store"
-                            />
-                            <span className="px-4 text-xs text-white/30 shrink-0 border-l border-white/[0.04]">
-                              .authentifactor.com
-                            </span>
-                          </div>
-                          <div className="mt-1.5 h-5">
-                            {checkingSlug && (
-                              <span className="text-xs text-white/40 flex items-center gap-1">
-                                <Loader2 className="h-3 w-3 animate-spin" />
-                                Checking availability...
-                              </span>
-                            )}
-                            {!checkingSlug && slugAvailable === true && (
-                              <motion.span
-                                initial={{ opacity: 0, x: -5 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                className="text-xs text-[#2DD4A0] flex items-center gap-1"
-                              >
-                                <Check className="h-3 w-3" />
-                                {slug}.authentifactor.com is yours
-                              </motion.span>
-                            )}
-                            {!checkingSlug && slugAvailable === false && (
-                              <span className="text-xs text-red-400">
-                                Not available.
-                                {slugSuggestion && (
-                                  <>
-                                    {" "}Try{" "}
-                                    <button
-                                      type="button"
-                                      onClick={() => {
-                                        setSlug(slugSuggestion);
-                                        setSlugAvailable(null);
-                                        setSlugSuggestion(null);
-                                      }}
-                                      className="underline hover:text-red-300 cursor-pointer"
-                                    >
-                                      {slugSuggestion}
-                                    </button>
-                                    ?
-                                  </>
-                                )}
-                              </span>
-                            )}
-                          </div>
+                          <label className={labelClass}>
+                            Current Website{" "}
+                            <span className="text-white/20 normal-case tracking-normal">(if any)</span>
+                          </label>
+                          <input
+                            type="url"
+                            value={website}
+                            onChange={(e) => setWebsite(e.target.value)}
+                            className={inputClass}
+                            placeholder="https://mybrand.com"
+                          />
+                          <p className="mt-1.5 text-xs text-[#6b6762]">
+                            Your Authentifactor workspace URL will be generated after onboarding.
+                          </p>
                         </div>
 
                         {/* Currency + Service Interest */}
@@ -874,9 +811,9 @@ function GetStartedContent() {
                           <p className="text-sm font-semibold text-white">
                             {storeName || "—"}
                           </p>
-                          <p className="text-xs text-white/40">
-                            {slug}.authentifactor.com
-                          </p>
+                          {website && (
+                            <p className="text-xs text-white/40">{website}</p>
+                          )}
                         </div>
                       </div>
                       {storeDescription && (
@@ -888,12 +825,13 @@ function GetStartedContent() {
 
                     <div className="rounded-xl bg-[#252525] p-5">
                       <h3 className="text-xs font-semibold uppercase tracking-[0.12em] text-white/30 mb-3">
-                        Account
+                        Contact
                       </h3>
                       <p className="text-sm font-medium text-white">
                         {firstName} {lastName}
                       </p>
                       <p className="text-xs text-white/40 mt-0.5">{email}</p>
+                      {phone && <p className="text-xs text-white/40 mt-0.5">{phone}</p>}
                     </div>
 
                     <div className="rounded-xl bg-[#252525] p-5">
@@ -953,10 +891,14 @@ function GetStartedContent() {
                       <input type="hidden" name="firstName" value={firstName} />
                       <input type="hidden" name="lastName" value={lastName} />
                       <input type="hidden" name="email" value={email} />
+                      <input type="hidden" name="phone" value={phone} />
                       <input type="hidden" name="password" value={password} />
                       <input type="hidden" name="storeName" value={storeName} />
                       <input type="hidden" name="slug" value={slug} />
                       <input type="hidden" name="currency" value={currency} />
+                      {website && (
+                        <input type="hidden" name="website" value={website} />
+                      )}
                       {vertical && (
                         <input type="hidden" name="vertical" value={vertical} />
                       )}

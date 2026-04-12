@@ -14,13 +14,15 @@ import { headers } from "next/headers";
 
 const signupSchema = z.object({
   email: z.string().email("Valid email required"),
+  phone: z.string().min(1, "Phone number is required"),
   password: z.string().min(8, "Password must be at least 8 characters"),
   firstName: z.string().min(1, "First name is required"),
   lastName: z.string().min(1, "Last name is required"),
-  storeName: z.string().min(2, "Store name must be at least 2 characters"),
+  storeName: z.string().min(2, "Business name must be at least 2 characters"),
   slug: z.string().min(2, "Slug must be at least 2 characters"),
   planId: z.enum(["accelerator", "growth", "transformation"]),
   currency: z.enum(["GBP", "NGN", "USD", "EUR", "GHS", "KES"]).default("GBP"),
+  website: z.string().url().optional().or(z.literal("")),
   vertical: z
     .enum(["commerce", "saas", "web", "ai", "crm", "security", "brand", "consulting", "other"])
     .optional(),
