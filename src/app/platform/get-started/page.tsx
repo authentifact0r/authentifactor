@@ -64,13 +64,16 @@ const currencies = [
 ];
 
 const verticals = [
-  { value: "", label: "Select your industry (optional)" },
-  { value: "grocery", label: "Grocery & Food" },
-  { value: "fashion", label: "Fashion & Textiles" },
-  { value: "catering", label: "Catering & Meal Prep" },
-  { value: "beauty", label: "Beauty & Cosmetics" },
-  { value: "education", label: "Education & Learning" },
-  { value: "other", label: "Other" },
+  { value: "", label: "What do you need? (optional)" },
+  { value: "commerce", label: "Commerce & E-Commerce Platform" },
+  { value: "saas", label: "SaaS & Platform Development" },
+  { value: "web", label: "Web & Product Development" },
+  { value: "ai", label: "AI Integration & Automation" },
+  { value: "crm", label: "CRM & Lead Generation" },
+  { value: "security", label: "Cyber Security & Compliance" },
+  { value: "brand", label: "Brand Strategy & Digital Growth" },
+  { value: "consulting", label: "Business Consulting & Strategy" },
+  { value: "other", label: "Other / Multiple Services" },
 ];
 
 const clientLogos = [
@@ -675,7 +678,7 @@ function GetStartedContent() {
                           </div>
                         </div>
 
-                        {/* Currency + Industry */}
+                        {/* Currency + Service Interest */}
                         <div className="grid gap-4 md:grid-cols-2">
                           <div>
                             <label className={labelClass}>Currency</label>
@@ -692,7 +695,7 @@ function GetStartedContent() {
                             </select>
                           </div>
                           <div>
-                            <label className={labelClass}>Industry</label>
+                            <label className={labelClass}>Service Interest</label>
                             <select
                               value={vertical}
                               onChange={(e) => setVertical(e.target.value)}

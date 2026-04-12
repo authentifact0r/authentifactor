@@ -22,7 +22,7 @@ const signupSchema = z.object({
   planId: z.enum(["accelerator", "growth", "transformation"]),
   currency: z.enum(["GBP", "NGN", "USD", "EUR", "GHS", "KES"]).default("GBP"),
   vertical: z
-    .enum(["grocery", "fashion", "catering", "beauty", "education", "other"])
+    .enum(["commerce", "saas", "web", "ai", "crm", "security", "brand", "consulting", "other"])
     .optional(),
   referredBy: z.string().optional(),
 });

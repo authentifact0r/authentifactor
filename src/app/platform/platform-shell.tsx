@@ -90,8 +90,8 @@ const megaNavItems = [
       },
     ],
     features: [
-      { image: "https://images.unsplash.com/photo-1542838132-92c53300491e?w=400&q=80&fit=crop", title: "Discover Stores", link: "/marketplace" },
-      { image: "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=400&q=80&fit=crop", title: "Start a Project", link: "/get-started" },
+      { image: "https://images.unsplash.com/photo-1551434678-e076c223a692?w=400&q=80&fit=crop", title: "Our Solutions", link: "/marketplace" },
+      { image: "https://images.unsplash.com/photo-1553877522-43269d4ea984?w=400&q=80&fit=crop", title: "Start a Project", link: "/get-started" },
     ],
   },
 ];
