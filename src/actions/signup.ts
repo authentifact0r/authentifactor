@@ -12,6 +12,23 @@ import { sendWelcomeEmail, sendNewTenantAlert } from "@/lib/email";
 import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 
+// Block disposable/temporary email providers to control spam
+const BLOCKED_EMAIL_DOMAINS = [
+  "mailinator.com", "guerrillamail.com", "tempmail.com", "throwaway.email",
+  "yopmail.com", "sharklasers.com", "guerrillamailblock.com", "grr.la",
+  "dispostable.com", "trashmail.com", "fakeinbox.com", "maildrop.cc",
+  "temp-mail.org", "10minutemail.com", "minutemail.com", "emailondeck.com",
+  "getnada.com", "mohmal.com", "burnermail.io", "inboxbear.com",
+  "mailnesia.com", "tempail.com", "tempr.email", "discard.email",
+  "mailsac.com", "harakirimail.com", "33mail.com", "mailtothis.com",
+  "tmail.ws", "mailcatch.com", "trashmail.net", "trashmail.me",
+];
+
+function isBlockedEmail(email: string): boolean {
+  const domain = email.split("@")[1]?.toLowerCase();
+  return BLOCKED_EMAIL_DOMAINS.includes(domain);
+}
+
 const signupSchema = z.object({
   email: z.string().email("Valid email required"),
   phone: z.string().min(1, "Phone number is required"),
@@ -63,6 +80,11 @@ export async function signupTenant(
   const parsed = signupSchema.safeParse(raw);
   if (!parsed.success) {
     return { fieldErrors: parsed.error.flatten().fieldErrors as Record<string, string[]> };
+  }
+
+  // Block disposable emails
+  if (isBlockedEmail(parsed.data.email)) {
+    return { error: "Please use a business or personal email address. Temporary email providers are not accepted." };
   }
 
   const { email, password, firstName, lastName, storeName, planId, currency, vertical, referredBy } =
