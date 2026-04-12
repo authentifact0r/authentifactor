@@ -190,9 +190,7 @@ export default function LoginPage() {
               }}
             >
               <div className="mb-8">
-                <div className="bg-white rounded-xl px-5 py-3 inline-block mb-8">
-                  <Image src="/images/authentifactor-logo.png" alt="Authentifactor" width={300} height={90} className="h-16 w-auto" />
-                </div>
+                <Image src="/images/authentifactor-logo.png" alt="Authentifactor" width={300} height={90} className="h-16 w-auto mb-8" />
                 <h2 className="text-xl font-semibold text-[#f0ede8] mb-1">Sign in</h2>
                 <p className="text-sm text-[#9e9a94]">Enter your credentials to access your dashboard.</p>
               </div>
