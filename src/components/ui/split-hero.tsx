@@ -5,7 +5,6 @@ import Link from "next/link";
 import {
   ArrowRight,
   Play,
-  Target,
   Crown,
   Star,
   ShoppingBag,
@@ -14,6 +13,10 @@ import {
   Sparkles,
   Briefcase,
   Cookie,
+  Brain,
+  BarChart3,
+  CreditCard,
+  Users,
 } from "lucide-react";
 
 const CLIENTS = [
@@ -25,16 +28,12 @@ const CLIENTS = [
   { name: "BowSea", icon: Briefcase },
 ];
 
-function StatItem({ value, label }: { value: string; label: string }) {
-  return (
-    <div className="flex flex-col items-center justify-center transition-transform hover:-translate-y-1 cursor-default">
-      <span className="text-xl font-bold text-white sm:text-2xl">{value}</span>
-      <span className="text-[10px] uppercase tracking-wider text-zinc-500 font-medium sm:text-xs">
-        {label}
-      </span>
-    </div>
-  );
-}
+const capabilities = [
+  { icon: Brain, label: "AI Integration" },
+  { icon: CreditCard, label: "Payment & Fintech" },
+  { icon: Users, label: "CRM & Leads" },
+  { icon: BarChart3, label: "Analytics & BI" },
+];
 
 export function SplitHero() {
   return (
@@ -77,7 +76,7 @@ export function SplitHero() {
             <div className="split-hero-fade split-hero-d1">
               <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 backdrop-blur-md transition-colors hover:bg-white/10">
                 <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-zinc-300 flex items-center gap-2">
-                  Multi-Tenant Commerce Platform
+                  Digital Solution Architects
                   <Star className="w-3.5 h-3.5 text-emerald-400 fill-emerald-400" />
                 </span>
               </div>
@@ -85,20 +84,26 @@ export function SplitHero() {
 
             {/* Heading */}
             <h1 className="split-hero-fade split-hero-d2 text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-medium tracking-tighter leading-[0.9]">
-              We architect{" "}
+              We don&apos;t just build.{" "}
               <br />
               <span className="bg-gradient-to-br from-white via-white to-emerald-300 bg-clip-text text-transparent">
-                digital infrastructure
+                We architect
               </span>
               <br />
-              that scales.
+              <span
+                className="font-light italic text-white/60"
+                style={{ fontFamily: "var(--font-serif)" }}
+              >
+                growth.
+              </span>
             </h1>
 
             {/* Description */}
             <p className="split-hero-fade split-hero-d3 max-w-xl text-lg text-zinc-400 leading-relaxed">
-              From e-commerce to fashion, food retail to SaaS — we design,
-              engineer, and scale world-class digital products for ambitious
-              brands.
+              From commerce platforms to AI integration, CRM to payment
+              infrastructure — we consult, design, engineer, and scale
+              world-class digital products for ambitious brands across
+              London and Lagos.
             </p>
 
             {/* CTA Buttons */}
@@ -107,7 +112,7 @@ export function SplitHero() {
                 href="/platform/get-started"
                 className="group inline-flex items-center justify-center gap-2 rounded-full bg-white px-8 py-4 text-sm font-semibold text-zinc-950 transition-all hover:scale-[1.02] hover:bg-zinc-200 active:scale-[0.98]"
               >
-                Get Started Free
+                Start a Project
                 <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
               </Link>
               <Link
@@ -122,57 +127,60 @@ export function SplitHero() {
 
           {/* ─── RIGHT COLUMN ─── */}
           <div className="lg:col-span-5 space-y-6 lg:mt-12">
-            {/* Stats Card */}
+            {/* Capabilities Card */}
             <div className="split-hero-fade split-hero-d5 relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 p-8 backdrop-blur-xl shadow-2xl">
               <div className="absolute top-0 right-0 -mr-16 -mt-16 h-64 w-64 rounded-full bg-emerald-500/10 blur-3xl pointer-events-none" />
 
               <div className="relative z-10">
-                <div className="flex items-center gap-4 mb-8">
+                <div className="flex items-center gap-4 mb-6">
                   <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-500/20 ring-1 ring-emerald-400/30">
-                    <Target className="h-6 w-6 text-emerald-300" />
+                    <Brain className="h-6 w-6 text-emerald-300" />
                   </div>
                   <div>
-                    <div className="text-3xl font-bold tracking-tight text-white">
-                      6+
-                    </div>
-                    <div className="text-sm text-zinc-400">Live Brands</div>
+                    <div className="text-sm font-medium text-zinc-400">What we do</div>
+                    <div className="text-lg font-bold text-white">Full-Spectrum Digital</div>
                   </div>
                 </div>
 
-                {/* Progress Bar */}
-                <div className="space-y-3 mb-8">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-zinc-400">Platform Uptime</span>
-                    <span className="text-white font-medium">99.9%</span>
-                  </div>
-                  <div className="h-2 w-full overflow-hidden rounded-full bg-zinc-800/50">
-                    <div className="h-full w-[99.9%] rounded-full bg-gradient-to-r from-emerald-400 to-emerald-200" />
-                  </div>
+                {/* Capability pills */}
+                <div className="grid grid-cols-2 gap-3 mb-6">
+                  {capabilities.map((cap) => (
+                    <div
+                      key={cap.label}
+                      className="flex items-center gap-2.5 rounded-xl border border-white/[0.08] bg-white/[0.03] px-3.5 py-2.5 transition-all hover:bg-white/[0.06] hover:border-white/[0.15]"
+                    >
+                      <cap.icon className="h-4 w-4 text-emerald-400 shrink-0" />
+                      <span className="text-xs font-medium text-white/70">{cap.label}</span>
+                    </div>
+                  ))}
                 </div>
 
                 <div className="h-px w-full bg-white/10 mb-6" />
 
-                {/* Mini Stats */}
-                <div className="grid grid-cols-3 gap-4 text-center">
-                  <StatItem value="4K+" label="Jobs/day" />
-                  <div className="w-px h-full bg-white/10 mx-auto" />
-                  <StatItem value="<2s" label="Load" />
-                  <div className="w-px h-full bg-white/10 mx-auto" />
-                  <StatItem value="100%" label="Secure" />
+                {/* Industries */}
+                <div className="flex flex-wrap gap-2">
+                  {["Commerce", "SaaS", "Healthcare", "Education", "Fashion", "Food & Bev"].map((tag) => (
+                    <span
+                      key={tag}
+                      className="rounded-full border border-white/[0.08] bg-white/[0.03] px-3 py-1 text-[10px] font-medium tracking-wide text-zinc-400"
+                    >
+                      {tag}
+                    </span>
+                  ))}
                 </div>
 
                 {/* Tag Pills */}
-                <div className="mt-8 flex flex-wrap gap-2">
+                <div className="mt-6 flex flex-wrap gap-2">
                   <div className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1 text-[10px] font-medium tracking-wide text-emerald-300">
                     <span className="relative flex h-2 w-2">
                       <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
                       <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
                     </span>
-                    LIVE
+                    ACCEPTING PROJECTS
                   </div>
                   <div className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[10px] font-medium tracking-wide text-zinc-300">
                     <Crown className="w-3 h-3 text-emerald-400" />
-                    HIPAA + GDPR
+                    GDPR + PCI COMPLIANT
                   </div>
                 </div>
               </div>

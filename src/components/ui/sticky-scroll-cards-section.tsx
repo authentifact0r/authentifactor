@@ -6,8 +6,12 @@ import {
   Globe,
   Palette,
   Search,
-  Smartphone,
-  Code2,
+  Brain,
+  CreditCard,
+  Users,
+  BarChart3,
+  MessageSquare,
+  Workflow,
 } from "lucide-react";
 
 interface ServiceCard {
@@ -23,9 +27,9 @@ interface ServiceCard {
 const services: ServiceCard[] = [
   {
     number: "01",
-    title: "E-Commerce Platforms",
+    title: "Commerce & Platform Architecture",
     description:
-      "Full-featured online stores with inventory management, multi-warehouse routing, payment processing via Stripe and Paystack, and subscription engines. Built on our multi-tenant architecture so you scale from day one.",
+      "Full-featured commerce platforms with multi-tenant architecture, inventory management, subscription engines, and marketplace capabilities. We engineer the infrastructure that lets you scale from one brand to many.",
     imageUrl:
       "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?q=80&w=2070&auto=format&fit=crop",
     icon: <Store className="h-6 w-6" />,
@@ -34,56 +38,78 @@ const services: ServiceCard[] = [
   },
   {
     number: "02",
-    title: "Custom Websites & Domains",
+    title: "AI Integration & Automation",
     description:
-      "Bespoke web experiences with your own domain, SSL, and identity. Designed to convert visitors into loyal customers with editorial layouts, smooth animations, and premium typography.",
+      "AI-powered chatbots, recommendation engines, content generation, and intelligent workflow automation. We integrate frontier AI models into your business processes to reduce cost and increase velocity.",
     imageUrl:
-      "https://images.unsplash.com/photo-1467232004584-a241de8bcf5d?q=80&w=2069&auto=format&fit=crop",
-    icon: <Globe className="h-6 w-6" />,
-    bgColor: "bg-blue-100",
+      "https://images.unsplash.com/photo-1677442136019-21780ecad995?q=80&w=2070&auto=format&fit=crop",
+    icon: <Brain className="h-6 w-6" />,
+    bgColor: "bg-violet-100",
     textColor: "text-gray-700",
   },
   {
     number: "03",
-    title: "Brand Identity & Design",
+    title: "CRM & Customer Data Platforms",
     description:
-      "Custom branding, design systems, and visual identities that make your business instantly recognisable. From logo to full token architecture — your brand, systematised.",
+      "CRM implementation, customer segmentation, lifecycle marketing, and unified data platforms. We connect every touchpoint so you understand your customers deeply and convert them consistently.",
     imageUrl:
-      "https://images.unsplash.com/photo-1561070791-2526d30994b5?q=80&w=2000&auto=format&fit=crop",
-    icon: <Palette className="h-6 w-6" />,
-    bgColor: "bg-purple-100",
+      "https://images.unsplash.com/photo-1552581234-26160f608093?q=80&w=2070&auto=format&fit=crop",
+    icon: <Users className="h-6 w-6" />,
+    bgColor: "bg-blue-100",
     textColor: "text-gray-700",
   },
   {
     number: "04",
-    title: "SEO & Digital Growth",
+    title: "Payment & Fintech Integration",
     description:
-      "Built-in SEO tools, structured data, sitemaps, and analytics strategies engineered to grow your organic presence. We don't just build — we make sure you're found.",
+      "Stripe, Paystack, Apple Pay, Google Pay, mobile money, multi-currency, and geo-aware pricing. We architect payment infrastructure that works from London to Lagos — and everywhere in between.",
     imageUrl:
-      "https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=2015&auto=format&fit=crop",
-    icon: <Search className="h-6 w-6" />,
+      "https://images.unsplash.com/photo-1563013544-824ae1b704d3?q=80&w=2070&auto=format&fit=crop",
+    icon: <CreditCard className="h-6 w-6" />,
     bgColor: "bg-amber-100",
     textColor: "text-gray-800",
   },
   {
     number: "05",
-    title: "Mobile Applications",
+    title: "Brand Strategy & Digital Storytelling",
     description:
-      "White-label iOS and Android apps. Your brand in your customers' pockets with push notifications, deep linking, and native performance powered by Capacitor or React Native.",
+      "Brand identity systems, content strategy, omnichannel brand building, and conversion-driven design. Your brand isn't just a logo — it's an experience we architect across every surface.",
     imageUrl:
-      "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?q=80&w=2070&auto=format&fit=crop",
-    icon: <Smartphone className="h-6 w-6" />,
+      "https://images.unsplash.com/photo-1561070791-2526d30994b5?q=80&w=2000&auto=format&fit=crop",
+    icon: <Palette className="h-6 w-6" />,
     bgColor: "bg-pink-100",
     textColor: "text-gray-700",
   },
   {
     number: "06",
-    title: "Custom Development",
+    title: "Lead Generation & Conversion",
     description:
-      "Bespoke features, API integrations, webhook pipelines, and technical architecture tailored to your unique business requirements. From Cloud Run APIs to real-time dashboards.",
+      "Landing page optimisation, A/B testing, marketing automation, SEO strategy, and audience analytics. We engineer the funnel that turns traffic into revenue and visitors into loyal customers.",
+    imageUrl:
+      "https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=2015&auto=format&fit=crop",
+    icon: <Search className="h-6 w-6" />,
+    bgColor: "bg-teal-100",
+    textColor: "text-gray-700",
+  },
+  {
+    number: "07",
+    title: "Analytics & Business Intelligence",
+    description:
+      "Real-time dashboards, conversion tracking, customer behaviour analytics, and AI-driven insights. We give you the data infrastructure to make decisions with confidence, not guesswork.",
+    imageUrl:
+      "https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=2070&auto=format&fit=crop",
+    icon: <BarChart3 className="h-6 w-6" />,
+    bgColor: "bg-indigo-100",
+    textColor: "text-gray-700",
+  },
+  {
+    number: "08",
+    title: "Digital Operations & Automation",
+    description:
+      "Webhook pipelines, scheduled jobs, email triggers, inventory automation, and subscription lifecycle management. We automate the operational complexity so you focus on growth.",
     imageUrl:
       "https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=2070&auto=format&fit=crop",
-    icon: <Code2 className="h-6 w-6" />,
+    icon: <Workflow className="h-6 w-6" />,
     bgColor: "bg-cyan-100",
     textColor: "text-gray-700",
   },
@@ -119,7 +145,7 @@ export function StickyServiceSection() {
             {/* Header */}
             <div className="text-center max-w-3xl mx-auto mb-16">
               <p className="text-sm font-semibold uppercase tracking-[0.2em] text-emerald-600 mb-4">
-                Services
+                What We Do
               </p>
               <h2
                 ref={headerRef as React.Ref<HTMLHeadingElement>}
@@ -130,7 +156,7 @@ export function StickyServiceSection() {
                 }`}
                 style={{ transformStyle: "preserve-3d" }}
               >
-                End-to-end digital services,{" "}
+                Full-spectrum digital consulting,{" "}
                 <span
                   className="font-light italic text-gray-400"
                   style={{ fontFamily: "var(--font-serif)" }}
@@ -147,12 +173,13 @@ export function StickyServiceSection() {
                 }`}
                 style={{ transformStyle: "preserve-3d" }}
               >
-                We don&apos;t just build websites — we engineer the architecture
-                that powers your business growth.
+                We don&apos;t just build websites — we architect the digital
+                infrastructure, strategy, and intelligence that powers your
+                business growth.
               </p>
             </div>
 
-            {/* Sticky Cards — same pattern as the original */}
+            {/* Sticky Cards */}
             <div className="w-full">
               {services.map((service, index) => (
                 <div
@@ -167,7 +194,7 @@ export function StickyServiceSection() {
                         {service.icon}
                       </div>
                       <span className="text-xs font-medium text-gray-400 tabular-nums tracking-wider uppercase">
-                        Step {service.number}
+                        {service.number}
                       </span>
                     </div>
                     <h3 className="text-xl sm:text-2xl md:text-3xl font-bold mb-3 text-gray-900 tracking-tight">

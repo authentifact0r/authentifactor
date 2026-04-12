@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import { Layers, Zap, ShieldCheck, BarChart3, Workflow, Database } from "lucide-react";
+import { Layers, Zap, ShieldCheck, BarChart3, Workflow, Brain } from "lucide-react";
 
 function BentoCapabilities() {
   const [sectionVisible, setSectionVisible] = useState(false);
@@ -73,44 +73,44 @@ function BentoCapabilities() {
   const features = [
     {
       title: "Multi-Tenant Architecture",
-      blurb: "Isolated data, shared infrastructure. Each tenant gets their own world within one platform — scale without limits.",
+      blurb: "Isolated data, shared infrastructure. Each client gets their own world within one platform — scale from one brand to a hundred.",
       meta: "Core",
       icon: Layers,
       animation: "bento-cap-float 6s ease-in-out infinite",
     },
     {
-      title: "Edge Performance",
-      blurb: "Server components, ISR, edge caching. Every page optimised for Core Web Vitals and sub-2s load times.",
-      meta: "Speed",
-      icon: Zap,
+      title: "AI-Powered Intelligence",
+      blurb: "Frontier AI models integrated into your workflows — chatbots, recommendations, content generation, and intelligent routing.",
+      meta: "AI",
+      icon: Brain,
       animation: "bento-cap-pulse 4s ease-in-out infinite",
     },
     {
-      title: "Enterprise Security",
-      blurb: "JWT rotation, encrypted payments, RBAC, audit logging, and GDPR-ready data handling across every tenant.",
+      title: "Enterprise Security & Compliance",
+      blurb: "JWT rotation, encrypted payments, RBAC, audit logging, PCI-DSS, and GDPR-ready data handling across every project.",
       meta: "Trust",
       icon: ShieldCheck,
       animation: "bento-cap-tilt 5.5s ease-in-out infinite",
     },
     {
-      title: "Analytics & Insights",
-      blurb: "Real-time dashboards, conversion tracking, inventory alerts, and revenue analytics at your fingertips.",
+      title: "Analytics & Business Intelligence",
+      blurb: "Real-time dashboards, conversion tracking, customer behaviour analytics, and AI-driven insights for data-informed decisions.",
       meta: "Data",
       icon: BarChart3,
       animation: "bento-cap-drift 8s ease-in-out infinite",
     },
     {
-      title: "Automation Engine",
-      blurb: "Webhook pipelines, scheduled jobs, email triggers, and subscription lifecycle automation — hands-free ops.",
+      title: "Automation & Integration",
+      blurb: "CRM pipelines, webhook automation, email triggers, payment orchestration, and third-party API integrations — seamlessly connected.",
       meta: "Ops",
       icon: Workflow,
       animation: "bento-cap-glow 7s ease-in-out infinite",
     },
     {
-      title: "Data Architecture",
-      blurb: "PostgreSQL with Prisma ORM, multi-warehouse inventory, and tenant-scoped data isolation by default.",
-      meta: "DB",
-      icon: Database,
+      title: "Edge Performance",
+      blurb: "Server components, ISR, edge caching. Every page optimised for Core Web Vitals and sub-2s load times globally.",
+      meta: "Speed",
+      icon: Zap,
       animation: "bento-cap-spin 20s linear infinite",
     },
   ];
@@ -173,7 +173,7 @@ function BentoCapabilities() {
               Capabilities
             </span>
             <h2 className="text-3xl font-bold tracking-tight text-white md:text-5xl">
-              Enterprise-grade platform,{" "}
+              Enterprise-grade capabilities,{" "}
               <span
                 className="font-light italic text-white/40"
                 style={{ fontFamily: "var(--font-serif)" }}
@@ -183,7 +183,7 @@ function BentoCapabilities() {
             </h2>
           </div>
           <p className="max-w-sm text-sm text-white/50 md:text-base md:text-right">
-            Battle-tested infrastructure with modular architecture, security by default, and real-time observability.
+            Battle-tested infrastructure with AI integration, security by default, and intelligent automation built in.
           </p>
         </header>
 

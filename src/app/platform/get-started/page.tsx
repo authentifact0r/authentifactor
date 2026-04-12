@@ -235,14 +235,14 @@ function GetStartedContent() {
             )}
 
             <h1 className="text-4xl font-bold tracking-tight text-white sm:text-5xl lg:text-6xl">
-              Start selling{" "}
+              Launch your{" "}
               <span className="font-[family-name:var(--font-serif)] italic text-emerald-400">
-                today
+                digital presence
               </span>
             </h1>
             <p className="mt-4 text-lg text-white/50 max-w-xl mx-auto">
-              Join 6+ brands already powered by Authentifactor.
-              Your storefront goes live in under 5 minutes.
+              Join ambitious brands powered by Authentifactor.
+              Commerce, AI, CRM, payments — all from one platform.
             </p>
 
             {/* ─── Social proof logos ─── */}
