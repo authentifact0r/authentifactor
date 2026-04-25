@@ -31,16 +31,6 @@ interface ClientCard {
   imgFit?: "cover" | "contain" | "fill";
 }
 
-/**
- * Build a live screenshot URL using thum.io.
- * Free, no API key, captures current state of any public URL.
- * https://www.thum.io/documentation
- */
-function liveSnapshot(url: string, width = 1280): string {
-  const clean = url.replace(/^https?:\/\//, "");
-  return `https://image.thum.io/get/width/${width}/crop/900/noanimate/https://${clean}`;
-}
-
 const clientData: ClientCard[] = [
   {
     id: "bowsea",
@@ -52,8 +42,8 @@ const clientData: ClientCard[] = [
     description: "Career launchpad connecting students with placements, employers with talent, and coaches with impact.",
     stat: "4,200+ Jobs",
     icon: <Briefcase size={20} />,
-    screenshot: "/images/screenshots/bowsea.png",
-    imgPosition: "center center",
+    screenshot: "/images/screenshots/bowsea.jpg",
+    imgPosition: "center top",
   },
   {
     id: "clarityconduct",
@@ -65,8 +55,8 @@ const clientData: ClientCard[] = [
     description: "AI-powered operational efficiency platform — voice agents, lead gen, and multi-tenant DaaS for agencies.",
     stat: "Active Clients",
     icon: <Building2 size={20} />,
-    screenshot: "/images/screenshots/clarityconduct.png",
-    imgPosition: "left top",
+    screenshot: "/images/screenshots/clarityconduct.jpg",
+    imgPosition: "center top",
   },
   {
     id: "sbm",
@@ -78,8 +68,8 @@ const clientData: ClientCard[] = [
     description: "Contemporary fashion brand — editorial photography, lookbook, mega-menu navigation, and e-commerce.",
     stat: "12 Collections",
     icon: <Palette size={20} />,
-    screenshot: "/images/screenshots/styledbymaryam.png",
-    imgPosition: "top",
+    screenshot: "/images/screenshots/styledbymaryam.jpg",
+    imgPosition: "center top",
   },
   {
     id: "careceutical",
@@ -91,8 +81,8 @@ const clientData: ClientCard[] = [
     description: "Enterprise clinical management — appointments, triage, patient records, and real-time analytics.",
     stat: "5 Roles",
     icon: <Stethoscope size={20} />,
-    screenshot: "/images/screenshots/careceutical.png",
-    imgPosition: "center center",
+    screenshot: "/images/screenshots/careceutical.jpg",
+    imgPosition: "center top",
   },
   {
     id: "citiestroves",
@@ -104,8 +94,8 @@ const clientData: ClientCard[] = [
     description: "Serviced apartment booking for African markets — Lagos, Accra, Nairobi, Cape Town.",
     stat: "4 Cities",
     icon: <Plane size={20} />,
-    screenshot: "/images/screenshots/citiestroves.png",
-    imgPosition: "top",
+    screenshot: "/images/screenshots/citiestroves.jpg",
+    imgPosition: "center top",
   },
   {
     id: "vm",
@@ -117,8 +107,8 @@ const clientData: ClientCard[] = [
     description: "Interactive learning platform with H5P content, curated learning paths, and mentor matching.",
     stat: "H5P Powered",
     icon: <GraduationCap size={20} />,
-    screenshot: "/images/screenshots/vibrantminds.png",
-    imgPosition: "left top",
+    screenshot: "/images/screenshots/vibrantminds.jpg",
+    imgPosition: "center top",
   },
 ];
 

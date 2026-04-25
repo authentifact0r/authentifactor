@@ -1,26 +1,35 @@
 import puppeteer from 'puppeteer';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const outDir = path.join(__dirname, 'public/images/screenshots');
 
 const sites = [
-  // Retake problem screenshots at taller viewport for better card fit
-  { name: 'clarityconduct', url: 'https://www.clarityconduct.com', file: '/Users/olu/naija-pantry/public/images/screenshots/clarityconduct.png', width: 1440, height: 1200 },
-  { name: 'vibrantminds', url: 'https://vibrantmindsasc.org.uk', file: '/Users/olu/naija-pantry/public/images/screenshots/vibrantminds.png', width: 1440, height: 1200 },
-  { name: 'careceutical', url: 'https://careceutical.vercel.app', file: '/Users/olu/naija-pantry/public/images/screenshots/careceutical.png', width: 1440, height: 1200 },
-  { name: 'bowsea', url: 'https://placementsportal-81608.web.app', file: '/Users/olu/naija-pantry/public/images/screenshots/bowsea.png', width: 1440, height: 1200 },
+  { name: 'bowsea',         url: 'https://bowsea.com' },
+  { name: 'clarityconduct', url: 'https://www.clarityconduct.com' },
+  { name: 'styledbymaryam', url: 'https://styledbymaryam.com' },
+  { name: 'careceutical',   url: 'https://careceutical.vercel.app' },
+  { name: 'citiestroves',   url: 'https://citiestroves.com' },
+  { name: 'vibrantminds',   url: 'https://vibrantmindsasc.org.uk' },
 ];
+
+const VIEWPORT = { width: 1440, height: 1200, deviceScaleFactor: 2 };
 
 const browser = await puppeteer.launch({ headless: true });
 
 for (const site of sites) {
-  console.log(`Capturing ${site.name}...`);
+  const file = path.join(outDir, `${site.name}.jpg`);
+  process.stdout.write(`Capturing ${site.name.padEnd(16)} `);
   const page = await browser.newPage();
-  await page.setViewport({ width: site.width, height: site.height, deviceScaleFactor: 2 });
+  await page.setViewport(VIEWPORT);
   try {
-    await page.goto(site.url, { waitUntil: 'networkidle2', timeout: 20000 });
-    await new Promise(r => setTimeout(r, 3000));
-    await page.screenshot({ path: site.file, type: 'png' });
-    console.log(`  ✓ Saved`);
+    await page.goto(site.url, { waitUntil: 'networkidle2', timeout: 30000 });
+    await new Promise(r => setTimeout(r, 3500));
+    await page.screenshot({ path: file, type: 'jpeg', quality: 82 });
+    console.log('OK');
   } catch (e) {
-    console.log(`  ✗ Failed: ${e.message.split('\n')[0]}`);
+    console.log(`FAIL: ${e.message.split('\n')[0]}`);
   }
   await page.close();
 }
