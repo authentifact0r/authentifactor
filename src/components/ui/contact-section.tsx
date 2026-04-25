@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { ArrowRight, X, MessageSquare, Sparkles } from "lucide-react";
+import { ArrowRight, X, MessageSquare } from "lucide-react";
 
 const projectTypeOptions = [
   "E-Commerce",
@@ -84,50 +84,129 @@ export function FloatingCTABanner() {
 
   return (
     <>
-      {/* ─── Floating Banner — slides up from bottom ─── */}
+      {/* ─── Notion-style centered popup card ─── */}
       <AnimatePresence>
         {bannerVisible && !formOpen && (
-          <motion.div
-            className="fixed bottom-6 left-4 right-4 z-[60] mx-auto max-w-xl"
-            initial={{ opacity: 0, y: 80 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 80 }}
-            transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-          >
-            <div className="relative overflow-hidden rounded-2xl bg-[#131313]/95 px-6 py-5 shadow-[0_20px_60px_rgba(0,0,0,0.5)] backdrop-blur-2xl">
-              {/* Accent glow */}
-              <div className="absolute -left-8 -top-8 h-32 w-32 rounded-full bg-[#2DD4A0]/20 blur-3xl" />
+          <>
+            {/* Backdrop */}
+            <motion.div
+              className="fixed inset-0 z-[60] bg-black/55 backdrop-blur-[3px]"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.25 }}
+              onClick={dismissBanner}
+            />
 
-              <button
-                onClick={dismissBanner}
-                className="absolute top-3 right-3 flex h-7 w-7 items-center justify-center rounded-full text-white/40 transition-colors hover:bg-white/10 hover:text-white"
-                aria-label="Dismiss"
-              >
-                <X className="h-3.5 w-3.5" />
-              </button>
+            {/* Card */}
+            <motion.div
+              className="fixed left-1/2 top-1/2 z-[61] w-[min(440px,92vw)] -translate-x-1/2 -translate-y-1/2"
+              initial={{ opacity: 0, y: 24, scale: 0.96 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 16, scale: 0.97 }}
+              transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="cta-pop-title"
+            >
+              <div className="overflow-hidden rounded-[28px] bg-[#0e0e0e] shadow-[0_28px_80px_rgba(0,0,0,0.55)] ring-1 ring-white/[0.06]">
+                {/* Close — neon-blue ring, top right */}
+                <button
+                  onClick={dismissBanner}
+                  aria-label="Dismiss"
+                  className="absolute right-4 top-4 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-[#0e0e0e] text-white/85 ring-2 ring-[#00BFFF] transition-colors hover:text-white"
+                >
+                  <X className="h-4 w-4" strokeWidth={2.5} />
+                </button>
 
-              <div className="relative flex items-center gap-4">
-                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#2DD4A0]/10">
-                  <Sparkles className="h-5 w-5 text-[#2DD4A0]" />
+                {/* ── Top half: warm illustration ── */}
+                <div className="relative h-[260px] overflow-hidden bg-gradient-to-b from-[#FAE2D2] to-[#F4CFB3]">
+                  {/* Soft radial glow for depth */}
+                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_25%,rgba(255,255,255,0.55),transparent_55%)]" />
+
+                  {/* Tilted brief preview card */}
+                  <motion.div
+                    className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+                    initial={{ rotate: -3, y: 8, opacity: 0 }}
+                    animate={{ rotate: -2, y: 0, opacity: 1 }}
+                    transition={{ delay: 0.15, duration: 0.6, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
+                  >
+                    <div className="relative w-[280px] rounded-2xl bg-white px-4 py-3.5 shadow-[0_18px_40px_rgba(15,15,15,0.18)]">
+                      {/* Notification badge */}
+                      <span className="absolute -left-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-[#FF6A4D] text-[10px] font-bold text-white shadow-md">
+                        3
+                      </span>
+                      <div className="flex gap-3">
+                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#2DD4A0] to-[#00BFFF] text-[15px] font-semibold text-white">
+                          A
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p className="text-[13px] font-semibold leading-tight text-[#1a1a1a]">
+                            Adetola
+                          </p>
+                          <p className="mt-0.5 text-[12.5px] leading-snug text-[#3a3a3a]">
+                            Need a launchpad for our Q3 product drop —
+                            commerce + brand site.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </motion.div>
+
+                  {/* Caption pill */}
+                  <motion.div
+                    className="absolute bottom-5 left-1/2 -translate-x-1/2"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.35, duration: 0.4 }}
+                  >
+                    <span className="inline-block whitespace-nowrap rounded-md bg-[#0e0e0e] px-3 py-1.5 text-[12.5px] font-medium text-white">
+                      every brand starts with a brief.
+                    </span>
+                  </motion.div>
                 </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold text-white">
-                    Ready to build something extraordinary?
-                  </p>
-                  <p className="text-xs text-white/40 mt-0.5">
+
+                {/* ── Bottom half: dark CTA ── */}
+                <div className="relative px-7 pb-6 pt-7">
+                  {/* "Studio openings" pill */}
+                  <span className="inline-flex items-center rounded-md bg-[#00BFFF]/15 px-2.5 py-1 text-[12px] font-semibold tracking-tight text-[#5fcfff]">
+                    Studio openings
+                  </span>
+
+                  <h3
+                    id="cta-pop-title"
+                    className="mt-4 text-[30px] font-bold leading-[1.05] tracking-tight text-white"
+                  >
+                    Ready to build
+                    <br />
+                    <span className="font-light italic text-white/55" style={{ fontFamily: "var(--font-serif)" }}>
+                      something extraordinary?
+                    </span>
+                  </h3>
+
+                  <p className="mt-3 text-[14px] leading-relaxed text-white/55">
                     Limited spots for Q3 2026 — tell us about your project.
                   </p>
+
+                  <div className="mt-6 flex items-center justify-end gap-2">
+                    <button
+                      onClick={dismissBanner}
+                      className="h-10 rounded-full px-4 text-sm font-semibold text-white/70 transition-colors hover:text-white"
+                    >
+                      Dismiss
+                    </button>
+                    <button
+                      onClick={openForm}
+                      className="group inline-flex h-10 items-center gap-1.5 rounded-full bg-[#00BFFF] px-5 text-sm font-semibold text-white shadow-[0_8px_24px_rgba(0,191,255,0.35)] transition-all hover:bg-[#19c8ff] hover:shadow-[0_10px_28px_rgba(0,191,255,0.5)]"
+                    >
+                      Show me
+                      <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
+                    </button>
+                  </div>
                 </div>
-                <button
-                  onClick={openForm}
-                  className="shrink-0 inline-flex h-9 items-center gap-1.5 rounded-full bg-white px-5 text-xs font-semibold text-gray-950 transition-all hover:bg-gray-100"
-                >
-                  Let&apos;s talk
-                  <ArrowRight className="h-3 w-3" />
-                </button>
               </div>
-            </div>
-          </motion.div>
+            </motion.div>
+          </>
         )}
       </AnimatePresence>
 
