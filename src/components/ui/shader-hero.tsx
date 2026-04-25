@@ -72,14 +72,11 @@ export default function ShaderHero() {
         className="absolute inset-0 w-full h-full"
         colors={["#000000", "#059669", "#0891b2", "#064e3b", "#3b82f6"]}
         speed={0.25}
-        backgroundColor="#000000"
       />
       <MeshGradient
         className="absolute inset-0 w-full h-full opacity-40"
         colors={["#000000", "#ffffff", "#10b981", "#3b82f6"]}
         speed={0.15}
-        wireframe="true"
-        backgroundColor="transparent"
       />
 
       {/* ── Dark scrims for text readability ── */}

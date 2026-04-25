@@ -46,7 +46,6 @@ export default async function AdminProductsPage() {
       metaDescription: p.metaDescription || null,
       subcategory: p.subcategory || null,
       collection: p.collection || null,
-      shortDescription: p.shortDescription || null,
       totalStock: p.inventoryBatches.reduce((s: number, b: any) => s + b.quantity, 0),
       createdAt: p.createdAt.toISOString(),
       updatedAt: p.updatedAt.toISOString(),

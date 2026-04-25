@@ -193,7 +193,7 @@ export function ClientShowcaseCards({ className }: { className?: string }) {
                   className="mb-2 flex h-8 w-8 items-center justify-center rounded-lg text-white/90"
                   style={{ backgroundColor: `${client.color}80` }}
                 >
-                  {React.cloneElement(client.icon as React.ReactElement, { size: 14 })}
+                  {React.cloneElement(client.icon as React.ReactElement<{ size?: number }>, { size: 14 })}
                 </div>
                 <span
                   className="hidden text-[11px] font-semibold tracking-wider text-white/70 md:block"

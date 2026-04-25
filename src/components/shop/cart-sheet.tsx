@@ -71,7 +71,7 @@ export function CartSheet() {
                           {item.product?.name || "Product"}
                         </p>
                         <p className="text-sm text-gray-500">
-                          {formatPrice(item.product?.price || "0")}
+                          {formatPrice(Number(item.product?.price ?? 0))}
                         </p>
                         <div className="mt-auto flex items-center gap-2">
                           <Button

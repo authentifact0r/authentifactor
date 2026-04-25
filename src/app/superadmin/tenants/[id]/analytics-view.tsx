@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 import type { BreakdownItem } from "@/config/usagePricing";
 
-const fade = { hidden: { opacity: 0, y: 16 }, visible: (i: number) => ({ opacity: 1, y: 0, transition: { duration: 0.5, delay: i * 0.06, ease: [0.16, 1, 0.3, 1] } }) };
+const fade = { hidden: { opacity: 0, y: 16 }, visible: (i: number) => ({ opacity: 1, y: 0, transition: { duration: 0.5, delay: i * 0.06, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] } }) };
 
 const formatGbp = (n: number) => `£${n.toFixed(2)}`;
 const formatDate = (d: string | null) => d ? new Date(d).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" }) : "—";
@@ -118,7 +118,7 @@ export function TenantAnalyticsView({ tenant, metrics, latestUsage, usageHistory
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+        transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
         className="rounded-2xl border border-white/[0.06] bg-white/[0.03] backdrop-blur-sm p-8"
       >
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">

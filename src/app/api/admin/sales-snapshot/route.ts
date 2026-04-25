@@ -53,7 +53,7 @@ export async function GET() {
         id: o.id,
         amount: Number(o.total),
         product: o.items?.[0]?.product?.name || "Order",
-        customer: user ? `${user.firstName} ${user.lastName}`.trim() : user?.email || "Customer",
+        customer: user ? (`${user.firstName} ${user.lastName}`.trim() || user.email) : "Customer",
         time: o.createdAt.toLocaleTimeString("en-GB"),
       };
     });

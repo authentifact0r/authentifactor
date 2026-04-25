@@ -32,7 +32,6 @@ interface Product {
   metaDescription: string | null;
   subcategory: string | null;
   collection: string | null;
-  shortDescription: string | null;
 }
 
 export function ProductsTable({ products }: { products: Product[] }) {
@@ -52,10 +51,10 @@ export function ProductsTable({ products }: { products: Product[] }) {
   const [editData, setEditData] = useState<Record<string, any>>({});
 
   const categories = [...new Set(products.map((p) => p.category).filter(Boolean))];
-  const subcategories = [...new Set(products.map((p) => p.subcategory).filter(Boolean))];
-  const collections = [...new Set(products.map((p) => p.collection).filter(Boolean))];
-  const materials = [...new Set(products.map((p) => p.material).filter(Boolean))];
-  const brands = [...new Set(products.map((p) => p.brand).filter(Boolean))];
+  const subcategories = [...new Set(products.map((p) => p.subcategory).filter((v): v is string => Boolean(v)))];
+  const collections = [...new Set(products.map((p) => p.collection).filter((v): v is string => Boolean(v)))];
+  const materials = [...new Set(products.map((p) => p.material).filter((v): v is string => Boolean(v)))];
+  const brands = [...new Set(products.map((p) => p.brand).filter((v): v is string => Boolean(v)))];
   const lowStockCount = products.filter((p) => p.totalStock > 0 && p.totalStock <= 5).length;
   const outOfStockCount = products.filter((p) => p.totalStock <= 0).length;
 

@@ -133,8 +133,11 @@ export async function signupTenant(
   const passwordHash = await hashPassword(password);
   const trialEndsAt = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000); // 14 days
 
-  let tenant;
+  let tenant: Awaited<ReturnType<typeof db.tenant.create>> | undefined;
   let user;
+
+  // Apply template color scheme + sample data if vertical has a template
+  const template = vertical ? getTemplate(vertical) : undefined;
 
   try {
     const result = await db.$transaction(async (tx) => {
@@ -146,9 +149,6 @@ export async function signupTenant(
           lastName,
         },
       });
-
-      // Apply template color scheme if vertical has a template
-      const template = vertical ? getTemplate(vertical) : undefined;
 
       const newTenant = await tx.tenant.create({
         data: {
@@ -189,13 +189,14 @@ export async function signupTenant(
     tenant = result.tenant;
 
     // Seed template data (shipping rules + sample products) — non-blocking
-    if (template) {
+    if (template && tenant) {
+      const seededTenantId = tenant.id;
       try {
         // Shipping rules
         if (template.shippingMethods.length > 0) {
           await db.shippingRule.createMany({
             data: template.shippingMethods.map((s) => ({
-              tenantId: tenant.id,
+              tenantId: seededTenantId,
               name: s.name,
               method: s.method,
               minWeightKg: s.minWeightKg,
@@ -211,7 +212,7 @@ export async function signupTenant(
         if (template.sampleProducts.length > 0) {
           await db.product.createMany({
             data: template.sampleProducts.map((p) => ({
-              tenantId: tenant.id,
+              tenantId: seededTenantId,
               name: p.name,
               sku: p.sku,
               slug: p.slug,

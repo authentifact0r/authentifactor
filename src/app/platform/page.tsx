@@ -19,7 +19,7 @@ import { TestimonialsSection } from "@/components/ui/testimonials-column";
 import { FAQSection } from "@/components/ui/faq-section";
 
 /* ─── Motion ─── */
-const ease = [0.16, 1, 0.3, 1];
+const ease: [number, number, number, number] = [0.16, 1, 0.3, 1];
 
 const fadeUp = {
   hidden: { opacity: 0, y: 32 },

@@ -17,7 +17,7 @@ interface TenantListing {
   _count: { products: number };
 }
 
-const ease = [0.16, 1, 0.3, 1];
+const ease: [number, number, number, number] = [0.16, 1, 0.3, 1];
 
 const verticalLabels: Record<string, string> = {
   grocery: "Grocery & Food",

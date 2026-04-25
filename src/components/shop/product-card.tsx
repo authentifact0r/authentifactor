@@ -75,7 +75,7 @@ export function ProductCard({ product }: ProductCardProps) {
         <span className="text-[1.05rem] font-light italic shrink-0 ml-3" style={{ color: "#888", fontFamily: "var(--font-display, Georgia), serif" }}>
           {hasFlashSale || product.compareAtPrice ? (
             <>
-              <span className="line-through mr-1 text-[0.85rem]">{formatPrice(product.compareAtPrice || product.price)}</span>
+              <span className="line-through mr-1 text-[0.85rem]">{formatPrice(Number(product.compareAtPrice ?? product.price))}</span>
               {formatPrice(salePrice)}
             </>
           ) : (

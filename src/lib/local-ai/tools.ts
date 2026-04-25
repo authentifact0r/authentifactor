@@ -204,23 +204,20 @@ export const TOOLS: Record<string, Tool> = {
 // "optional", "enum", …). Unwrap one layer of optional so the type
 // label reads as the underlying primitive.
 function describeZodType(t: ZodTypeAny): string {
-  // @ts-expect-error — Zod 4 runtime shape
-  const def = t.def;
+  const def = (t as unknown as { def?: { type?: string; innerType?: ZodTypeAny; entries?: Record<string, string> } }).def;
   if (!def) return "any";
-  if (def.type === "optional") {
-    // @ts-expect-error — inner schema
+  if (def.type === "optional" && def.innerType) {
     return describeZodType(def.innerType);
   }
   if (def.type === "enum") {
-    const values = Object.values(def.entries ?? {}) as string[];
+    const values = Object.values(def.entries ?? {});
     return `enum(${values.join("|")})`;
   }
-  return (def.type as string) ?? "any";
+  return def.type ?? "any";
 }
 
 function isOptionalSchema(t: ZodTypeAny): boolean {
-  // @ts-expect-error — Zod 4 runtime shape
-  return t.def?.type === "optional";
+  return (t as unknown as { def?: { type?: string } }).def?.type === "optional";
 }
 
 function toSchema(tool: Tool): ToolSchema {

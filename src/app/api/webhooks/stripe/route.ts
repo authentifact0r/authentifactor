@@ -80,6 +80,7 @@ export async function POST(req: NextRequest) {
                 lastName: meta.customerName?.split(" ").slice(1).join(" ") || "",
                 line1: addressParts[0] || "",
                 city: addressParts[1] || "",
+                state: "",
                 postcode: addressParts[2] || "",
                 phone: meta.customerPhone || null,
               },
