@@ -8,7 +8,6 @@
     "build": "prisma generate && next build",
     "start": "next start",
     "lint": "next lint",
-    "lint:voice": "tsx scripts/voice-sweep.ts",
     "capture:screenshots": "node screenshot.mjs",
     "db:generate": "prisma generate",
     "db:push": "prisma db push",
