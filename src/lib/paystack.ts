@@ -96,12 +96,28 @@ export function createPaystackClient(secretKey: string) {
     },
 
     verifyWebhookSignature(body: string, signature: string): boolean {
+      // 2026-05-20 hardening (audit HIGH — timing-attack):
+      // constant-time HMAC compare. The previous `===` leaks timing
+      // info that a determined attacker can use to derive the signature
+      // byte-by-byte. Also fail closed if secretKey is unset — without
+      // a key the previous code happily returned `false`, but a missing
+      // key in prod should be a configuration error, not a silent deny.
+      if (!secretKey) {
+        throw new Error("paystack_secret_unset");
+      }
       const crypto = require("crypto");
       const hash = crypto
         .createHmac("sha512", secretKey)
         .update(body)
         .digest("hex");
-      return hash === signature;
+      try {
+        const a = Buffer.from(hash, "hex");
+        const b = Buffer.from(signature, "hex");
+        if (a.length !== b.length) return false;
+        return crypto.timingSafeEqual(a, b);
+      } catch {
+        return false;
+      }
     },
   };
 }

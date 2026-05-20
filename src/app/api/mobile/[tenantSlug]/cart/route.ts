@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db, tenantDb, TENANT_ID } from "@/lib/db";
+import { getCurrentUser } from "@/lib/auth";
 
 interface CartSyncItem {
   productId: string;
@@ -11,28 +12,43 @@ export async function POST(
   { params }: { params: Promise<{ tenantSlug: string }> }
 ) {
   const { tenantSlug } = await params;
+
+  // 2026-05-20 hardening (audit CRITICAL #8): previously this route
+  // took `userId` from the request body with no auth — any caller
+  // could overwrite any user's cart on any tenant. Now we require an
+  // authenticated user and use the JWT's userId. We also verify the
+  // user belongs to the tenant identified by the URL slug, so an
+  // attacker can't smuggle a cross-tenant cart write by guessing IDs.
+  const authUser = await getCurrentUser().catch(() => null);
+  if (!authUser) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   const tenant = await db.tenant.findUnique({ where: { slug: tenantSlug } });
   if (!tenant) {
     return NextResponse.json({ error: "Tenant not found" }, { status: 404 });
   }
+  if (authUser.tenantId !== tenant.id) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
 
-  let body: { items: CartSyncItem[]; userId: string };
+  let body: { items: CartSyncItem[] };
   try {
     body = await req.json();
   } catch {
     return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
   }
 
-  const { items, userId } = body;
+  const { items } = body;
+  const userId = authUser.id;
 
-  if (!userId || !Array.isArray(items)) {
+  if (!Array.isArray(items)) {
     return NextResponse.json(
-      { error: "userId and items[] are required" },
+      { error: "items[] is required" },
       { status: 400 }
     );
   }
 
-  // Verify user exists
   const user = await db.user.findUnique({ where: { id: userId } });
   if (!user) {
     return NextResponse.json({ error: "User not found" }, { status: 404 });

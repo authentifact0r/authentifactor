@@ -1,14 +1,21 @@
 import { NextResponse } from "next/server";
-import { getScopedDb } from "@/lib/db";
-import { db } from "@/lib/db";
+import { db, getScopedDb } from "@/lib/db";
+import { requireAdmin, requireSuperAdmin } from "@/lib/auth";
 
 export async function GET() {
   try {
+    // 2026-05-20 hardening: this route was previously in `publicPaths`
+    // (anyone on the internet could hit it) AND the catch block below
+    // silently fell back to the unscoped `db` whenever tenant context
+    // failed to resolve — effectively giving any caller cross-tenant
+    // sales data. Now: tenant admin gets their own tenant's snapshot;
+    // only an explicit super-admin gets the global aggregate.
+    await requireAdmin();
     let tdb;
     try {
       tdb = await getScopedDb();
     } catch {
-      // No tenant context — use global db (superadmin)
+      await requireSuperAdmin();
       tdb = db;
     }
 

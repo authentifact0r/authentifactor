@@ -1,14 +1,20 @@
 import { NextRequest, NextResponse } from "next/server";
 import { stripe } from "@/lib/stripe";
 import { db as prisma } from "@/lib/db";
+import { requireAdmin } from "@/lib/auth";
 import { BILLING_PLANS, type BillingPlanId } from "@/config/billingPlans";
 
 export async function POST(request: NextRequest) {
   try {
-    const { tenantId, planId } = await request.json();
+    // 2026-05-20 hardening (audit CRITICAL #7): tenant from JWT,
+    // not body. Previously any unauthenticated caller could change any
+    // tenant's subscription plan (and the prorating bills their card).
+    const user = await requireAdmin();
+    const { planId } = await request.json().catch(() => ({}));
+    const tenantId = user.tenantId;
 
-    if (!tenantId || !planId) {
-      return NextResponse.json({ error: "tenantId and planId are required" }, { status: 400 });
+    if (!planId) {
+      return NextResponse.json({ error: "planId is required" }, { status: 400 });
     }
 
     const plan = BILLING_PLANS[planId as BillingPlanId];
@@ -80,7 +86,13 @@ export async function POST(request: NextRequest) {
       action: "created",
     });
   } catch (error: any) {
+    if (error?.message === "Unauthorized") {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    if (error?.message?.startsWith("Forbidden")) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
     console.error("Create subscription error:", error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ error: "Internal error" }, { status: 500 });
   }
 }

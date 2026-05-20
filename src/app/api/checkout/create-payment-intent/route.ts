@@ -1,11 +1,20 @@
 import { NextRequest, NextResponse } from "next/server";
 import { stripe } from "@/lib/stripe";
 import { getCurrentUser } from "@/lib/auth";
-import { getTenant } from "@/lib/tenant";
+import { db } from "@/lib/db";
 
 /**
  * Creates a Stripe PaymentIntent for inline checkout with Payment Element.
- * This enables Apple Pay, Google Pay, Link, and card payments.
+ *
+ * 2026-05-20 hardening (audit CRITICAL #4): the amount is now derived
+ * server-side from the existing Order row referenced by `orderId`. The
+ * caller no longer chooses the amount — the previous version multiplied
+ * a client-supplied `amount` into `paymentIntents.create()`, allowing
+ * any logged-in user to pay 1p for any cart total.
+ *
+ * The tenant is derived from the user's JWT (via getCurrentUser), NOT
+ * from the previously-used getTenant() header path — closing the
+ * cross-tenant attack surface from audit CRITICAL #1.
  */
 export async function POST(req: NextRequest) {
   try {
@@ -14,32 +23,52 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Please log in" }, { status: 401 });
     }
 
-    const tenant = await getTenant();
-    const { amount, currency, orderId, orderNumber } = await req.json();
-
-    if (!amount || amount <= 0) {
-      return NextResponse.json({ error: "Invalid amount" }, { status: 400 });
+    const { orderId, orderNumber } = (await req.json().catch(() => ({}))) as {
+      orderId?: string;
+      orderNumber?: string;
+    };
+    if (!orderId && !orderNumber) {
+      return NextResponse.json(
+        { error: "orderId or orderNumber is required" },
+        { status: 400 },
+      );
     }
 
-    // Convert to smallest currency unit (pence/kobo)
-    const multiplier = ["NGN", "KES"].includes(currency?.toUpperCase()) ? 100 : 100;
-    const amountInSmallest = Math.round(amount * multiplier);
+    const order = await db.order.findFirst({
+      where: {
+        tenantId: user.tenantId,
+        userId: user.id,
+        ...(orderId ? { id: orderId } : {}),
+        ...(orderNumber ? { orderNumber } : {}),
+      },
+      include: { tenant: { select: { id: true, slug: true, name: true, currency: true } } },
+    });
+    if (!order) {
+      return NextResponse.json({ error: "Order not found" }, { status: 404 });
+    }
+    if (order.paymentStatus === "PAID") {
+      return NextResponse.json({ error: "Order already paid" }, { status: 409 });
+    }
+
+    const totalGbp = Number(order.total);
+    if (!(totalGbp > 0)) {
+      return NextResponse.json({ error: "Order has no positive total" }, { status: 400 });
+    }
+    const amountInSmallest = Math.round(totalGbp * 100);
 
     const paymentIntent = await stripe.paymentIntents.create({
       amount: amountInSmallest,
-      currency: (currency || tenant.currency || "GBP").toLowerCase(),
-      automatic_payment_methods: {
-        enabled: true, // Auto-enables Apple Pay, Google Pay, Link, card, etc.
-      },
+      currency: (order.tenant.currency || "GBP").toLowerCase(),
+      automatic_payment_methods: { enabled: true },
       metadata: {
-        tenantId: tenant.id,
-        tenantSlug: tenant.slug,
+        tenantId: order.tenant.id,
+        tenantSlug: order.tenant.slug,
         userId: user.id,
-        orderId: orderId || "",
-        orderNumber: orderNumber || "",
+        orderId: order.id,
+        orderNumber: order.orderNumber,
       },
       receipt_email: user.email,
-      description: `Order from ${tenant.name}`,
+      description: `Order ${order.orderNumber} from ${order.tenant.name}`,
     });
 
     return NextResponse.json({
@@ -48,8 +77,8 @@ export async function POST(req: NextRequest) {
   } catch (error: any) {
     console.error("Create payment intent error:", error);
     return NextResponse.json(
-      { error: error.message || "Failed to create payment" },
-      { status: 500 }
+      { error: "Failed to create payment" },
+      { status: 500 },
     );
   }
 }

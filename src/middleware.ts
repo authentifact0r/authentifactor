@@ -47,14 +47,17 @@ function resolveTenantSlug(request: NextRequest): string | null {
 
 const protectedPrefixes = ["/account", "/admin"];
 
+// 2026-05-20 hardening: `/api/superadmin`, `/api/billing` (except
+// `/api/billing/webhook`), and `/api/admin/sales-snapshot` are NO LONGER
+// listed here — every one of those handlers now performs its own auth
+// check (requireSuperAdmin / requireAdmin). The audit (CRITICAL #3, #7)
+// found these routes were anonymously callable from the internet, which
+// dumped tenant Stripe data and allowed billing-portal hijack.
 const publicPaths = [
   "/api/webhooks",
   "/api/billing/webhook",
   "/api/auth",
-  "/api/admin/sales-snapshot",
-  "/api/superadmin",
   "/api/tenant",
-  "/api/billing",
   "/api/security",
   "/login",
   "/register",
@@ -96,8 +99,16 @@ export function middleware(request: NextRequest) {
   }
 
   // ── Resolve tenant ──
+  // 2026-05-20 hardening (audit CRITICAL #1): UNCONDITIONALLY strip any
+  // attacker-supplied `x-tenant-slug` before re-setting it from our own
+  // server-side host/subdomain resolver. Without this delete(), a user
+  // could send `X-Tenant-Slug: target-tenant` on a request to a path
+  // where our resolver returns null (platform host, no override) — the
+  // user's value would survive into `getTenantId()` / `tenantDb()` and
+  // grant cross-tenant access.
   const tenantSlug = resolveTenantSlug(request);
   const requestHeaders = new Headers(request.headers);
+  requestHeaders.delete("x-tenant-slug");
 
   if (tenantSlug) {
     requestHeaders.set("x-tenant-slug", tenantSlug);

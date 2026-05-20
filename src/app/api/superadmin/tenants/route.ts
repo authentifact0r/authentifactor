@@ -1,10 +1,15 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { requireSuperAdmin } from "@/lib/auth";
 import { computeBillingMetrics } from "@/lib/usageBilling";
 import type { PlanId } from "@/config/usagePricing";
 
 export async function GET() {
   try {
+    // 2026-05-20 hardening (audit CRITICAL #3): previously this route
+    // was anonymously callable from the internet and dumped every
+    // tenant's billing/Stripe data. Now requires a super-admin user.
+    await requireSuperAdmin();
     const tenants = await db.tenant.findMany({
       orderBy: { createdAt: "desc" },
       select: {
@@ -87,7 +92,13 @@ export async function GET() {
 
     return NextResponse.json({ tenants: enriched });
   } catch (error: any) {
+    if (error?.message === "Unauthorized") {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    if (error?.message?.startsWith("Forbidden")) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
     console.error("Superadmin tenants error:", error);
-    return NextResponse.json({ tenants: [], error: error.message }, { status: 500 });
+    return NextResponse.json({ error: "Internal error" }, { status: 500 });
   }
 }

@@ -3,12 +3,33 @@ import { cookies } from "next/headers";
 import bcrypt from "bcryptjs";
 import { db } from "./db";
 
-const JWT_SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET || "fallback-dev-secret"
-);
-const REFRESH_SECRET = new TextEncoder().encode(
-  process.env.JWT_REFRESH_SECRET || "fallback-refresh-secret"
-);
+// 2026-05-20 hardening (audit HIGH): refuse to boot with a fallback
+// JWT secret in production. A misconfigured deploy with `JWT_SECRET`
+// unset previously silently fell back to the string literal in this
+// file — a value every reader of the repo knows, so every issued JWT
+// would be forgeable. Fail loudly at module load.
+function loadJwtSecret(name: "JWT_SECRET" | "JWT_REFRESH_SECRET"): Uint8Array {
+  const raw = process.env[name] || "";
+  if (process.env.NODE_ENV === "production") {
+    if (!raw || raw.length < 32) {
+      throw new Error(
+        `${name} must be set to at least 32 chars in production (was ${raw.length} chars)`,
+      );
+    }
+  } else if (!raw) {
+    // Dev only: fall back to a constant so `npm run dev` still works
+    // for a fresh checkout. Production cannot reach this branch.
+    return new TextEncoder().encode(
+      name === "JWT_SECRET"
+        ? "fallback-dev-secret-not-for-prod-must-be-32+chars"
+        : "fallback-refresh-secret-not-for-prod-32+chars",
+    );
+  }
+  return new TextEncoder().encode(raw);
+}
+
+const JWT_SECRET = loadJwtSecret("JWT_SECRET");
+const REFRESH_SECRET = loadJwtSecret("JWT_REFRESH_SECRET");
 
 export interface JWTPayload {
   userId: string;

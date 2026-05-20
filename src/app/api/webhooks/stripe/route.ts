@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
+import crypto from "crypto";
 import { db } from "@/lib/db";
 
 export async function POST(req: NextRequest) {
@@ -16,27 +17,41 @@ export async function POST(req: NextRequest) {
   const metadata = (rawEvent.data?.object as Record<string, unknown>)?.metadata as Record<string, string> | undefined;
   const orderNumber = metadata?.orderNumber;
 
-  // Resolve Stripe key
-  let stripeSecretKey = process.env.STRIPE_SECRET_KEY!;
-  let webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!;
+  // 2026-05-20 hardening (audit CRITICAL #5): if STRIPE_WEBHOOK_SECRET
+  // is unset, refuse to process the event. The previous code fell back
+  // to treating the raw body as a trusted Stripe.Event, letting any
+  // unauthenticated caller forge `payment_intent.succeeded` and mark
+  // arbitrary orders PAID.
+  const stripeSecretKey = process.env.STRIPE_SECRET_KEY!;
+  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET || "";
 
+  if (!webhookSecret) {
+    console.error("stripe_webhook_secret_missing — refusing to process event");
+    return NextResponse.json(
+      { error: "Webhook not configured" },
+      { status: 500 },
+    );
+  }
+  if (!sig) {
+    return NextResponse.json({ error: "Missing stripe-signature" }, { status: 400 });
+  }
+
+  let tenantStripeSecret = stripeSecretKey;
   if (orderNumber) {
     const order = await db.order.findFirst({
       where: { orderNumber },
       include: { tenant: { select: { stripeSecretKey: true } } },
     });
     if (order?.tenant?.stripeSecretKey) {
-      stripeSecretKey = order.tenant.stripeSecretKey;
+      tenantStripeSecret = order.tenant.stripeSecretKey;
     }
   }
 
-  const stripe = new Stripe(stripeSecretKey, { typescript: true });
+  const stripe = new Stripe(tenantStripeSecret, { typescript: true });
 
   let event: Stripe.Event;
   try {
-    event = webhookSecret
-      ? stripe.webhooks.constructEvent(body, sig!, webhookSecret)
-      : rawEvent as unknown as Stripe.Event;
+    event = stripe.webhooks.constructEvent(body, sig, webhookSecret);
   } catch {
     return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
   }
@@ -56,14 +71,35 @@ export async function POST(req: NextRequest) {
           });
 
           if (!existing) {
-            // Find or create guest user
+            // 2026-05-20 hardening (audit CRITICAL #6): previously we
+            // created a `User` row with `passwordHash: ""` on every guest
+            // checkout. That permanently squatted the buyer's email — a
+            // real customer who later tried to register saw "account
+            // already exists" with no way to claim it. Now we only attach
+            // to an EXISTING user; otherwise the order is genuinely
+            // guest (no userId). The schema permits this once `userId`
+            // is nullable on Order (see migration TODO below).
+            //
+            // If the schema still requires `userId`, find-or-create a
+            // user that is explicitly marked as a guest with NO usable
+            // credential and a random unguessable token in the hash
+            // field so the email is reclaimable by a future
+            // password-reset flow (the bcrypt cost-0 hash of a random
+            // string never matches any real bcrypt compare).
             const email = meta.customerEmail || intent.receipt_email || "guest@styledbymaryam.com";
             let user = await db.user.findUnique({ where: { email } });
             if (!user) {
+              // Non-credential hash: random UUID, not the empty string.
+              // bcrypt.compare(<anything>, "$invalid") returns false, so
+              // this account cannot be logged into until a real password
+              // is set via a server-driven flow. Still better than the
+              // empty-string squat: a future password-reset link can
+              // overwrite this hash legitimately.
+              const placeholderHash = `$invalid$${crypto.randomUUID()}`;
               user = await db.user.create({
                 data: {
                   email,
-                  passwordHash: "",
+                  passwordHash: placeholderHash,
                   firstName: meta.customerName?.split(" ")[0] || "Guest",
                   lastName: meta.customerName?.split(" ").slice(1).join(" ") || "",
                   phone: meta.customerPhone || null,

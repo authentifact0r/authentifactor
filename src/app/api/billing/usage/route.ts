@@ -1,19 +1,21 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { requireAdmin, requireSuperAdmin } from "@/lib/auth";
 import { computeBillingMetrics } from "@/lib/usageBilling";
 import type { PlanId } from "@/config/usagePricing";
 
 /**
- * GET /api/billing/usage?tenantId=xxx&months=3
+ * GET /api/billing/usage?months=3
+ *
+ * 2026-05-20 hardening (audit CRITICAL #7): tenantId is derived from
+ * the authenticated admin's JWT — any query-string tenantId is ignored.
+ * Previously this returned any tenant's billing data without auth.
  */
 export async function GET(request: NextRequest) {
   try {
-    const tenantId = request.nextUrl.searchParams.get("tenantId");
+    const user = await requireAdmin();
+    const tenantId = user.tenantId;
     const months = parseInt(request.nextUrl.searchParams.get("months") || "1");
-
-    if (!tenantId) {
-      return NextResponse.json({ error: "tenantId required" }, { status: 400 });
-    }
 
     const since = new Date();
     since.setMonth(since.getMonth() - months);
@@ -47,16 +49,32 @@ export async function GET(request: NextRequest) {
       tenantName: tenant.name,
     });
   } catch (error: any) {
+    if (error?.message === "Unauthorized") {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    if (error?.message?.startsWith("Forbidden")) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
     console.error("Usage fetch error:", error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ error: "Internal error" }, { status: 500 });
   }
 }
 
 /**
- * POST /api/billing/usage — record usage for a period
+ * POST /api/billing/usage — record usage for a period.
+ *
+ * 2026-05-20 hardening (audit CRITICAL #7): requires super-admin. This
+ * route writes the usage records that DRIVE the next invoice — a
+ * tenant admin could otherwise write zero usage to dodge billing, and
+ * an unauthenticated caller could write inflated usage to bill a
+ * competitor's tenant into the ground. The cron/scheduler that
+ * periodically ingests cloud-provider metrics should authenticate as
+ * a super-admin service account (TODO: migrate to a dedicated
+ * internal-shared-secret header pattern with `crypto.timingSafeEqual`).
  */
 export async function POST(request: NextRequest) {
   try {
+    await requireSuperAdmin();
     const body = await request.json();
     const { tenantId, periodStart, periodEnd, gcp, vercel } = body;
 
@@ -117,7 +135,13 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ record, metrics });
   } catch (error: any) {
+    if (error?.message === "Unauthorized") {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    if (error?.message?.startsWith("Forbidden")) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
     console.error("Usage record error:", error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ error: "Internal error" }, { status: 500 });
   }
 }

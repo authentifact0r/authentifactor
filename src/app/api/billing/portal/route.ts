@@ -1,16 +1,21 @@
 import { NextRequest, NextResponse } from "next/server";
 import { stripe } from "@/lib/stripe";
 import { db as prisma } from "@/lib/db";
+import { requireAdmin } from "@/lib/auth";
 
 export async function POST(request: NextRequest) {
   try {
-    const { tenantId, returnUrl } = await request.json();
+    // 2026-05-20 hardening (audit CRITICAL #7): this route was
+    // anonymously callable from the internet — anyone could mint a
+    // Stripe billing-portal URL for any tenant's customer. Now the
+    // tenant is derived from the authenticated admin's JWT and any
+    // body-supplied tenantId is ignored.
+    const user = await requireAdmin();
+    const { returnUrl } = await request.json().catch(() => ({}));
 
-    if (!tenantId) {
-      return NextResponse.json({ error: "tenantId is required" }, { status: 400 });
-    }
-
-    const tenant = await prisma.tenant.findUnique({ where: { id: tenantId } });
+    const tenant = await prisma.tenant.findUnique({
+      where: { id: user.tenantId },
+    });
     if (!tenant || !tenant.stripeCustomerId) {
       return NextResponse.json({ error: "Tenant not found or missing Stripe customer" }, { status: 404 });
     }
@@ -22,7 +27,13 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ url: session.url });
   } catch (error: any) {
+    if (error?.message === "Unauthorized") {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    if (error?.message?.startsWith("Forbidden")) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
     console.error("Billing portal error:", error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ error: "Internal error" }, { status: 500 });
   }
 }

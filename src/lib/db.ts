@@ -124,10 +124,45 @@ export function tenantDb(tenantId: string) {
   });
 }
 
+/**
+ * Resolve the tenant-scoped Prisma client for the current request.
+ *
+ * 2026-05-20 hardening: authenticated callers (admin/account routes) now
+ * derive tenantId from the SERVER-ISSUED JWT, NOT the `x-tenant-slug`
+ * request header. The header was previously the sole authority and a
+ * client could simply set it to any tenant's slug to read/write that
+ * tenant's data (audit CRITICAL #1). The JWT path closes that.
+ *
+ * Unauthenticated callers (storefront product reads, sitemap, etc.)
+ * still fall through to the header — but middleware now unconditionally
+ * deletes any user-supplied `x-tenant-slug` and re-sets it from the
+ * server-side host/subdomain resolver, so the header is trustworthy for
+ * those reads.
+ */
 export async function getScopedDb() {
+  const { getCurrentUser } = await import("./auth");
   const { getTenantId } = await import("./tenant");
+
+  const user = await getCurrentUser().catch(() => null);
+  if (user?.tenantId) {
+    return tenantDb(user.tenantId);
+  }
   const id = await getTenantId();
   return tenantDb(id);
+}
+
+/**
+ * Strict variant — REQUIRES an authenticated user and returns a client
+ * scoped to that user's tenant. Use in admin/account routes where any
+ * fall-through to header-based resolution would be a security bug.
+ */
+export async function getAuthScopedDb() {
+  const { getCurrentUser } = await import("./auth");
+  const user = await getCurrentUser();
+  if (!user?.tenantId) {
+    throw new Error("Unauthorized");
+  }
+  return tenantDb(user.tenantId);
 }
 
 /**
