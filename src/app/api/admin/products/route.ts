@@ -2,12 +2,14 @@ import { NextRequest, NextResponse } from "next/server";
 import { getScopedDb } from "@/lib/db";
 import { requireAdmin } from "@/lib/auth";
 import { apiError } from "@/lib/api-error";
+import { readJsonBody } from "@/lib/read-body";
 
 export async function POST(request: NextRequest) {
   try {
     await requireAdmin();
     const tdb = await getScopedDb();
-    const body = await request.json();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const body = await readJsonBody<any>(request);
 
     if (!body.name || !body.price) return NextResponse.json({ error: "Name and price required" }, { status: 400 });
 

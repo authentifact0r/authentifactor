@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db, tenantDb } from "@/lib/db";
 import { stripe } from "@/lib/stripe";
+import { readJsonBody } from "@/lib/read-body";
 
 // 2026-05-20 hardening (audit CRITICAL #4 + MEDIUM CORS):
 // Wildcard CORS replaced with an allowlist of known storefront
@@ -54,7 +55,10 @@ export async function POST(request: NextRequest) {
       return cors(NextResponse.json({ error: "Tenant not found" }, { status: 404 }), origin, null);
     }
 
-    const body = await request.json();
+    // 2026-05-22 hardening (audit MEDIUM — no body-size limits): reject
+    // oversized JSON payloads early.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const body = await readJsonBody<any>(request);
     const { items, customer, shipping, giftWrap, giftNote } = body;
 
     if (!Array.isArray(items) || !items.length || !customer?.email) {

@@ -5,6 +5,7 @@ import { getTenant } from "@/lib/tenant";
 import { generateOrderNumber } from "@/lib/utils";
 import { calculateShippingOptions, findClosestWarehouse } from "@/lib/shipping";
 import { createPaystackClient } from "@/lib/paystack";
+import { readJsonBody } from "@/lib/read-body";
 import type { ShippingMethod, PaymentProvider } from "@prisma/client";
 
 export async function POST(req: NextRequest) {
@@ -17,7 +18,10 @@ export async function POST(req: NextRequest) {
     const tdb = await getScopedDb();
     const tenant = await getTenant();
 
-    const body = await req.json();
+    // 2026-05-22 hardening (audit MEDIUM — no body-size limits on API
+    // route handlers): readJsonBody rejects oversized payloads early.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const body = await readJsonBody<any>(req);
     const { address, shippingMethod, paymentProvider, items } = body;
 
     if (!address || !shippingMethod || !items?.length) {
