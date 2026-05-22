@@ -357,6 +357,10 @@ model Order {
   tenantId        String
   tenant          Tenant         @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   orderNumber     String         @unique
+  // 2026-05-20 hardening (audit HIGH): de-dupe key for /api/checkout —
+  // a client retry with the same Idempotency-Key returns the existing
+  // order instead of creating a duplicate. Unique per tenant.
+  idempotencyKey  String?
   userId          String
   addressId       String
   address         Address        @relation(fields: [addressId], references: [id])
@@ -388,6 +392,7 @@ model Order {
 
   items           OrderItem[]
 
+  @@unique([tenantId, idempotencyKey])
   @@index([tenantId])
   @@index([userId])
   @@index([status])
