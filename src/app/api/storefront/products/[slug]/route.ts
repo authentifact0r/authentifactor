@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { apiError } from "@/lib/api-error";
 
 // Public API — single product by slug
 // Usage: GET /api/storefront/products/soleil-sculptural-tulip-mini-dress?tenant=styled-by-maryam
@@ -64,7 +65,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     response.headers.set("Access-Control-Allow-Origin", "*");
     response.headers.set("Cache-Control", "public, s-maxage=60, stale-while-revalidate=300");
     return response;
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  } catch (error: unknown) {
+    return apiError(error, { context: "storefront/products/[slug]" });
   }
 }

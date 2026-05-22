@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { apiError } from "@/lib/api-error";
 
 // Public API — no auth required. Serves product data for a tenant's storefront.
 // Usage: GET /api/storefront/products?tenant=styled-by-maryam
@@ -66,7 +67,7 @@ export async function GET(request: NextRequest) {
     response.headers.set("Cache-Control", "public, s-maxage=60, stale-while-revalidate=300");
 
     return response;
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  } catch (error: unknown) {
+    return apiError(error, { context: "storefront/products" });
   }
 }

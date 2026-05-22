@@ -67,6 +67,17 @@ const nextConfig: NextConfig = {
   experimental: {
     serverActions: {
       bodySizeLimit: "2mb",
+      // 2026-05-22 hardening (audit MEDIUM — no explicit server-action
+      // origin allowlist): Next.js already rejects server-action POSTs
+      // whose Origin does not match the request Host (same-origin is
+      // always permitted, so each tenant custom domain calling its own
+      // actions still works). This list is the EXTRA set of origins
+      // allowed on top of that default — it does not narrow the
+      // same-origin guarantee. Naming the canonical platform origins
+      // makes the policy explicit and auditable. Add tenant custom
+      // domains here only if a cross-origin server-action call is ever
+      // genuinely required.
+      allowedOrigins: ["authentifactor.com", "*.authentifactor.com"],
     },
   },
   async headers() {
