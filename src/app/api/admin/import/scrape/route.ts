@@ -1,40 +1,64 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/auth";
+import { safeFetch, readTextCapped, SsrfBlockedError } from "@/lib/safe-fetch";
+
+// 2026-05-20 hardening (audit HIGH — SSRF in admin scrape):
+// The scrape import only ever needs to reach known dropshipping
+// suppliers. Restrict outbound fetches to this allowlist; combined
+// with safeFetch's private-IP + scheme + redirect-target checks, an
+// admin (or a cross-tenant escalated attacker) can no longer use this
+// route as a server-side proxy into the internal network / cloud
+// metadata endpoint.
+const SUPPLIER_ALLOWLIST = [
+  "aliexpress.com",
+  "aliexpress.us",
+  "amazon.com",
+  "amazon.co.uk",
+  "temu.com",
+  "alibaba.com",
+  "cjdropshipping.com",
+  "dhgate.com",
+  "shein.com",
+];
+
+const FETCH_HEADERS: Record<string, string>[] = [
+  {
+    "User-Agent":
+      "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+    Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+    "Accept-Language": "en-US,en;q=0.9",
+    "Accept-Encoding": "identity",
+    "Cache-Control": "no-cache",
+    "Sec-Fetch-Dest": "document",
+    "Sec-Fetch-Mode": "navigate",
+    "Sec-Fetch-Site": "none",
+  },
+  // Googlebot UA (many sites serve full HTML to Googlebot)
+  {
+    "User-Agent":
+      "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)",
+    Accept: "text/html",
+  },
+];
 
 async function tryFetch(url: string): Promise<string | null> {
-  // Strategy 1: Direct fetch with browser-like headers
-  const strategies = [
-    {
-      headers: {
-        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-        "Accept-Language": "en-US,en;q=0.9",
-        "Accept-Encoding": "identity",
-        "Cache-Control": "no-cache",
-        "Sec-Fetch-Dest": "document",
-        "Sec-Fetch-Mode": "navigate",
-        "Sec-Fetch-Site": "none",
-      },
-    },
-    // Strategy 2: Googlebot UA (many sites serve full HTML to Googlebot)
-    {
-      headers: {
-        "User-Agent": "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)",
-        "Accept": "text/html",
-      },
-    },
-  ];
-
-  for (const strategy of strategies) {
+  for (const headers of FETCH_HEADERS) {
     try {
-      const res = await fetch(url, { headers: strategy.headers, redirect: "follow" });
+      const res = await safeFetch(url, {
+        headers,
+        allowedHosts: SUPPLIER_ALLOWLIST,
+      });
       if (!res.ok) continue;
-      const html = await res.text();
+      const html = await readTextCapped(res);
       // Check it's real content, not a CAPTCHA or blank page
       if (html.length > 5000 && (html.includes("og:title") || html.includes("<title") || html.includes("product"))) {
         return html;
       }
-    } catch {}
+    } catch (e) {
+      // An SSRF block must surface to the caller — not be swallowed as
+      // "site blocked the request". Re-throw so POST() returns 400.
+      if (e instanceof SsrfBlockedError) throw e;
+    }
   }
   return null;
 }
@@ -182,6 +206,12 @@ export async function POST(request: NextRequest) {
       message: hasData ? undefined : `Limited data from ${supplier}. Please review and fill in missing details.`,
     });
   } catch (error: any) {
+    if (error instanceof SsrfBlockedError) {
+      return NextResponse.json(
+        { error: "This URL is not an allowed supplier or could not be safely fetched." },
+        { status: 400 },
+      );
+    }
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
