@@ -1,5 +1,6 @@
 "use client";
 import { createContext, useContext } from "react";
+import { safeHexColor } from "@/lib/brand-color";
 
 const fontFamilyMap: Record<string, string> = {
   inter: "'Inter', sans-serif",
@@ -39,14 +40,25 @@ export interface TenantConfig {
 const TenantContext = createContext<TenantConfig | null>(null);
 
 export function TenantProvider({ tenant, children }: { tenant: TenantConfig; children: React.ReactNode }) {
+  // 2026-05-20 hardening (audit HIGH — CSS-injection branding XSS):
+  // brand colours are interpolated into this `<style>` block. Even
+  // though the write path now validates, sanitize again at read time
+  // so a row poisoned before that fix shipped cannot break out of the
+  // tag. Anything that is not a strict hex colour falls back to the
+  // schema default.
+  const brand = safeHexColor(tenant.primaryColor, "#064E3B");
+  const accent = safeHexColor(tenant.accentColor, "#F59E0B");
+  const bg = safeHexColor(tenant.backgroundColor, "#FFFFFF");
+  const text = safeHexColor(tenant.textColor, "#1a1a1a");
+
   return (
     <TenantContext.Provider value={tenant}>
       <style dangerouslySetInnerHTML={{ __html: `
         :root {
-          --color-brand: ${tenant.primaryColor};
-          --color-accent: ${tenant.accentColor};
-          --color-bg: ${tenant.backgroundColor};
-          --color-text: ${tenant.textColor};
+          --color-brand: ${brand};
+          --color-accent: ${accent};
+          --color-bg: ${bg};
+          --color-text: ${text};
           --font-body: ${fontFamilyMap[tenant.fontFamily] || fontFamilyMap.inter};
           --font-heading: ${fontFamilyMap[tenant.headingFontFamily] || fontFamilyMap.cormorant};
         }
