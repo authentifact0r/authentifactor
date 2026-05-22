@@ -26,12 +26,29 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  output: "standalone",
   typescript: {
     ignoreBuildErrors: true,
   },
+  // 2026-05-20 hardening (audit HIGH — open Image Optimization SSRF):
+  // `hostname: "**"` let `/_next/image?url=...` fetch ANY https URL
+  // server-side and cache it — an open proxy + cache-abuse / DoS
+  // vector. Restricted to the hosts the platform actually serves
+  // images from. Add new tenant custom domains / CDNs here as needed.
   images: {
     remotePatterns: [
-      { protocol: "https", hostname: "**" },
+      // Vercel Blob storage (product/branding uploads)
+      { protocol: "https", hostname: "*.public.blob.vercel-storage.com" },
+      { protocol: "https", hostname: "blob.vercel-storage.com" },
+      // Platform + tenant storefront subdomains
+      { protocol: "https", hostname: "authentifactor.com" },
+      { protocol: "https", hostname: "*.authentifactor.com" },
+      { protocol: "https", hostname: "*.vercel.app" },
+      // Tenant custom domains
+      { protocol: "https", hostname: "styledbymaryam.com" },
+      { protocol: "https", hostname: "*.styledbymaryam.com" },
+      // Legacy image dependency still referenced in seed/sample content
+      { protocol: "https", hostname: "images.unsplash.com" },
     ],
   },
   experimental: {
