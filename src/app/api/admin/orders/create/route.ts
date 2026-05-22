@@ -1,13 +1,33 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getScopedDb, db } from "@/lib/db";
 import { requireAdmin } from "@/lib/auth";
+import { apiError } from "@/lib/api-error";
+import { readJsonBody } from "@/lib/read-body";
+import type { ShippingMethod } from "@prisma/client";
+import crypto from "crypto";
 
 export async function POST(request: NextRequest) {
   try {
-    const user = await requireAdmin();
+    await requireAdmin();
     const tdb = await getScopedDb();
 
-    const { items, customerName, customerEmail, customerPhone, address, shippingMethod, notes } = await request.json();
+    const { items, customerName, customerEmail, customerPhone, address, shippingMethod, notes } =
+      await readJsonBody<{
+        items?: Array<{ productId: string; qty?: number; size?: string; color?: string }>;
+        customerName?: string;
+        customerEmail?: string;
+        customerPhone?: string;
+        address?: {
+          line1?: string;
+          line2?: string;
+          city?: string;
+          state?: string;
+          postcode?: string;
+          country?: string;
+        };
+        shippingMethod?: string;
+        notes?: string;
+      }>(request);
 
     if (!items?.length || !customerName || !customerEmail || !address?.line1 || !address?.city || !address?.postcode) {
       return NextResponse.json({ error: "Items, customer details, and address required" }, { status: 400 });
@@ -18,13 +38,16 @@ export async function POST(request: NextRequest) {
     if (!customer) {
       const nameParts = customerName.trim().split(" ");
       const { hashPassword } = await import("@/lib/auth");
+      // 2026-05-22 hardening (audit MEDIUM — CWE-338 weak PRNG):
+      // placeholder password for an order-created customer account is
+      // now generated with a CSPRNG (was Math.random()).
       customer = await db.user.create({
         data: {
           email: customerEmail,
           firstName: nameParts[0] || "",
           lastName: nameParts.slice(1).join(" ") || "",
           phone: customerPhone || null,
-          passwordHash: await hashPassword(Math.random().toString(36).slice(2)),
+          passwordHash: await hashPassword(crypto.randomBytes(32).toString("base64url")),
         },
       });
     }
@@ -84,7 +107,7 @@ export async function POST(request: NextRequest) {
         discount: 0,
         total: subtotal,
         totalWeightKg: totalWeight,
-        shippingMethod: shippingMethod || "STANDARD",
+        shippingMethod: (shippingMethod || "STANDARD") as ShippingMethod,
         paymentProvider: "STRIPE",
         paymentStatus: "PAID",
         notes: notes || null,
@@ -93,7 +116,7 @@ export async function POST(request: NextRequest) {
     });
 
     return NextResponse.json({ order }, { status: 201 });
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  } catch (error: unknown) {
+    return apiError(error, { context: "admin/orders/create" });
   }
 }
