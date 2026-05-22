@@ -150,6 +150,27 @@ model TenantUser {
   @@map("tenant_users")
 }
 
+// ─── REFRESH TOKEN SESSIONS ─────────────────────────────────
+// Server-side session store for refresh-token rotation + revocation.
+// Each refresh token carries a `jti`; only the SHA-256 hash of the
+// secret is stored. On every refresh the row is rotated (old jti
+// revoked, new one issued). Logout revokes the row server-side so a
+// stolen token cannot outlive the session.
+
+model RefreshToken {
+  id         String   @id @default(cuid())
+  jti        String   @unique
+  tokenHash  String   // SHA-256 hex of the signed refresh JWT
+  userId     String
+  revokedAt  DateTime?
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+
+  @@index([userId])
+  @@index([expiresAt])
+  @@map("refresh_tokens")
+}
+
 model Address {
   id          String  @id @default(cuid())
   userId      String

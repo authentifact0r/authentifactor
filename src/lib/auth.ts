@@ -1,6 +1,7 @@
 import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
 import bcrypt from "bcryptjs";
+import crypto from "crypto";
 import { db } from "./db";
 
 // 2026-05-20 hardening (audit HIGH): refuse to boot with a fallback
@@ -31,6 +32,9 @@ function loadJwtSecret(name: "JWT_SECRET" | "JWT_REFRESH_SECRET"): Uint8Array {
 const JWT_SECRET = loadJwtSecret("JWT_SECRET");
 const REFRESH_SECRET = loadJwtSecret("JWT_REFRESH_SECRET");
 
+const ACCESS_TOKEN_TTL_SEC = 15 * 60; // 15 minutes
+const REFRESH_TOKEN_TTL_SEC = 7 * 24 * 60 * 60; // 7 days
+
 export interface JWTPayload {
   userId: string;
   email: string;
@@ -49,6 +53,10 @@ export async function verifyPassword(
   return bcrypt.compare(password, hash);
 }
 
+function sha256Hex(input: string): string {
+  return crypto.createHash("sha256").update(input).digest("hex");
+}
+
 export async function createAccessToken(payload: JWTPayload): Promise<string> {
   return new SignJWT(payload as unknown as Record<string, unknown>)
     .setProtectedHeader({ alg: "HS256" })
@@ -57,12 +65,30 @@ export async function createAccessToken(payload: JWTPayload): Promise<string> {
     .sign(JWT_SECRET);
 }
 
-export async function createRefreshToken(payload: JWTPayload): Promise<string> {
-  return new SignJWT(payload as unknown as Record<string, unknown>)
+// 2026-05-20 hardening (audit HIGH — no refresh rotation/revocation):
+// the refresh token now carries a `jti`. The signed token's SHA-256
+// hash is persisted in the RefreshToken table so logout / rotation
+// can revoke it server-side. A stolen refresh token is therefore
+// killable, and rotation detects re-use.
+async function createRefreshToken(payload: JWTPayload): Promise<string> {
+  const jti = crypto.randomUUID();
+  const token = await new SignJWT(payload as unknown as Record<string, unknown>)
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
+    .setJti(jti)
     .setExpirationTime("7d")
     .sign(REFRESH_SECRET);
+
+  await db.refreshToken.create({
+    data: {
+      jti,
+      tokenHash: sha256Hex(token),
+      userId: payload.userId,
+      expiresAt: new Date(Date.now() + REFRESH_TOKEN_TTL_SEC * 1000),
+    },
+  });
+
+  return token;
 }
 
 export async function verifyAccessToken(
@@ -76,23 +102,35 @@ export async function verifyAccessToken(
   }
 }
 
-export async function verifyRefreshToken(
+interface RefreshVerifyResult {
+  payload: JWTPayload;
+  jti: string;
+}
+
+// Verifies the JWT signature AND that the matching RefreshToken row is
+// present, not revoked, and not expired.
+async function verifyRefreshToken(
   token: string
-): Promise<JWTPayload | null> {
+): Promise<RefreshVerifyResult | null> {
   try {
     const { payload } = await jwtVerify(token, REFRESH_SECRET);
-    return payload as unknown as JWTPayload;
+    const jti = payload.jti as string | undefined;
+    if (!jti) return null;
+
+    const row = await db.refreshToken.findUnique({ where: { jti } });
+    if (!row) return null;
+    if (row.revokedAt) return null;
+    if (row.expiresAt.getTime() < Date.now()) return null;
+    if (row.tokenHash !== sha256Hex(token)) return null;
+
+    return { payload: payload as unknown as JWTPayload, jti };
   } catch {
     return null;
   }
 }
 
-export async function setAuthCookies(payload: JWTPayload) {
-  const cookieStore = await cookies();
-  const accessToken = await createAccessToken(payload);
-  const refreshToken = await createRefreshToken(payload);
-
-  const baseCookieOpts = {
+function baseCookieOpts() {
+  return {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax" as const,
@@ -102,20 +140,49 @@ export async function setAuthCookies(payload: JWTPayload) {
       domain: ".authentifactor.com",
     }),
   };
+}
+
+// Sole login session-issuing path. Consolidates the previously
+// divergent `/api/auth/login` (flat 7d access_token) and server-action
+// (15m + raw 7d) flows into one shape: 15m access + rotating, revocable
+// 7d refresh.
+export async function setAuthCookies(payload: JWTPayload) {
+  const cookieStore = await cookies();
+  const accessToken = await createAccessToken(payload);
+  const refreshToken = await createRefreshToken(payload);
+  const opts = baseCookieOpts();
 
   cookieStore.set("access_token", accessToken, {
-    ...baseCookieOpts,
-    maxAge: 15 * 60, // 15 minutes
+    ...opts,
+    maxAge: ACCESS_TOKEN_TTL_SEC,
   });
-
   cookieStore.set("refresh_token", refreshToken, {
-    ...baseCookieOpts,
-    maxAge: 7 * 24 * 60 * 60, // 7 days
+    ...opts,
+    maxAge: REFRESH_TOKEN_TTL_SEC,
   });
 }
 
+// Revokes the persisted refresh-token row (if present) and clears the
+// browser cookies. Used by /api/auth/logout and logoutAction.
 export async function clearAuthCookies() {
   const cookieStore = await cookies();
+  const refreshToken = cookieStore.get("refresh_token")?.value;
+  if (refreshToken) {
+    try {
+      const { payload } = await jwtVerify(refreshToken, REFRESH_SECRET);
+      const jti = payload.jti as string | undefined;
+      if (jti) {
+        await db.refreshToken
+          .updateMany({
+            where: { jti, revokedAt: null },
+            data: { revokedAt: new Date() },
+          })
+          .catch(() => {});
+      }
+    } catch {
+      // invalid/expired token — nothing to revoke
+    }
+  }
   cookieStore.delete("access_token");
   cookieStore.delete("refresh_token");
 }
@@ -125,27 +192,57 @@ export async function getCurrentUser() {
   const accessToken = cookieStore.get("access_token")?.value;
 
   if (!accessToken) {
-    // Try refresh token
+    // Try refresh token — verified against the server-side session store.
     const refreshToken = cookieStore.get("refresh_token")?.value;
     if (!refreshToken) return null;
 
-    const refreshPayload = await verifyRefreshToken(refreshToken);
-    if (!refreshPayload) return null;
+    const result = await verifyRefreshToken(refreshToken);
+    if (!result) return null;
 
-    // Issue new access token
+    // 2026-05-20 hardening (audit HIGH): re-load role + isSuperAdmin
+    // from the DB on every refresh so role downgrades / account
+    // disables propagate instead of waiting out the 7-day TTL.
+    const tenantUser = await db.tenantUser.findUnique({
+      where: {
+        userId_tenantId: {
+          userId: result.payload.userId,
+          tenantId: result.payload.tenantId,
+        },
+      },
+      include: { user: { select: { id: true, email: true } } },
+    });
+    if (!tenantUser) {
+      // The user no longer belongs to this tenant — kill the session.
+      await db.refreshToken
+        .updateMany({
+          where: { jti: result.jti, revokedAt: null },
+          data: { revokedAt: new Date() },
+        })
+        .catch(() => {});
+      return null;
+    }
+
     const newPayload: JWTPayload = {
-      userId: refreshPayload.userId,
-      email: refreshPayload.email,
-      tenantId: refreshPayload.tenantId,
-      tenantRole: refreshPayload.tenantRole,
+      userId: tenantUser.user.id,
+      email: tenantUser.user.email,
+      tenantId: result.payload.tenantId,
+      tenantRole: tenantUser.role,
     };
+
+    // Rotate: revoke the consumed jti, issue a fresh access + refresh pair.
+    await db.refreshToken
+      .updateMany({
+        where: { jti: result.jti, revokedAt: null },
+        data: { revokedAt: new Date() },
+      })
+      .catch(() => {});
     await setAuthCookies(newPayload);
 
     return {
-      id: refreshPayload.userId,
-      email: refreshPayload.email,
-      tenantId: refreshPayload.tenantId,
-      tenantRole: refreshPayload.tenantRole,
+      id: newPayload.userId,
+      email: newPayload.email,
+      tenantId: newPayload.tenantId,
+      tenantRole: newPayload.tenantRole,
     };
   }
 

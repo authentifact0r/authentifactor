@@ -1,10 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import bcrypt from "bcryptjs";
-import { SignJWT } from "jose";
+import { verifyPassword, setAuthCookies, type JWTPayload } from "@/lib/auth";
 
-const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || "fallback-dev-secret");
-
+// 2026-05-20 hardening (audit HIGH — divergent auth paths): this route
+// previously minted its own flat 7-day `access_token` signed with a
+// fallback-able `JWT_SECRET`, with no refresh token and no server-side
+// session row. It now funnels through `setAuthCookies()` — the single
+// session-issuing path — which produces a 15m access token plus a
+// rotating, revocable 7d refresh token persisted in `RefreshToken`.
 export async function POST(request: NextRequest) {
   try {
     const { email, password } = await request.json();
@@ -18,7 +21,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Invalid email or password" }, { status: 401 });
     }
 
-    const valid = await bcrypt.compare(password, user.passwordHash);
+    const valid = await verifyPassword(password, user.passwordHash);
     if (!valid) {
       return NextResponse.json({ error: "Invalid email or password" }, { status: 401 });
     }
@@ -27,7 +30,8 @@ export async function POST(request: NextRequest) {
     let tenantId = "";
     let tenantRole = "CUSTOMER";
 
-    // Check x-tenant-slug header from middleware
+    // Check x-tenant-slug header from middleware (set server-side; the
+    // middleware strips any attacker-supplied value before this point).
     const slug = request.headers.get("x-tenant-slug");
     if (slug) {
       const tenant = await db.tenant.findUnique({ where: { slug } });
@@ -61,30 +65,16 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "No tenant context. Access your storefront domain directly." }, { status: 403 });
     }
 
-    // Create JWT
-    const token = await new SignJWT({
+    const payload: JWTPayload = {
       userId: user.id,
       email: user.email,
       tenantId,
       tenantRole,
-      isSuperAdmin: user.isSuperAdmin,
-    })
-      .setProtectedHeader({ alg: "HS256" })
-      .setExpirationTime("7d")
-      .sign(JWT_SECRET);
+    };
+    await setAuthCookies(payload);
 
     const redirectTo = user.isSuperAdmin ? "/superadmin" : "/admin";
-
-    const response = NextResponse.json({ success: true, redirectTo });
-    response.cookies.set("access_token", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-      maxAge: 60 * 60 * 24 * 7,
-      path: "/",
-    });
-
-    return response;
+    return NextResponse.json({ success: true, redirectTo });
   } catch (error: any) {
     console.error("Login error:", error);
     return NextResponse.json({ error: "Login failed" }, { status: 500 });
