@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { requireAdmin } from "@/lib/auth";
 import { getTenantId } from "@/lib/tenant";
+import { apiError } from "@/lib/api-error";
 
 export async function POST(request: NextRequest) {
   try {
@@ -18,6 +19,6 @@ export async function POST(request: NextRequest) {
     const updated = await db.tenantUser.update({ where: { id }, data: { role } });
     return NextResponse.json({ member: updated });
   } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return apiError(error, { context: "admin/team/update" });
   }
 }

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getScopedDb } from "@/lib/db";
 import { requireAdmin } from "@/lib/auth";
 import { triggerStorefrontSync } from "@/lib/sync";
+import { apiError } from "@/lib/api-error";
 
 export async function PATCH(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -48,7 +49,7 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
 
     return NextResponse.json({ product: { id: updated.id, name: updated.name } });
   } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return apiError(error, { context: "admin/products/[id]" });
   }
 }
 
@@ -68,6 +69,6 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
 
     return NextResponse.json({ success: true });
   } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return apiError(error, { context: "admin/products/[id]" });
   }
 }

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getScopedDb } from "@/lib/db";
 import { requireAdmin } from "@/lib/auth";
+import { apiError } from "@/lib/api-error";
 
 export async function POST(request: NextRequest) {
   try {
@@ -25,6 +26,6 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ batch: updated });
   } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return apiError(error, { context: "admin/inventory/adjust" });
   }
 }

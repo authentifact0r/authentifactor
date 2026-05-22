@@ -3,6 +3,7 @@ import { db } from "@/lib/db";
 import { requireAdmin } from "@/lib/auth";
 import { getTenantId } from "@/lib/tenant";
 import { assertBrandColor, BrandColorError } from "@/lib/brand-color";
+import { apiError } from "@/lib/api-error";
 
 export async function POST(request: NextRequest) {
   try {
@@ -39,6 +40,6 @@ export async function POST(request: NextRequest) {
     if (error instanceof BrandColorError) {
       return NextResponse.json({ error: error.message }, { status: 400 });
     }
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return apiError(error, { context: "admin/branding" });
   }
 }

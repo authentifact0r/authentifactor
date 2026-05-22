@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/auth";
 import { safeFetch, readTextCapped, SsrfBlockedError } from "@/lib/safe-fetch";
+import { apiError } from "@/lib/api-error";
 
 // 2026-05-20 hardening (audit HIGH — SSRF in admin scrape):
 // The scrape import only ever needs to reach known dropshipping
@@ -212,6 +213,6 @@ export async function POST(request: NextRequest) {
         { status: 400 },
       );
     }
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return apiError(error, { context: "admin/import/scrape" });
   }
 }
