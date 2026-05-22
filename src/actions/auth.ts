@@ -11,10 +11,13 @@ import {
   type JWTPayload,
 } from "@/lib/auth";
 import { redirect } from "next/navigation";
+import { headers } from "next/headers";
+import { checkLoginRateLimit } from "@/lib/rateLimit";
+import { passwordSchema } from "@/lib/password-policy";
 
 const registerSchema = z.object({
   email: z.string().email(),
-  password: z.string().min(8, "Password must be at least 8 characters"),
+  password: passwordSchema,
   firstName: z.string().min(1),
   lastName: z.string().min(1),
   phone: z.string().optional(),
@@ -83,6 +86,19 @@ export async function loginAction(formData: FormData): Promise<void> {
   }
 
   const { email, password } = parsed.data;
+
+  // 2026-05-22 hardening (audit MEDIUM — no login rate limiting):
+  // per-IP + per-email brute-force speed bump on the server-action login
+  // path (mirrors `/api/auth/login`).
+  const headerStore = await headers();
+  const ip =
+    headerStore.get("x-forwarded-for")?.split(",")[0].trim() || "unknown";
+  if (!checkLoginRateLimit(ip, email).allowed) {
+    redirect(
+      "/login?error=" +
+        encodeURIComponent("Too many login attempts. Please try again later."),
+    );
+  }
 
   const user = await db.user.findUnique({ where: { email } });
   if (!user) {

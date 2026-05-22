@@ -8,9 +8,11 @@ import { slugify } from "@/lib/utils";
 import { BILLING_PLANS, type BillingPlanId } from "@/config/billingPlans";
 import { getTemplate } from "@/config/tenantTemplates";
 import { rateLimit } from "@/lib/rateLimit";
+import { passwordSchema } from "@/lib/password-policy";
 import { sendWelcomeEmail, sendNewTenantAlert } from "@/lib/email";
 import { redirect } from "next/navigation";
 import { headers } from "next/headers";
+import crypto from "crypto";
 
 // Block disposable/temporary email providers to control spam
 const BLOCKED_EMAIL_DOMAINS = [
@@ -32,7 +34,7 @@ function isBlockedEmail(email: string): boolean {
 const signupSchema = z.object({
   email: z.string().email("Valid email required"),
   phone: z.string().min(1, "Phone number is required"),
-  password: z.string().min(8, "Password must be at least 8 characters"),
+  password: passwordSchema,
   firstName: z.string().min(1, "First name is required"),
   lastName: z.string().min(1, "Last name is required"),
   storeName: z.string().min(2, "Business name must be at least 2 characters"),
@@ -126,8 +128,10 @@ export async function signupTenant(
     }
   }
 
-  // Generate referral code for the new tenant
-  const referralCode = `${slug}-${Math.random().toString(36).substring(2, 6)}`;
+  // Generate referral code for the new tenant.
+  // 2026-05-22 hardening (audit MEDIUM — CWE-338 weak PRNG): use a CSPRNG
+  // so referral codes (which gate referral attribution) are not guessable.
+  const referralCode = `${slug}-${crypto.randomBytes(3).toString("hex")}`;
 
   // Atomic DB provisioning
   const passwordHash = await hashPassword(password);

@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { verifyPassword, setAuthCookies, type JWTPayload } from "@/lib/auth";
+import { checkLoginRateLimit } from "@/lib/rateLimit";
+import { readJsonBody } from "@/lib/read-body";
+import { apiError } from "@/lib/api-error";
 
 // 2026-05-20 hardening (audit HIGH — divergent auth paths): this route
 // previously minted its own flat 7-day `access_token` signed with a
@@ -10,10 +13,23 @@ import { verifyPassword, setAuthCookies, type JWTPayload } from "@/lib/auth";
 // rotating, revocable 7d refresh token persisted in `RefreshToken`.
 export async function POST(request: NextRequest) {
   try {
-    const { email, password } = await request.json();
+    const { email, password } = await readJsonBody<{
+      email?: string;
+      password?: string;
+    }>(request);
 
     if (!email || !password) {
       return NextResponse.json({ error: "Email and password are required" }, { status: 400 });
+    }
+
+    // 2026-05-22 hardening (audit MEDIUM — no login rate limiting):
+    // per-IP + per-email brute-force / credential-stuffing speed bump.
+    const ip = request.headers.get("x-forwarded-for")?.split(",")[0].trim() || "unknown";
+    if (!checkLoginRateLimit(ip, email).allowed) {
+      return NextResponse.json(
+        { error: "Too many login attempts. Please try again later." },
+        { status: 429 },
+      );
     }
 
     const user = await db.user.findUnique({ where: { email } });
@@ -75,8 +91,7 @@ export async function POST(request: NextRequest) {
 
     const redirectTo = user.isSuperAdmin ? "/superadmin" : "/admin";
     return NextResponse.json({ success: true, redirectTo });
-  } catch (error: any) {
-    console.error("Login error:", error);
-    return NextResponse.json({ error: "Login failed" }, { status: 500 });
+  } catch (error: unknown) {
+    return apiError(error, { context: "auth/login" });
   }
 }
