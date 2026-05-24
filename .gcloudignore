@@ -1,0 +1,9 @@
+node_modules
+.next
+.git
+.pm2
+docs
+.env*.local
+.env.production
+*.log
+.DS_Store
