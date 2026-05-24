@@ -8,14 +8,29 @@ import crypto from "crypto";
 
 const MAX_UPLOAD_BYTES = 10 * 1024 * 1024; // 10 MB
 
-// Try Vercel Blob first, fall back to local filesystem
-async function uploadToBlob(name: string, buffer: Buffer): Promise<string | null> {
+// 2026-05-24: dropped @vercel/blob ("no more vercel"). Storefront
+// product images now go to GCS bucket `authentifactor-uploads` which
+// has `allUsers:objectViewer` so the returned public URL is browser-
+// loadable directly. The Cloud Run service runs as
+// `206949228411-compute@developer.gserviceaccount.com` which has
+// `roles/storage.objectAdmin` on the bucket — uploads use Application
+// Default Credentials, no token needed.
+async function uploadToGcs(name: string, buffer: Buffer, contentType: string): Promise<string | null> {
+  const bucketName = process.env.GCS_UPLOADS_BUCKET;
+  if (!bucketName) return null;
   try {
-    if (!process.env.BLOB_READ_WRITE_TOKEN) return null;
-    const { put } = await import("@vercel/blob");
-    const blob = await put(name, buffer, { access: "public", addRandomSuffix: false });
-    return blob.url;
-  } catch {
+    const { Storage } = await import("@google-cloud/storage");
+    const storage = new Storage();
+    const file = storage.bucket(bucketName).file(name);
+    await file.save(buffer, {
+      contentType,
+      // Long cache: uploaded names are UUIDs, never reused.
+      metadata: { cacheControl: "public, max-age=31536000, immutable" },
+      resumable: false,
+    });
+    return `https://storage.googleapis.com/${bucketName}/${name}`;
+  } catch (err) {
+    console.error("[upload] gcs failed:", err);
     return null;
   }
 }
@@ -65,8 +80,9 @@ export async function POST(request: NextRequest) {
     // Math.random() PRNG and any attacker control over the stored name.
     const name = `${crypto.randomUUID()}.${detected.ext}`;
 
-    // Try Vercel Blob first (production), fall back to local (dev)
-    let url = await uploadToBlob(`products/${name}`, buffer);
+    // GCS first (production), fall back to local filesystem (dev — no
+    // GCS_UPLOADS_BUCKET configured, or GCS write failed for any reason).
+    let url = await uploadToGcs(`products/${name}`, buffer, detected.mime);
     if (!url) {
       url = await uploadToLocal(name, buffer);
     }
