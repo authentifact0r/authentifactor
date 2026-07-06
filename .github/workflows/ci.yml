@@ -1,0 +1,22 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - name: Tests
+        run: npm test
+      # NOTE: typecheck is not gated yet — 40 pre-existing TS errors in 21 files
+      # (recorded 2026-07-06). Add `npm run typecheck` here once that debt is paid.

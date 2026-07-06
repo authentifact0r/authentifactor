@@ -14,8 +14,13 @@ Undocumented-but-real features: AI pipeline (`npm run ai:*` scripts), geolocatio
 - Next.js 16 diverges from training data — check `node_modules/next/dist/docs/` before writing Next code.
 - Webhooks (both processors): signature-verified + idempotent + fail-closed, no exceptions.
 
+## Tests & CI (added 2026-07-06)
+- `npm test` — vitest suites for password-policy, currency conversion, Paystack webhook signature
+  verification (20 tests). Keep green; GH Actions CI enforces on main.
+- `npm run typecheck` — currently FAILS with 40 pre-existing TS errors in 21 files. Not gated in CI
+  yet; pay this debt down opportunistically, then add typecheck to ci.yml.
+
 ## Known gaps (don't inherit them)
-- Zero tests and no CI/CD — deploys are manual (Dockerfile only). Add the first test with your change;
-  never cite the absence as an excuse.
+- Deploys are manual (Dockerfile only) — no deploy automation.
 - Security fixes from the 2026-05 campaign are committed — verify the DEPLOYED revision before
   assuming they're live.
