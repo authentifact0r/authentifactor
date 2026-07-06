@@ -649,8 +649,6 @@ async function main() {
         minWeightKg: 0,
         maxWeightKg: 20,
         baseCost: 2.99,
-        perKgCost: 0,
-        estimatedDays: 0,
         perKgCost: 500,
         estimatedDays: 3,
       },

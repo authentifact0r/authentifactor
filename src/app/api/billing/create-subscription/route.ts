@@ -3,6 +3,7 @@ import { stripe } from "@/lib/stripe";
 import { db as prisma } from "@/lib/db";
 import { requireAdmin } from "@/lib/auth";
 import { BILLING_PLANS, type BillingPlanId } from "@/config/billingPlans";
+import { subscriptionPeriodEnd } from "@/lib/stripe-compat";
 
 export async function POST(request: NextRequest) {
   try {
@@ -71,9 +72,10 @@ export async function POST(request: NextRequest) {
         billingPlan: planId,
         billingStatus: "active",
         stripeSubscriptionId: subscription.id,
-        nextInvoiceDate: subscription.current_period_end
-          ? new Date(subscription.current_period_end * 1000)
-          : null,
+        nextInvoiceDate: (() => {
+          const periodEnd = subscriptionPeriodEnd(subscription);
+          return periodEnd ? new Date(periodEnd * 1000) : null;
+        })(),
       },
     });
 

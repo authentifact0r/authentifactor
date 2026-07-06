@@ -98,17 +98,17 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Shipping: pull a tenant-defined ShippingOption by id (server
-    // chooses the cost), fall back to 0 if none selected.
-    if (shipping?.optionId && typeof shipping.optionId === "string") {
-      const option = await tdb.shippingOption.findFirst({
-        where: { id: shipping.optionId, isActive: true },
-        select: { priceGbp: true, name: true },
-      });
-      if (option) {
-        totalPence += Math.round(Number(option.priceGbp) * 100);
-        description.push(`Shipping: ${option.name}`);
-      }
+    // Shipping: this was written against a planned `ShippingOption` model
+    // that never landed in the schema — the old lookup crashed with a 500
+    // whenever a client sent `shipping.optionId`. No storefront surface
+    // sends it today, so fail closed until a real shipping-selection model
+    // exists (ShippingRule has different semantics: baseCost + perKgCost,
+    // not a flat per-option price — do NOT silently substitute it here).
+    if (shipping?.optionId) {
+      return NextResponse.json(
+        { error: "Shipping option selection is not available" },
+        { status: 400 },
+      );
     }
 
     if (giftWrap) totalPence += 500;

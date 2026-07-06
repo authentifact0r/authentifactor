@@ -24,7 +24,6 @@ import { listSessions, getHistory, deleteSession } from "../src/lib/local-ai/mem
 import { startVaultWatcher } from "../src/lib/local-ai/watcher";
 import fsp from "node:fs/promises";
 import nodePath from "node:path";
-import { VAULT_PATH } from "../src/lib/local-ai/config";
 
 const QUESTION =
   process.argv[2] ||

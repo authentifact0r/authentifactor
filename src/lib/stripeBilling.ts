@@ -1,5 +1,6 @@
 import { stripe } from "@/lib/stripe";
 import { db } from "@/lib/db";
+import { createUsageRecord } from "./stripe-compat";
 
 /**
  * Attach metered usage items to an existing subscription.
@@ -58,14 +59,11 @@ export async function reportHostingUsageToStripe(
     return null;
   }
 
-  const record = await stripe.subscriptionItems.createUsageRecord(
-    tenant.stripeHostingItemId,
-    {
-      quantity: Math.round(quantityPence),
-      timestamp: Math.floor(Date.now() / 1000),
-      action: "set",
-    },
-  );
+  const record = await createUsageRecord(stripe, tenant.stripeHostingItemId, {
+    quantity: Math.round(quantityPence),
+    timestamp: Math.floor(Date.now() / 1000),
+    action: "set",
+  });
 
   return record;
 }
@@ -83,14 +81,11 @@ export async function reportBackendUsageToStripe(
     return null;
   }
 
-  const record = await stripe.subscriptionItems.createUsageRecord(
-    tenant.stripeBackendItemId,
-    {
-      quantity: Math.round(quantityPence),
-      timestamp: Math.floor(Date.now() / 1000),
-      action: "set",
-    },
-  );
+  const record = await createUsageRecord(stripe, tenant.stripeBackendItemId, {
+    quantity: Math.round(quantityPence),
+    timestamp: Math.floor(Date.now() / 1000),
+    action: "set",
+  });
 
   return record;
 }

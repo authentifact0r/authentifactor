@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getScopedDb } from "@/lib/db";
+import { getScopedDb, TENANT_ID } from "@/lib/db";
 import { requireAdmin } from "@/lib/auth";
 import { apiError } from "@/lib/api-error";
 
@@ -29,6 +29,7 @@ export async function POST(request: NextRequest) {
 
     const batch = await tdb.inventoryBatch.create({
       data: {
+        tenantId: TENANT_ID, // real value injected by tenantDb extension (lib/db.ts)
         productId,
         warehouseId: warehouseId || null,
         batchNumber,

@@ -17,8 +17,10 @@ Undocumented-but-real features: AI pipeline (`npm run ai:*` scripts), geolocatio
 ## Tests & CI (added 2026-07-06)
 - `npm test` — vitest suites for password-policy, currency conversion, Paystack webhook signature
   verification (20 tests). Keep green; GH Actions CI enforces on main.
-- `npm run typecheck` — currently FAILS with 40 pre-existing TS errors in 21 files. Not gated in CI
-  yet; pay this debt down opportunistically, then add typecheck to ci.yml.
+- `npm run typecheck` — clean as of 2026-07-06 (40 errors paid down) and CI-gated. Notable patterns:
+  tenant-scoped creates use the `TENANT_ID` sentinel from `@/lib/db` (real value injected by the
+  tenantDb extension); Stripe API-version drift is absorbed by `src/lib/stripe-compat.ts` — use its
+  helpers, never read `subscription.current_period_end` / `invoice.subscription` directly.
 
 ## Known gaps (don't inherit them)
 - Deploys are manual (Dockerfile only) — no deploy automation.

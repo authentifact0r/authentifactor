@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getScopedDb, db } from "@/lib/db";
+import { getScopedDb, db, TENANT_ID } from "@/lib/db";
 import { requireAdmin } from "@/lib/auth";
 import { apiError } from "@/lib/api-error";
 import { readJsonBody } from "@/lib/read-body";
@@ -43,6 +43,7 @@ export async function POST(request: NextRequest) {
       // now generated with a CSPRNG (was Math.random()).
       customer = await db.user.create({
         data: {
+          tenantId: TENANT_ID, // real value injected by tenantDb extension (lib/db.ts)
           email: customerEmail,
           firstName: nameParts[0] || "",
           lastName: nameParts.slice(1).join(" ") || "",
@@ -56,6 +57,7 @@ export async function POST(request: NextRequest) {
     const nameParts = customerName.trim().split(" ");
     const newAddress = await db.address.create({
       data: {
+        tenantId: TENANT_ID, // real value injected by tenantDb extension (lib/db.ts)
         userId: customer.id,
         firstName: nameParts[0] || "",
         lastName: nameParts.slice(1).join(" ") || "",
@@ -98,6 +100,7 @@ export async function POST(request: NextRequest) {
 
     const order = await tdb.order.create({
       data: {
+        tenantId: TENANT_ID, // real value injected by tenantDb extension (lib/db.ts)
         userId: customer.id,
         addressId: newAddress.id,
         orderNumber,

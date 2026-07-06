@@ -44,6 +44,17 @@ export default async function AccountLayout({
     freeShippingMinimum: tenant.freeShippingMinimum,
     heroBannerTitle: tenant.heroBannerTitle,
     heroBannerSubtitle: tenant.heroBannerSubtitle,
+    heroBannerImage: tenant.heroBannerImage,
+    categories: [], // account pages don't render category navigation
+    fontFamily: tenant.fontFamily,
+    headingFontFamily: tenant.headingFontFamily,
+    backgroundColor: tenant.backgroundColor,
+    textColor: tenant.textColor,
+    enableMegaMenu: tenant.enableMegaMenu,
+    enableScrollAnimations: tenant.enableScrollAnimations,
+    instagramHandle: tenant.instagramHandle,
+    brandStory: tenant.brandStory,
+    brandStoryImage: tenant.brandStoryImage,
   };
 
   const accent = tenant.accentColor || "#C5A059";

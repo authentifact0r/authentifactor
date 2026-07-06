@@ -6,6 +6,7 @@
  */
 
 import { PrismaClient } from "@prisma/client";
+import { createUsageRecord } from "../src/lib/stripe-compat";
 
 const prisma = new PrismaClient();
 
@@ -50,20 +51,18 @@ async function main() {
     // Report hosting usage (in pence for precision)
     if (tenant.stripeHostingItemId && usage.vercelCostGbp > 0) {
       const pence = Math.round(usage.vercelCostGbp * 100);
-      await stripe.subscriptionItems.createUsageRecord(
-        tenant.stripeHostingItemId,
-        { quantity: pence, timestamp: Math.floor(Date.now() / 1000), action: "set" },
-      );
+      await createUsageRecord(stripe, tenant.stripeHostingItemId, {
+        quantity: pence, timestamp: Math.floor(Date.now() / 1000), action: "set",
+      });
       console.log(`    ✓ Hosting: ${pence}p (£${usage.vercelCostGbp})`);
     }
 
     // Report backend usage
     if (tenant.stripeBackendItemId && usage.gcpCostGbp > 0) {
       const pence = Math.round(usage.gcpCostGbp * 100);
-      await stripe.subscriptionItems.createUsageRecord(
-        tenant.stripeBackendItemId,
-        { quantity: pence, timestamp: Math.floor(Date.now() / 1000), action: "set" },
-      );
+      await createUsageRecord(stripe, tenant.stripeBackendItemId, {
+        quantity: pence, timestamp: Math.floor(Date.now() / 1000), action: "set",
+      });
       console.log(`    ✓ Backend: ${pence}p (£${usage.gcpCostGbp})`);
     }
 

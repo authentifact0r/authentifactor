@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { stripe, STRIPE_WEBHOOK_SECRET } from "@/lib/stripe";
 import { db as prisma } from "@/lib/db";
 import Stripe from "stripe";
+import { invoiceSubscriptionId, lineItemPriceMetadata, subscriptionPeriodEnd } from "@/lib/stripe-compat";
 
 export async function POST(request: NextRequest) {
   const body = await request.text();
@@ -24,7 +25,7 @@ export async function POST(request: NextRequest) {
     switch (event.type) {
       case "invoice.payment_succeeded": {
         const invoice = event.data.object as Stripe.Invoice;
-        const subscriptionId = invoice.subscription as string;
+        const subscriptionId = invoiceSubscriptionId(invoice);
         if (!subscriptionId) break;
 
         const tenant = await prisma.tenant.findFirst({
@@ -39,7 +40,7 @@ export async function POST(request: NextRequest) {
           let backendUsage = 0;
 
           for (const line of lines) {
-            const meta = line.price?.metadata || line.metadata || {};
+            const meta = lineItemPriceMetadata(line) || line.metadata || {};
             if (meta.type === "hosting") {
               hostingUsage += (line.amount || 0) / 100;
             } else if (meta.type === "backend") {
@@ -72,7 +73,7 @@ export async function POST(request: NextRequest) {
 
       case "invoice.payment_failed": {
         const invoice = event.data.object as Stripe.Invoice;
-        const subscriptionId = invoice.subscription as string;
+        const subscriptionId = invoiceSubscriptionId(invoice);
         if (!subscriptionId) break;
 
         const tenant = await prisma.tenant.findFirst({
@@ -108,9 +109,10 @@ export async function POST(request: NextRequest) {
             data: {
               billingStatus: status,
               billingPlan: (subscription.metadata.planId as string) || tenant.billingPlan,
-              nextInvoiceDate: subscription.current_period_end
-                ? new Date(subscription.current_period_end * 1000)
-                : null,
+              nextInvoiceDate: (() => {
+                const periodEnd = subscriptionPeriodEnd(subscription);
+                return periodEnd ? new Date(periodEnd * 1000) : null;
+              })(),
             },
           });
         }

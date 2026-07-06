@@ -13,6 +13,7 @@ import { sendWelcomeEmail, sendNewTenantAlert } from "@/lib/email";
 import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 import crypto from "crypto";
+import { subscriptionPeriodEnd } from "@/lib/stripe-compat";
 
 // Block disposable/temporary email providers to control spam
 const BLOCKED_EMAIL_DOMAINS = [
@@ -272,9 +273,10 @@ export async function signupTenant(
       data: {
         stripeCustomerId: customer.id,
         stripeSubscriptionId: subscription.id,
-        nextInvoiceDate: subscription.current_period_end
-          ? new Date(subscription.current_period_end * 1000)
-          : null,
+        nextInvoiceDate: (() => {
+          const periodEnd = subscriptionPeriodEnd(subscription);
+          return periodEnd ? new Date(periodEnd * 1000) : null;
+        })(),
       },
     });
   } catch (err) {
