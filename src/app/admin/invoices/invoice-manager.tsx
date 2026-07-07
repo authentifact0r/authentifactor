@@ -1,0 +1,239 @@
+"use client";
+import { apiUrl } from "@/lib/api";
+
+import { useCallback, useEffect, useState } from "react";
+import {
+  Receipt, Send, ExternalLink, RefreshCw, CheckCircle, AlertTriangle, Clock,
+} from "lucide-react";
+
+interface InvoiceRow {
+  id: string;
+  number: string | null;
+  customerEmail: string | null;
+  customerName: string | null;
+  amountDue: number;
+  amountPaid: number;
+  currency: string;
+  status: string | null;
+  hostedInvoiceUrl: string | null;
+  dueDate: number | null;
+  created: number;
+}
+
+const SYMBOLS: Record<string, string> = { gbp: "£", usd: "$", eur: "€" };
+const money = (minor: number, currency: string) =>
+  `${SYMBOLS[currency] || currency.toUpperCase() + " "}${(minor / 100).toLocaleString(undefined, { minimumFractionDigits: 2 })}`;
+
+const STATUS_BADGE: Record<string, string> = {
+  paid: "bg-emerald-500/15 text-emerald-300 border-emerald-500/30",
+  open: "bg-amber-500/15 text-amber-300 border-amber-500/30",
+  draft: "bg-white/10 text-white/60 border-white/20",
+  void: "bg-white/5 text-white/40 border-white/10 line-through",
+  uncollectible: "bg-red-500/15 text-red-300 border-red-500/30",
+};
+
+const inputCls =
+  "w-full rounded-lg border border-white/15 bg-white/5 px-3 py-2 text-sm text-white placeholder:text-white/30 focus:border-amber-400 focus:outline-none";
+
+export function InvoiceManager() {
+  const [form, setForm] = useState({
+    clientEmail: "", clientName: "", description: "", amount: "", currency: "gbp", daysUntilDue: "14", memo: "",
+  });
+  const [sending, setSending] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState<{ url: string | null; email: string; amount: string } | null>(null);
+  const [invoices, setInvoices] = useState<InvoiceRow[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const load = useCallback(async () => {
+    setLoading(true);
+    try {
+      const res = await fetch(apiUrl("/api/admin/invoices"), { cache: "no-store" });
+      const data = await res.json();
+      setInvoices(data.invoices || []);
+    } catch {
+      // list is best-effort; composer still works
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => { load(); }, [load]);
+
+  const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
+    setForm((f) => ({ ...f, [k]: e.target.value }));
+
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    setSuccess(null);
+    setSending(true);
+    try {
+      const res = await fetch(apiUrl("/api/admin/invoices"), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...form,
+          amount: parseFloat(form.amount),
+          daysUntilDue: parseInt(form.daysUntilDue, 10) || 14,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to create invoice");
+      setSuccess({
+        url: data.invoice.hostedInvoiceUrl,
+        email: data.invoice.customerEmail,
+        amount: money(data.invoice.amountDue, data.invoice.currency),
+      });
+      setForm((f) => ({ ...f, clientEmail: "", clientName: "", description: "", amount: "", memo: "" }));
+      load();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to create invoice");
+    } finally {
+      setSending(false);
+    }
+  };
+
+  return (
+    <div className="p-6 md:p-8 space-y-6">
+      <div>
+        <h1 className="text-2xl font-bold text-white tracking-tight flex items-center gap-2">
+          <Receipt className="h-6 w-6 text-amber-400" /> Invoices
+        </h1>
+        <p className="text-sm text-white/60 mt-1">
+          Request payment from a client — Stripe emails them a hosted invoice with a pay link.
+        </p>
+      </div>
+
+      {/* Composer */}
+      <form onSubmit={submit} className="rounded-2xl border border-white/10 bg-white/5 p-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label className="block text-xs font-medium text-white/60 mb-1">Client email *</label>
+          <input type="email" required value={form.clientEmail} onChange={set("clientEmail")}
+            placeholder="finance@client.com" className={inputCls} />
+        </div>
+        <div>
+          <label className="block text-xs font-medium text-white/60 mb-1">Client / company name</label>
+          <input type="text" value={form.clientName} onChange={set("clientName")}
+            placeholder="Acme Ltd" className={inputCls} />
+        </div>
+        <div className="md:col-span-2">
+          <label className="block text-xs font-medium text-white/60 mb-1">What is this for? *</label>
+          <input type="text" required value={form.description} onChange={set("description")}
+            placeholder="Catering order #1042 — balance due" className={inputCls} />
+        </div>
+        <div className="grid grid-cols-3 gap-3">
+          <div>
+            <label className="block text-xs font-medium text-white/60 mb-1">Currency</label>
+            <select value={form.currency} onChange={set("currency")} className={inputCls}>
+              <option value="gbp">GBP £</option>
+              <option value="usd">USD $</option>
+              <option value="eur">EUR €</option>
+            </select>
+          </div>
+          <div className="col-span-2">
+            <label className="block text-xs font-medium text-white/60 mb-1">Amount *</label>
+            <input type="number" required min="1" step="0.01" value={form.amount} onChange={set("amount")}
+              placeholder="250.00" className={inputCls} />
+          </div>
+        </div>
+        <div>
+          <label className="block text-xs font-medium text-white/60 mb-1">Due in (days)</label>
+          <input type="number" min="1" max="90" value={form.daysUntilDue} onChange={set("daysUntilDue")} className={inputCls} />
+        </div>
+        <div className="md:col-span-2">
+          <label className="block text-xs font-medium text-white/60 mb-1">Memo (shown on the invoice)</label>
+          <input type="text" value={form.memo} onChange={set("memo")}
+            placeholder="Thank you for your business." className={inputCls} />
+        </div>
+
+        {error && (
+          <div className="md:col-span-2 flex items-center gap-2 rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-300">
+            <AlertTriangle className="h-4 w-4 shrink-0" /> {error}
+          </div>
+        )}
+        {success && (
+          <div className="md:col-span-2 flex items-center justify-between gap-2 rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-3 py-2 text-sm text-emerald-300">
+            <span className="flex items-center gap-2">
+              <CheckCircle className="h-4 w-4 shrink-0" />
+              Invoice for {success.amount} sent to {success.email}
+            </span>
+            {success.url && (
+              <a href={success.url} target="_blank" rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 font-medium hover:text-emerald-200">
+                View <ExternalLink className="h-3.5 w-3.5" />
+              </a>
+            )}
+          </div>
+        )}
+
+        <div className="md:col-span-2 flex justify-end">
+          <button type="submit" disabled={sending}
+            className="inline-flex items-center gap-2 rounded-xl bg-amber-400 px-5 py-2.5 text-sm font-semibold text-black hover:bg-amber-300 disabled:opacity-50 transition-colors">
+            <Send className="h-4 w-4" />
+            {sending ? "Sending…" : "Create & send invoice"}
+          </button>
+        </div>
+      </form>
+
+      {/* Recent invoices */}
+      <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
+        <div className="mb-4 flex items-center justify-between">
+          <h2 className="flex items-center gap-2 text-lg font-semibold text-white">
+            <Clock className="h-5 w-5 text-white/50" /> Recent invoices
+          </h2>
+          <button onClick={load} disabled={loading}
+            className="inline-flex items-center gap-1.5 text-sm text-white/60 hover:text-white disabled:opacity-50">
+            <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} /> Refresh
+          </button>
+        </div>
+        {loading && invoices.length === 0 ? (
+          <p className="py-6 text-center text-sm text-white/40">Loading invoices…</p>
+        ) : invoices.length === 0 ? (
+          <p className="py-6 text-center text-sm text-white/40">No invoices yet — send your first one above.</p>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-white/10 text-left text-white/50">
+                  <th className="py-2 pr-4 font-medium">Client</th>
+                  <th className="py-2 pr-4 font-medium">Amount</th>
+                  <th className="py-2 pr-4 font-medium">Status</th>
+                  <th className="py-2 pr-4 font-medium">Due</th>
+                  <th className="py-2 font-medium"></th>
+                </tr>
+              </thead>
+              <tbody>
+                {invoices.map((inv) => (
+                  <tr key={inv.id} className="border-b border-white/5 last:border-0">
+                    <td className="py-2.5 pr-4">
+                      <div className="font-medium text-white">{inv.customerName || inv.customerEmail}</div>
+                      {inv.customerName && <div className="text-xs text-white/40">{inv.customerEmail}</div>}
+                    </td>
+                    <td className="py-2.5 pr-4 font-medium text-white">{money(inv.amountDue, inv.currency)}</td>
+                    <td className="py-2.5 pr-4">
+                      <span className={`inline-block rounded-full border px-2 py-0.5 text-xs font-medium ${STATUS_BADGE[inv.status || "draft"] || STATUS_BADGE.draft}`}>
+                        {inv.status}
+                      </span>
+                    </td>
+                    <td className="py-2.5 pr-4 text-white/60">
+                      {inv.dueDate ? new Date(inv.dueDate * 1000).toLocaleDateString() : "—"}
+                    </td>
+                    <td className="py-2.5 text-right">
+                      {inv.hostedInvoiceUrl && (
+                        <a href={inv.hostedInvoiceUrl} target="_blank" rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1 font-medium text-amber-400 hover:text-amber-300">
+                          Open <ExternalLink className="h-3.5 w-3.5" />
+                        </a>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
