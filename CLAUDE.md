@@ -22,13 +22,13 @@ Undocumented-but-real features: AI pipeline (`npm run ai:*` scripts), geolocatio
   tenantDb extension); Stripe API-version drift is absorbed by `src/lib/stripe-compat.ts` — use its
   helpers, never read `subscription.current_period_end` / `invoice.subscription` directly.
 
-## Deploy
+## Deploy (ARMED 2026-07-07 — every push to main deploys)
 - Cloud Run service `authentifactor` (europe-west1, hybrid-saas-platform), authentifactor.com mapped.
-- Pipeline exists but is INERT: `.github/workflows/deploy.yml` skips until repo var
-  DEPLOY_ENABLED=true + WIF secrets are set (extend careceutical's WIF provider repo condition).
-  Until armed, deploy manually: `gcloud builds submit --config cloudbuild.yaml --project
-  hybrid-saas-platform --substitutions SHORT_SHA=$(git rev-parse --short HEAD)`.
-
-## Known gaps (don't inherit them)
-- Security fixes from the 2026-05 campaign are committed — verify the DEPLOYED revision before
-  assuming they're live.
+- Push to main → CI (typecheck+tests) + deploy.yml → Cloud Build → Cloud Run. WIF via the shared
+  `github-pool/github-provider` (owner-wide condition — also serves careceutical/clarityconduct/linkolu;
+  do NOT narrow it without listing all four repos).
+- `.env.production` is UNTRACKED — CI builds get NEXT_PUBLIC values from cloudbuild.yaml
+  substitutions → Docker build args. Add new NEXT_PUBLIC vars in BOTH places or they'll be
+  undefined in production bundles.
+- JWT secret validation is lazy (first use) — a module-scope env check will break the Docker build
+  (`next build` collects page data with production NODE_ENV and no runtime secrets).
