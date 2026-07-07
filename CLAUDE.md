@@ -32,3 +32,11 @@ Undocumented-but-real features: AI pipeline (`npm run ai:*` scripts), geolocatio
   undefined in production bundles.
 - JWT secret validation is lazy (first use) — a module-scope env check will break the Docker build
   (`next build` collects page data with production NODE_ENV and no runtime secrets).
+
+## DNS / subdomains (2026-07-07)
+- The wildcard `*.authentifactor.com` → Vercel A record was DELETED (dead + subdomain-takeover risk).
+  Tenant subdomains (middleware supports `tom.authentifactor.com` → tenant slug) are NXDOMAIN until
+  explicitly activated: per-subdomain Cloud Run domain mapping + Route53 CNAME to ghs.googlehosted.com.
+  Never restore a wildcard pointing at third-party infra.
+- `trq*._domainkey` CNAMEs → Shopify DKIM remain (email-scoped; only claimable if the Shopify store
+  closes — review if Shopify is ever retired).
