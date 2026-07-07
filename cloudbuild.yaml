@@ -1,0 +1,49 @@
+# Builds the Authentifactor image and deploys it to Cloud Run.
+#
+# NEXT_PUBLIC_* values are inlined at build time from the committed
+# .env.production (browser-exposed publishable values only). Runtime
+# secrets (DATABASE_URL, PAYSTACK_*, STRIPE_SECRET_KEY, ...) are bound
+# on the Cloud Run service and are intentionally NOT set here.
+#
+# Invoked by .github/workflows/deploy.yml on push to main, or manually:
+#   gcloud builds submit --config cloudbuild.yaml --project hybrid-saas-platform
+
+substitutions:
+  _REGION: europe-west1
+  _SERVICE: authentifactor
+  _IMAGE: europe-west1-docker.pkg.dev/hybrid-saas-platform/cloud-run-source-deploy/authentifactor
+
+options:
+  logging: CLOUD_LOGGING_ONLY
+  machineType: E2_HIGHCPU_8
+
+steps:
+  - id: build
+    name: gcr.io/cloud-builders/docker
+    args:
+      - build
+      - -t
+      - ${_IMAGE}:${SHORT_SHA}
+      - -t
+      - ${_IMAGE}:latest
+      - .
+
+  - id: push
+    name: gcr.io/cloud-builders/docker
+    args: [push, --all-tags, "${_IMAGE}"]
+
+  - id: deploy
+    name: gcr.io/google.com/cloudsdktool/cloud-sdk
+    entrypoint: gcloud
+    args:
+      - run
+      - deploy
+      - ${_SERVICE}
+      - --image=${_IMAGE}:${SHORT_SHA}
+      - --region=${_REGION}
+      - --platform=managed
+      - --quiet
+
+images:
+  - ${_IMAGE}:${SHORT_SHA}
+  - ${_IMAGE}:latest

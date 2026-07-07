@@ -1,0 +1,47 @@
+name: Deploy to Cloud Run
+
+# Auto-deploys main to the Cloud Run `authentifactor` service (europe-west1,
+# project hybrid-saas-platform) via Cloud Build (cloudbuild.yaml).
+#
+# Inert until armed: the job is skipped unless repo variable
+# DEPLOY_ENABLED == 'true'. Arming requires Workload Identity Federation:
+#   repo secret  GCP_WORKLOAD_IDENTITY_PROVIDER
+#   repo secret  GCP_DEPLOY_SERVICE_ACCOUNT
+#   repo var     DEPLOY_ENABLED = true
+# Same setup as careceutical — see careceutical/docs/DEPLOY.md and extend
+# the WIF provider's repo condition to cover this repository.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-cloud-run
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Build & deploy
+    if: vars.DEPLOY_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      id-token: write # required for Workload Identity Federation
+    steps:
+      - uses: actions/checkout@v4
+
+      - id: auth
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GCP_DEPLOY_SERVICE_ACCOUNT }}
+
+      - uses: google-github-actions/setup-gcloud@v2
+
+      - name: Submit Cloud Build (build + deploy)
+        run: |
+          gcloud builds submit \
+            --config cloudbuild.yaml \
+            --project hybrid-saas-platform \
+            --substitutions "SHORT_SHA=${GITHUB_SHA::7}"
