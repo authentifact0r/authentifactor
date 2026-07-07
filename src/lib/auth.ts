@@ -4,11 +4,15 @@ import bcrypt from "bcryptjs";
 import crypto from "crypto";
 import { db } from "./db";
 
-// 2026-05-20 hardening (audit HIGH): refuse to boot with a fallback
+// 2026-05-20 hardening (audit HIGH): refuse to run with a fallback
 // JWT secret in production. A misconfigured deploy with `JWT_SECRET`
 // unset previously silently fell back to the string literal in this
 // file — a value every reader of the repo knows, so every issued JWT
-// would be forgeable. Fail loudly at module load.
+// would be forgeable. Fail loudly on FIRST USE (2026-07-07: was module
+// load, which broke `next build` inside Docker — page-data collection
+// runs with production NODE_ENV but, correctly, no runtime secrets.
+// Lazy + memoized keeps the guarantee: no token is ever signed or
+// verified with a missing/short secret in production).
 function loadJwtSecret(name: "JWT_SECRET" | "JWT_REFRESH_SECRET"): Uint8Array {
   const raw = process.env[name] || "";
   if (process.env.NODE_ENV === "production") {
@@ -29,8 +33,10 @@ function loadJwtSecret(name: "JWT_SECRET" | "JWT_REFRESH_SECRET"): Uint8Array {
   return new TextEncoder().encode(raw);
 }
 
-const JWT_SECRET = loadJwtSecret("JWT_SECRET");
-const REFRESH_SECRET = loadJwtSecret("JWT_REFRESH_SECRET");
+let _jwtSecret: Uint8Array | undefined;
+let _refreshSecret: Uint8Array | undefined;
+const JWT_SECRET = () => (_jwtSecret ??= loadJwtSecret("JWT_SECRET"));
+const REFRESH_SECRET = () => (_refreshSecret ??= loadJwtSecret("JWT_REFRESH_SECRET"));
 
 const ACCESS_TOKEN_TTL_SEC = 15 * 60; // 15 minutes
 const REFRESH_TOKEN_TTL_SEC = 7 * 24 * 60 * 60; // 7 days
@@ -62,7 +68,7 @@ export async function createAccessToken(payload: JWTPayload): Promise<string> {
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
     .setExpirationTime("15m")
-    .sign(JWT_SECRET);
+    .sign(JWT_SECRET());
 }
 
 // 2026-05-20 hardening (audit HIGH — no refresh rotation/revocation):
@@ -77,7 +83,7 @@ async function createRefreshToken(payload: JWTPayload): Promise<string> {
     .setIssuedAt()
     .setJti(jti)
     .setExpirationTime("7d")
-    .sign(REFRESH_SECRET);
+    .sign(REFRESH_SECRET());
 
   await db.refreshToken.create({
     data: {
@@ -95,7 +101,7 @@ export async function verifyAccessToken(
   token: string
 ): Promise<JWTPayload | null> {
   try {
-    const { payload } = await jwtVerify(token, JWT_SECRET);
+    const { payload } = await jwtVerify(token, JWT_SECRET());
     return payload as unknown as JWTPayload;
   } catch {
     return null;
@@ -113,7 +119,7 @@ async function verifyRefreshToken(
   token: string
 ): Promise<RefreshVerifyResult | null> {
   try {
-    const { payload } = await jwtVerify(token, REFRESH_SECRET);
+    const { payload } = await jwtVerify(token, REFRESH_SECRET());
     const jti = payload.jti as string | undefined;
     if (!jti) return null;
 
