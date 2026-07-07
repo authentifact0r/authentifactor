@@ -12,6 +12,10 @@ substitutions:
   _REGION: europe-west1
   _SERVICE: authentifactor
   _IMAGE: europe-west1-docker.pkg.dev/hybrid-saas-platform/cloud-run-source-deploy/authentifactor
+  # Browser-exposed public values (the Stripe key is the *publishable* pk_live,
+  # public by design). Runtime secrets stay in Secret Manager on the service.
+  _APP_URL: "https://authentifactor.com"
+  _STRIPE_PK: "pk_live_51S7Hts0UXmT8UaSaFEi50aKkqdvaJN5YubNlQJZg9SqxLocrw8O0IkeBCtWHJ1G2BhXd70ksVWm1rBqsgVA0qihA00zZ9muxv9"
 
 options:
   logging: CLOUD_LOGGING_ONLY
@@ -22,6 +26,10 @@ steps:
     name: gcr.io/cloud-builders/docker
     args:
       - build
+      - --build-arg
+      - NEXT_PUBLIC_APP_URL=${_APP_URL}
+      - --build-arg
+      - NEXT_PUBLIC_STRIPE_PUBLIC_KEY=${_STRIPE_PK}
       - -t
       - ${_IMAGE}:${SHORT_SHA}
       - -t

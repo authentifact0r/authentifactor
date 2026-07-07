@@ -17,6 +17,13 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV DATABASE_URL="postgresql://placeholder:placeholder@localhost:5432/placeholder?schema=public"
+# NEXT_PUBLIC_* are inlined into the client bundle at build time. They are
+# browser-exposed public values (app URL + Stripe *publishable* key), passed
+# from cloudbuild.yaml — .env.production is untracked and absent in CI checkouts.
+ARG NEXT_PUBLIC_APP_URL
+ARG NEXT_PUBLIC_STRIPE_PUBLIC_KEY
+ENV NEXT_PUBLIC_APP_URL=$NEXT_PUBLIC_APP_URL
+ENV NEXT_PUBLIC_STRIPE_PUBLIC_KEY=$NEXT_PUBLIC_STRIPE_PUBLIC_KEY
 RUN npx prisma generate
 RUN npm run build
 
