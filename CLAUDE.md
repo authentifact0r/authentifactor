@@ -40,3 +40,10 @@ Undocumented-but-real features: AI pipeline (`npm run ai:*` scripts), geolocatio
   Never restore a wildcard pointing at third-party infra.
 - `trq*._domainkey` CNAMEs → Shopify DKIM remain (email-scoped; only claimable if the Shopify store
   closes — review if Shopify is ever retired).
+
+## Tenant invoicing (2026-07-07)
+`/admin/invoices` (sidebar → Invoices): admin creates + sends Stripe invoices to clients via
+POST/GET `/api/admin/invoices`. Uses the tenant's own `Tenant.stripeSecretKey` when set, else the
+platform Stripe account scoped by `metadata.tenantId`. Stripe currencies only (gbp/usd/eur) —
+NGN/Paystack invoicing deliberately out of scope (Paystack has no equivalent hosted invoice flow
+wired here). The billing webhook safely ignores these one-off invoices (no subscription id).
