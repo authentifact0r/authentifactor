@@ -1,11 +1,16 @@
-FROM node:20-alpine AS deps
+FROM node:22-alpine AS deps
 WORKDIR /app
-RUN apk add --no-cache libc6-compat openssl
+# python3 + make + g++ needed for native deps (better-sqlite3 et al.)
+# that npm rebuilds from source when no prebuilt alpine binary exists.
+RUN apk add --no-cache libc6-compat openssl python3 make g++
 COPY package.json package-lock.json* ./
 COPY prisma ./prisma
-RUN npm ci
+# `npm install` (not `npm ci`) — tolerates lockfile drift, important
+# during the 2026-05-24 @vercel/blob → @google-cloud/storage swap.
+# Revisit once lockfile is fully stable.
+RUN npm install --legacy-peer-deps
 
-FROM node:20-alpine AS builder
+FROM node:22-alpine AS builder
 WORKDIR /app
 RUN apk add --no-cache libc6-compat openssl
 COPY --from=deps /app/node_modules ./node_modules
@@ -15,7 +20,7 @@ ENV DATABASE_URL="postgresql://placeholder:placeholder@localhost:5432/placeholde
 RUN npx prisma generate
 RUN npm run build
 
-FROM node:20-alpine AS runner
+FROM node:22-alpine AS runner
 WORKDIR /app
 RUN apk add --no-cache libc6-compat openssl
 ENV NODE_ENV=production
