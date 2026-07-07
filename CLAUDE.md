@@ -22,7 +22,13 @@ Undocumented-but-real features: AI pipeline (`npm run ai:*` scripts), geolocatio
   tenantDb extension); Stripe API-version drift is absorbed by `src/lib/stripe-compat.ts` — use its
   helpers, never read `subscription.current_period_end` / `invoice.subscription` directly.
 
+## Deploy
+- Cloud Run service `authentifactor` (europe-west1, hybrid-saas-platform), authentifactor.com mapped.
+- Pipeline exists but is INERT: `.github/workflows/deploy.yml` skips until repo var
+  DEPLOY_ENABLED=true + WIF secrets are set (extend careceutical's WIF provider repo condition).
+  Until armed, deploy manually: `gcloud builds submit --config cloudbuild.yaml --project
+  hybrid-saas-platform --substitutions SHORT_SHA=$(git rev-parse --short HEAD)`.
+
 ## Known gaps (don't inherit them)
-- Deploys are manual (Dockerfile only) — no deploy automation.
 - Security fixes from the 2026-05 campaign are committed — verify the DEPLOYED revision before
   assuming they're live.
