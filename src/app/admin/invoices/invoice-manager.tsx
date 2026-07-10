@@ -18,6 +18,9 @@ interface InvoiceRow {
   hostedInvoiceUrl: string | null;
   dueDate: number | null;
   created: number;
+  memo: string | null;
+  lineDescription: string | null;
+  amendable: boolean;
 }
 
 const SYMBOLS: Record<string, string> = { gbp: "£", usd: "$", eur: "€" };
@@ -32,6 +35,15 @@ const STATUS_BADGE: Record<string, string> = {
   uncollectible: "bg-red-500/15 text-red-300 border-red-500/30",
 };
 
+// Quick-fill presets for common tenant invoice types — all fields stay editable.
+const SUGGESTIONS = [
+  { label: "Order — 50% deposit", description: "Custom order — 50% deposit", amount: "250.00", daysUntilDue: "7" },
+  { label: "Order — balance", description: "Custom order — balance due", amount: "250.00", daysUntilDue: "7" },
+  { label: "Wholesale order", description: "Wholesale order", amount: "500.00", daysUntilDue: "14" },
+  { label: "Catering", description: "Event catering — balance due", amount: "350.00", daysUntilDue: "7" },
+  { label: "Services", description: "Professional services", amount: "150.00", daysUntilDue: "14" },
+];
+
 const inputCls =
   "w-full rounded-lg border border-white/15 bg-white/5 px-3 py-2 text-sm text-white placeholder:text-white/30 focus:border-amber-400 focus:outline-none";
 
@@ -44,6 +56,8 @@ export function InvoiceManager() {
   const [success, setSuccess] = useState<{ url: string | null; email: string; amount: string } | null>(null);
   const [invoices, setInvoices] = useState<InvoiceRow[]>([]);
   const [loading, setLoading] = useState(true);
+  const [amending, setAmending] = useState<{ id: string; number: string | null } | null>(null);
+  const [voidingId, setVoidingId] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -63,6 +77,43 @@ export function InvoiceManager() {
   const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
     setForm((f) => ({ ...f, [k]: e.target.value }));
 
+  const applySuggestion = (s: (typeof SUGGESTIONS)[number]) =>
+    setForm((f) => ({ ...f, description: s.description, amount: s.amount, daysUntilDue: s.daysUntilDue }));
+
+  // Stripe invoices can't be edited once sent — amending means: prefill the
+  // form from the original, send the corrected invoice, void the original.
+  const startAmend = (inv: InvoiceRow) => {
+    setAmending({ id: inv.id, number: inv.number });
+    setForm({
+      clientEmail: inv.customerEmail || "",
+      clientName: inv.customerName || "",
+      description: inv.lineDescription || "",
+      amount: inv.amountDue ? (inv.amountDue / 100).toFixed(2) : "",
+      currency: inv.currency || "gbp",
+      daysUntilDue: "14",
+      memo: inv.memo || "",
+    });
+    setSuccess(null);
+    setError("");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const voidInvoice = async (inv: InvoiceRow) => {
+    if (!window.confirm(`Void invoice ${inv.number || inv.id} for ${money(inv.amountDue, inv.currency)}? The client's pay link will stop working.`)) return;
+    setVoidingId(inv.id);
+    setError("");
+    try {
+      const res = await fetch(apiUrl(`/api/admin/invoices/${inv.id}/void`), { method: "POST" });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to void invoice");
+      load();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to void invoice");
+    } finally {
+      setVoidingId(null);
+    }
+  };
+
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
@@ -80,11 +131,23 @@ export function InvoiceManager() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Failed to create invoice");
+      if (amending) {
+        try {
+          const voidRes = await fetch(apiUrl(`/api/admin/invoices/${amending.id}/void`), { method: "POST" });
+          if (!voidRes.ok) {
+            const voidData = await voidRes.json();
+            setError(`Corrected invoice sent, but voiding ${amending.number || amending.id} failed — void it manually. (${voidData.error || "unknown error"})`);
+          }
+        } catch {
+          setError(`Corrected invoice sent, but voiding ${amending.number || amending.id} failed — void it manually.`);
+        }
+      }
       setSuccess({
         url: data.invoice.hostedInvoiceUrl,
         email: data.invoice.customerEmail,
         amount: money(data.invoice.amountDue, data.invoice.currency),
       });
+      setAmending(null);
       setForm((f) => ({ ...f, clientEmail: "", clientName: "", description: "", amount: "", memo: "" }));
       load();
     } catch (err) {
@@ -104,6 +167,27 @@ export function InvoiceManager() {
           Request payment from a client — Stripe emails them a hosted invoice with a pay link.
         </p>
       </div>
+
+      {/* Quick-fill suggestions */}
+      <div className="flex flex-wrap items-center gap-2">
+        <span className="text-xs font-medium uppercase tracking-wide text-white/30">Quick fill</span>
+        {SUGGESTIONS.map((s) => (
+          <button key={s.label} type="button" onClick={() => applySuggestion(s)}
+            title={`${s.description} — £${s.amount}`}
+            className="rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-xs font-medium text-white/70 transition-colors hover:border-amber-400/50 hover:bg-amber-400/10 hover:text-amber-300">
+            {s.label}
+          </button>
+        ))}
+      </div>
+
+      {amending && (
+        <div className="flex items-center justify-between gap-2 rounded-lg border border-amber-400/30 bg-amber-400/10 px-3 py-2 text-sm text-amber-300">
+          <span>Amending invoice <strong>{amending.number || amending.id}</strong> — sending will void the original and email the corrected invoice.</span>
+          <button type="button" onClick={() => setAmending(null)} className="shrink-0 font-medium hover:text-amber-100">
+            Cancel amend
+          </button>
+        </div>
+      )}
 
       {/* Composer */}
       <form onSubmit={submit} className="rounded-2xl border border-white/10 bg-white/5 p-6 grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -171,7 +255,7 @@ export function InvoiceManager() {
           <button type="submit" disabled={sending}
             className="inline-flex items-center gap-2 rounded-xl bg-amber-400 px-5 py-2.5 text-sm font-semibold text-black hover:bg-amber-300 disabled:opacity-50 transition-colors">
             <Send className="h-4 w-4" />
-            {sending ? "Sending…" : "Create & send invoice"}
+            {sending ? "Sending…" : amending ? "Send corrected invoice" : "Create & send invoice"}
           </button>
         </div>
       </form>
@@ -219,13 +303,29 @@ export function InvoiceManager() {
                     <td className="py-2.5 pr-4 text-white/60">
                       {inv.dueDate ? new Date(inv.dueDate * 1000).toLocaleDateString() : "—"}
                     </td>
-                    <td className="py-2.5 text-right">
-                      {inv.hostedInvoiceUrl && (
-                        <a href={inv.hostedInvoiceUrl} target="_blank" rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1 font-medium text-amber-400 hover:text-amber-300">
-                          Open <ExternalLink className="h-3.5 w-3.5" />
-                        </a>
-                      )}
+                    <td className="py-2.5 text-right whitespace-nowrap">
+                      <div className="inline-flex items-center gap-3">
+                        {inv.amendable && (
+                          <>
+                            <button onClick={() => startAmend(inv)}
+                              className="font-medium text-white/60 hover:text-amber-300"
+                              title="Prefill the form with this invoice — sending voids the original">
+                              Amend
+                            </button>
+                            <button onClick={() => voidInvoice(inv)} disabled={voidingId === inv.id}
+                              className="font-medium text-white/60 hover:text-red-400 disabled:opacity-50"
+                              title="Cancel this invoice — the pay link stops working">
+                              {voidingId === inv.id ? "Voiding…" : "Void"}
+                            </button>
+                          </>
+                        )}
+                        {inv.hostedInvoiceUrl && (
+                          <a href={inv.hostedInvoiceUrl} target="_blank" rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1 font-medium text-amber-400 hover:text-amber-300">
+                            Open <ExternalLink className="h-3.5 w-3.5" />
+                          </a>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 ))}

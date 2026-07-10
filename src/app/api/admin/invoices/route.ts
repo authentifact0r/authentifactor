@@ -1,10 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import Stripe from "stripe";
 import { z } from "zod";
-import { db } from "@/lib/db";
-import { stripe as platformStripe } from "@/lib/stripe";
 import { requireAdmin } from "@/lib/auth";
 import { apiError } from "@/lib/api-error";
+import { tenantStripe } from "@/lib/tenant-stripe";
 
 /**
  * Tenant invoicing — create and send Stripe invoices to a tenant's clients.
@@ -27,17 +25,6 @@ const createSchema = z.object({
   currency: z.enum(INVOICE_CURRENCIES).default("gbp"),
   daysUntilDue: z.number().int().min(1).max(90).default(14),
 });
-
-async function tenantStripe(tenantId: string): Promise<{ client: Stripe; ownAccount: boolean }> {
-  const tenant = await db.tenant.findUnique({
-    where: { id: tenantId },
-    select: { stripeSecretKey: true },
-  });
-  if (tenant?.stripeSecretKey) {
-    return { client: new Stripe(tenant.stripeSecretKey, { typescript: true }), ownAccount: true };
-  }
-  return { client: platformStripe, ownAccount: false };
-}
 
 export async function POST(request: NextRequest) {
   try {
@@ -120,6 +107,9 @@ export async function GET() {
         hostedInvoiceUrl: inv.hosted_invoice_url,
         dueDate: inv.due_date,
         created: inv.created,
+        memo: inv.description,
+        lineDescription: inv.lines?.data?.[0]?.description || null,
+        amendable: inv.status === "open" && inv.metadata?.source === "tenant-invoicing",
       }));
 
     return NextResponse.json({ invoices });
