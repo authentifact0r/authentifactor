@@ -47,3 +47,18 @@ POST/GET `/api/admin/invoices`. Uses the tenant's own `Tenant.stripeSecretKey` w
 platform Stripe account scoped by `metadata.tenantId`. Stripe currencies only (gbp/usd/eur) —
 NGN/Paystack invoicing deliberately out of scope (Paystack has no equivalent hosted invoice flow
 wired here). The billing webhook safely ignores these one-off invoices (no subscription id).
+
+## gstack (recommended)
+
+This project uses [gstack](https://github.com/garrytan/gstack) for AI-assisted
+workflows (plan review, QA, security audit, ship pipeline). Installed globally at
+`~/.claude/skills/gstack` with the `gstack-` prefix. If missing, install with:
+
+```bash
+git clone --depth 1 https://github.com/garrytan/gstack.git ~/.claude/skills/gstack && cd ~/.claude/skills/gstack && ./setup --prefix
+```
+
+Key skills: /gstack-qa, /gstack-review, /gstack-ship, /gstack-investigate,
+/gstack-cso, /gstack-plan-ceo-review, /gstack-autoplan, /gstack-browse.
+Router: /gstack · Upgrade: /gstack-upgrade.
+Use `~/.claude/skills/gstack/...` for gstack file paths.
