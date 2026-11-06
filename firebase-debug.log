@@ -1,0 +1,22 @@
+[debug] [2026-05-23T17:31:32.531Z] ----------------------------------------------------------------------
+[debug] [2026-05-23T17:31:32.532Z] Command:       /usr/local/bin/node /usr/local/bin/firebase apps:list WEB --project=hybrid-saas-platform
+[debug] [2026-05-23T17:31:32.532Z] CLI Version:   15.8.0
+[debug] [2026-05-23T17:31:32.532Z] Platform:      darwin
+[debug] [2026-05-23T17:31:32.532Z] Node Version:  v22.19.0
+[debug] [2026-05-23T17:31:32.533Z] Time:          Sat May 23 2026 13:31:32 GMT-0400 (Eastern Daylight Time)
+[debug] [2026-05-23T17:31:32.533Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2026-05-23T17:31:32.542Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-05-23T17:31:32.542Z] > authorizing via signed-in user (oolusanya89@gmail.com)
+[debug] [2026-05-23T17:31:32.544Z] Checked if tokens are valid: true, expires at: 1779561090908
+[debug] [2026-05-23T17:31:32.544Z] Checked if tokens are valid: true, expires at: 1779561090908
+[debug] [2026-05-23T17:31:32.544Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/hybrid-saas-platform/webApps pageSize=100
+[debug] [2026-05-23T17:31:32.920Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/hybrid-saas-platform/webApps 404
+[debug] [2026-05-23T17:31:32.920Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/hybrid-saas-platform/webApps {"error":{"code":404,"message":"Firebase project 206949228411 not found.","status":"NOT_FOUND"}}
+[debug] [2026-05-23T17:31:32.921Z] Request to https://firebase.googleapis.com/v1beta1/projects/hybrid-saas-platform/webApps?pageSize=100 had HTTP Error: 404, Firebase project 206949228411 not found.
+[debug] [2026-05-23T17:31:32.923Z] FirebaseError: Request to https://firebase.googleapis.com/v1beta1/projects/hybrid-saas-platform/webApps?pageSize=100 had HTTP Error: 404, Firebase project 206949228411 not found.
+    at responseToError (/usr/local/lib/node_modules/firebase-tools/lib/responseToError.js:53:12)
+    at RetryOperation._fn (/usr/local/lib/node_modules/firebase-tools/lib/apiv2.js:330:77)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+[error] 
+[error] Error: Failed to list Firebase WEB apps. See firebase-debug.log for more info.
